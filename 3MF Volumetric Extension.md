@@ -332,7 +332,7 @@ up to one \<color> element, and an arbitray number of \<property> elements.
 If a consumer does not support any of the required volumedata elements, it MUST warn the user or the appropriate upstream processes
 that it cannot process all contents in this 3MF instance.
 
-## 3.3. Levelset element
+## 3.2.1 Levelset element
 
 Element **\<levelset>**
 
@@ -348,25 +348,104 @@ Element **\<levelset>**
 The \<levelset> element is used to defines the boundary of the object to be specified as
 the set of locations where the value of the levelset function equals the solidthreshold attribute.
 
-The levelset function is given by "destination channel" within the \<texturestack> with id matching texturestackid-attribute with name = "channel"-attribute of the \<levelset>-element.
+The levelset function is given by "destination channel" within the \<texturestack>
+with resource id matching the texturestackid-attribute and with name matching the "channel"-attribute of the \<levelset>-element.
 The mapping from object coordinates to the coordiante system of the corresponding texturestack is given by the transform attribute.
 
 
-## 3.3. Color element
+## 3.2.2 Color element
 
 Element **\<color>**
 
+Limits on values \<=0, \>=1 
 
-## 3.4. Composite element
+![color XML structure](images/color.png)
+
+| Name   | Type   | Use | Annotation |
+| --- | --- | --- | --- |
+| transform | ST\_Transformation | required | Transformation of the object coordinate system into the texturestackid coordinate system |
+| texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds houses the channels to be used in the child color elements. |
+
+The \<color> element is used to define the color of the object.
+Color format is RGB between normalized to the [0 - 1] range.
+
+The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
+
+## 3.2.3 Color channel elements
+
+Element **\<red>-, \<green>- and \<blue>**
+
+of
+
+Complex type **\<colorchannel>**
+
+![colorchannel XML structure](images/colorchannel.png)
+
+| Name   | Type   | Use | Annotation |
+| --- | --- | --- | --- |
+| srcchannel | ST\_ChannelName | required | Source channel for the values of this color channel|
+
+Each element instance of CT\_ColorChannel MUST have an attreibute "srcchannel" that MUST
+references a destination channel from the \<texturestack> with id matching the texturestackid of the parent \<color> element.
+
+If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
+
+
+## 3.2.4 Composite element
 
 Element **\<composite>**
+![composite XML structure](images/composite.png)
+
+| Name   | Type   | Use | Annotation |
+| --- | --- | --- | --- |
+| transform | ST\_Transformation | required | Transformation of the object coordinate system into the texturestackid coordinate system |
+| texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the channels used in the child \<materialmapping>-elements |
+| basematerialid | ST\_ResourceID | required | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
+
+The <composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
+
+The \<composite> element MUST have the texturestackid attribute
+
+This element MUST contain at least one <materialmapping> element, which will encode the relative contribution of a specific
+basematerial to the material mix.
+
+## 3.2.5 Material mapping element
+
+Element **\<materialmapping>**
+![materialmapping XML structure](images/materialmapping.png)
+
+| Name   | Type   | Use | Annotation |
+| --- | --- | --- | --- |
+| srcchannel | ST\_ChannelName | required | Source channel for the values of this material |
+| pindex | ST\_ResourceIndex | required | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
+
+The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent
+\<composite>-element.
+
+If the sampled value of a channel \<0 it must be evaluated as "0".
+
+If the sum of all values in it's child \<materialmapping>-elements is "0" ... TODO. PRODICER should not due that, consumer MUST ... . Potentialy define a minimal value.
 
 
-## 3.4. Property element
+## 3.2.4 Property element
 
 Element **\<property>**
+![property XML structure](images/property.png)
 
+| Name   | Type   | Use | Annotation |
+| --- | --- | --- | --- |
+| transform | ST\_Transformation | required | Transformation of the object coordinate system into the texturestackid coordinate system |
+| texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the channel used by this property |
+| channel | ST\_ChannelName | required | Name of the channel that serves as source for this properties scalar value |
+| name | ST\_PropertyNamespaceName | required | Namespace and name of this property property |
 
+The \<property> element allows to assign any point in space a scalar value of a freely definable property.
+This can be used to assign, e.g. opacity, conductivity, ...
+
+TODO:
+- rules for property versus composite (if they do not make sense together)
+- rules for physical units
+- rules for where to put namespace information ... ? Print ticket?
 
 # Part II. Appendixes
 

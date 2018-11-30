@@ -156,7 +156,7 @@
 					<triangle v1="4" v2="15" v3="25" pid="2" p1="0" />
 				</triangles>
 				
-				<volumedata requiredproperties="namespace:conductivity">
+				<v:volumedata requiredproperties="namespace:conductivity">
 					<levelset transform="1 0 0 ..." texturestackid="10" channel="mat1" solidthreshold="0">
 
 					<composite transform="1 0 0 ..." texturestackid="10" basematerialid="100">
@@ -174,7 +174,7 @@
 					<property name="namespace:conducticity" transform="1 0 0 ..." texturestackid="10" channel="mat1"/>
 					<property name="namespace:opacity" transform="1 0 0 ..." texturestackid="10" channel="mat2"/>
 
-				</volumedata>
+				</v:volumedata>
 			</mesh>
 		</object>
 	</resources>
