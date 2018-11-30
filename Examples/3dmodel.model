@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" xmlns:m="http://schemas.microsoft.com/3dmanufacturing/material/2015/02" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" xmlns:l="http://schemas.autodesk.com/dmg/loadcase/2016/08" xmlns:t="http://schemas.autodesk.com/dmg/tetrahedron/2017/01" xmlns:b="http://schemas.microsoft.com/3dmanufacturing/beamlattice/2017/02" xmlns:bt="http://schemas.autodesk.com/dmg/beamlatticetag/2017/02" xmlns:s="http://schemas.microsoft.com/3dmanufacturing/slice/2015/07">
+	<resources>
+		<m:colorgroup id="2">
+			<m:color color="#808080FF" />
+		</m:colorgroup>
+
+		<basematerial id="100">
+			<base name="Aluminum" displaycolor="#808080FF"/>
+			<base name="Titanium" displaycolor="#808000FF"/>
+			<base name="Stainless Steel" displaycolor="#008080FF"/>
+		</basematerial>
+		<basematerial id="101">
+			<base name="PLA blue" displaycolor="#808080FF"/>
+			<base name="ABS white" displaycolor="#808000FF"/>
+		</basematerial>
+
+
+		<v:image3d id="3" resolutionx="100" resolutiony="100" resolutionz="100" name="Image">
+			<image3dsheet path="3d/data/image_1.png" >
+			<image3dsheet path="3d/data/image_2.png" >
+			<image3dsheet path="3d/data/image_3.png" >
+			<image3dsheet path="3d/data/image_4.png" >
+			<image3dsheet path="3d/data/image_5.png" >
+		</v:image3d>
+
+		<v:image3d id="4" resolutionx="100" resolutiony="100" resolutionz="100" name="Otherimage">
+			<image3dsheet path="3d/data/imageOther_1.png" >
+			<image3dsheet path="3d/data/imageOther_2.png" >
+			<image3dsheet path="3d/data/imageOther_3.png" >
+			<image3dsheet path="3d/data/imageOther_4.png" >
+			<image3dsheet path="3d/data/imageOther_5.png" >
+		</v:image3d>
+
+		<v:texturestack id="10">
+			<dstchannel name="mat1" background="0">
+			<dstchannel name="mat2" background="0">
+			<dstchannel name="mat3" background="1">
+
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
+				<image3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1">
+				<image3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1">
+				<image3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1">
+			</texturelayer>
+			
+			<texturelayer transform="1 0 0..." compositing="multiply">
+				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="mat1" min="0" max="1">
+				<image3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat3" min="0" max="1">
+			</texturelayer>
+
+			<texturelayer transform="1 0 0..." compositing="multiply">
+				<image3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1">
+			</texturelayer>
+		</v:texturestack>
+
+		<v:texturestack id="11">
+			<dstchannel name="theoutchannel" background="100">
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
+				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="-1" max="1" tilestyleu="">
+			</texturelayer>
+			
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
+				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="0" max="1">
+			</texturelayer>
+		</v:texturestack>
+
+		<v:texturestack id="12">
+			<dstchannel name="r" background="0">
+			<dstchannel name="g" background="0">
+			<dstchannel name="b" background="0">
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
+				<image3dchannelselector image3dID="4" srcchannel="r" min="0" max="1">
+				<image3dchannelselector image3dID="4" srcchannel="g" min="0" max="1">
+				<image3dchannelselector image3dID="4" srcchannel="b" min="0" max="1">
+			</texturelayer>
+		</v:texturestack>
+
+		<object id="1" name="Box" type="model" pid="2" pindex="0">
+			<mesh>
+				<vertices>
+					<vertex x="0" y="0" z="0" />
+					<vertex x="100.00000" y="0" z="0" />
+					<vertex x="100.00000" y="100.00000" z="0" />
+					<vertex x="0" y="100.00000" z="0" />
+					<vertex x="0" y="0" z="100.00000" />
+					<vertex x="100.00000" y="0" z="100.00000" />
+					<vertex x="100.00000" y="100.00000" z="100.00000" />
+					<vertex x="0" y="100.00000" z="100.00000" />
+					<vertex x="50.00000" y="100.00000" z="0" />
+					<vertex x="100.00000" y="50.00000" z="0" />
+					<vertex x="50.00000" y="0" z="0" />
+					<vertex x="0" y="50.00000" z="0" />
+					<vertex x="50.00000" y="0" z="100.00000" />
+					<vertex x="100.00000" y="50.00000" z="100.00000" />
+					<vertex x="50.00000" y="100.00000" z="100.00000" />
+					<vertex x="0" y="50.00000" z="100.00000" />
+					<vertex x="100.00000" y="0" z="50.00000" />
+					<vertex x="0" y="0" z="50.00000" />
+					<vertex x="100.00000" y="100.00000" z="50.00000" />
+					<vertex x="0" y="100.00000" z="50.00000" />
+					<vertex x="50.00000" y="50.00000" z="0" />
+					<vertex x="50.00000" y="50.00000" z="100.00000" />
+					<vertex x="50.00000" y="0" z="50.00000" />
+					<vertex x="100.00000" y="50.00000" z="50.00000" />
+					<vertex x="50.00000" y="100.00000" z="50.00000" />
+					<vertex x="0" y="50.00000" z="50.00000" />
+				</vertices>
+				<triangles>
+					<triangle v1="3" v2="8" v3="20" pid="2" p1="0" />
+					<triangle v1="20" v2="11" v3="3" pid="2" p1="0" />
+					<triangle v1="11" v2="20" v3="10" pid="2" p1="0" />
+					<triangle v1="10" v2="0" v3="11" pid="2" p1="0" />
+					<triangle v1="8" v2="2" v3="9" pid="2" p1="0" />
+					<triangle v1="9" v2="20" v3="8" pid="2" p1="0" />
+					<triangle v1="20" v2="9" v3="1" pid="2" p1="0" />
+					<triangle v1="1" v2="10" v3="20" pid="2" p1="0" />
+					<triangle v1="4" v2="12" v3="21" pid="2" p1="0" />
+					<triangle v1="21" v2="15" v3="4" pid="2" p1="0" />
+					<triangle v1="15" v2="21" v3="14" pid="2" p1="0" />
+					<triangle v1="14" v2="7" v3="15" pid="2" p1="0" />
+					<triangle v1="12" v2="5" v3="13" pid="2" p1="0" />
+					<triangle v1="13" v2="21" v3="12" pid="2" p1="0" />
+					<triangle v1="21" v2="13" v3="6" pid="2" p1="0" />
+					<triangle v1="6" v2="14" v3="21" pid="2" p1="0" />
+					<triangle v1="0" v2="10" v3="22" pid="2" p1="0" />
+					<triangle v1="22" v2="17" v3="0" pid="2" p1="0" />
+					<triangle v1="17" v2="22" v3="12" pid="2" p1="0" />
+					<triangle v1="12" v2="4" v3="17" pid="2" p1="0" />
+					<triangle v1="10" v2="1" v3="16" pid="2" p1="0" />
+					<triangle v1="16" v2="22" v3="10" pid="2" p1="0" />
+					<triangle v1="22" v2="16" v3="5" pid="2" p1="0" />
+					<triangle v1="5" v2="12" v3="22" pid="2" p1="0" />
+					<triangle v1="1" v2="9" v3="23" pid="2" p1="0" />
+					<triangle v1="23" v2="16" v3="1" pid="2" p1="0" />
+					<triangle v1="16" v2="23" v3="13" pid="2" p1="0" />
+					<triangle v1="13" v2="5" v3="16" pid="2" p1="0" />
+					<triangle v1="9" v2="2" v3="18" pid="2" p1="0" />
+					<triangle v1="18" v2="23" v3="9" pid="2" p1="0" />
+					<triangle v1="23" v2="18" v3="6" pid="2" p1="0" />
+					<triangle v1="6" v2="13" v3="23" pid="2" p1="0" />
+					<triangle v1="2" v2="8" v3="24" pid="2" p1="0" />
+					<triangle v1="24" v2="18" v3="2" pid="2" p1="0" />
+					<triangle v1="18" v2="24" v3="14" pid="2" p1="0" />
+					<triangle v1="14" v2="6" v3="18" pid="2" p1="0" />
+					<triangle v1="8" v2="3" v3="19" pid="2" p1="0" />
+					<triangle v1="19" v2="24" v3="8" pid="2" p1="0" />
+					<triangle v1="24" v2="19" v3="7" pid="2" p1="0" />
+					<triangle v1="7" v2="14" v3="24" pid="2" p1="0" />
+					<triangle v1="3" v2="11" v3="25" pid="2" p1="0" />
+					<triangle v1="25" v2="19" v3="3" pid="2" p1="0" />
+					<triangle v1="19" v2="25" v3="15" pid="2" p1="0" />
+					<triangle v1="15" v2="7" v3="19" pid="2" p1="0" />
+					<triangle v1="11" v2="0" v3="17" pid="2" p1="0" />
+					<triangle v1="17" v2="25" v3="11" pid="2" p1="0" />
+					<triangle v1="25" v2="17" v3="4" pid="2" p1="0" />
+					<triangle v1="4" v2="15" v3="25" pid="2" p1="0" />
+				</triangles>
+				
+				<volumedata requiredproperties="namespace:conductivity">
+					<levelset transform="1 0 0 ..." texturestackid="10" channel="mat1" solidthreshold="0">
+
+					<composite transform="1 0 0 ..." texturestackid="10" basematerialid="100">
+						<materialmapping channel="mat1" pindex="0"/>
+						<materialmapping channel="mat2" pindex="1"/>
+						<materialmapping channel="mat3" pindex="2"/>
+					</composite>
+					
+					<color transform="1 0 0 ..." texturestackid="12">
+						<red srcchannel="r">
+						<green srcchannel="g">
+						<blue srcchannel="b">
+					</color>
+
+					<property name="namespace:conducticity" transform="1 0 0 ..." texturestackid="10" channel="mat1"/>
+					<property name="namespace:opacity" transform="1 0 0 ..." texturestackid="10" channel="mat2"/>
+
+				</volumedata>
+			</mesh>
+		</object>
+	</resources>
+	<build>
+		<item objectid="1" partnumber="Box" />
+	</build>
+</model>
