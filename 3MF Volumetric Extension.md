@@ -81,7 +81,7 @@ See [the standard 3MF Software Conformance documentation](https://github.com/3MF
 
 # Chapter 1. Overview of Additions
 This document describes new elements, each of which is OPTIONAL for producers, but core features with some exceptions (see below, various types of 3d volumetric data types) MUST be supported by consumers that specify support for this volumetric extension of 3MF. Not all types of volumetric textures make sense for all printing technologies and consumers may choose to ignore color, composite materials, or properties that do not match their hardware. 
-The proposed extensions enable the embedding of voxel data within 3mf files. This would enable the representation of objects that are characterized by variable material properties throughout their volume, like opacity, color, strength etc. 
+The proposed extensions enable the embedding of voxel data within 3mf files. This will enable the representation of objects that are characterized by variable material properties throughout their volume, like opacity, color, strength etc. 
 
 Addition:
 -	explain how surface/volume properties work together
@@ -97,15 +97,13 @@ Addition:
 
 ![Volumetric image](images/volumetric_image1.png)
 
-This document describes new elements, each of which is OPTIONAL for producers, but MUST be supported by consumers that specify support for this beam lattice extension of 3MF.
+This document describes new elements, each of which is OPTIONAL for producers, but MUST be supported by consumers that specify support for this volumetric extension of 3MF.
 
-The central idea of this extension is to enrich the geometry notion of 3MF with beam lattice elements that can represent small-scale lattices as well as larger truss structures – both of which are quite inefficient to handle with a mesh representation, especially in cases where the element count grows into large numbers.
+The central idea of this extension is to enrich the geometry notion of 3MF with volumetic elements that can represent spacially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
 
-In order to find a balance between implementation complexity and capabilities, in this version of the specification all lattice beams are required to have a circular cross section. This reduces anisotropy issues that would be introduced by non-rotational geometries. Any additional capabilities MAY be handled by further (either public or private) extensions.
+While this is meant to be an exact specification of geometric, material and in fact arbitary properties, and consumers MUST interpret it as such, the intent is also for applications in which editors can use the data structures for efficient interoperability and post processing the geometry in an intermediate step.
 
-While this is meant to be an exact specification of the lattice geometry, and consumers MUST interpret it as such, the intent is also for applications in which editors can use the data structures for efficient interoperability and post processing the geometry in an intermediate step.
-
-A producer using the lattice specification MUST mark the extension as required, as described in the core specification.
+A producer using the volumetric specification MUST mark the extension as required, as described in the core specification.
 
 ##### Figure 2-1: Overview of model XML structure of 3MF with volumetric additions
 
