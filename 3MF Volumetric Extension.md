@@ -371,7 +371,7 @@ Element **\<red>-, \<green>- and \<blue>**
 
 ![colorchannel XML structure](images/redgreenblue.png)
 
-pf
+of
 
 Complex type **\<colorchannel>**
 
