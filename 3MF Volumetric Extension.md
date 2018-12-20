@@ -367,7 +367,7 @@ The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-e
 
 ## 3.2.3 Color channel elements
 
-Element **\<red>-, \<green>- and \<blue>**
+Element **\<red>, \<green> and \<blue>**
 
 ![colorchannel XML structure](images/redgreenblue.png)
 
@@ -390,6 +390,7 @@ If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<
 ## 3.2.4 Composite element
 
 Element **\<composite>**
+
 ![composite XML structure](images/composite.png)
 
 | Name   | Type   | Use | Annotation |
@@ -408,6 +409,7 @@ basematerial to the material mix.
 ## 3.2.5 Material mapping element
 
 Element **\<materialmapping>**
+
 ![materialmapping XML structure](images/materialmapping.png)
 
 | Name   | Type   | Use | Annotation |
