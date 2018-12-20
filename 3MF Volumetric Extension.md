@@ -5,15 +5,7 @@
 
 
 
-
-
-
-
-
-
-
-
-| **Version** | 0.1.0 |
+| **Version** | 0.2.0 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -154,11 +146,11 @@ Element **\<image3dsheet>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| source | ST\_UriReference | required | Specifies the OPC part name (i.e. path) of the image data file |
+| path | ST\_UriReference | required | Specifies the OPC part name (i.e. path) of the image data file |
 
-![Physical representation of an \<image3d> and an \<image3dsheet>-element](images/image3d.png)
+![Physical representation of an \<image3d> and an \<image3dsheet>-element](images/image3dphysical.png)
 
-Each \<image3dsheet> element has one property which MUST be present. The source property determines the part name (i.e. path) of the 2d image data (see chapter 6 of the Materials & Properties Extension specification for more information).
+Each \<image3dsheet> element has one property which MUST be present. The path property determines the part name (i.e. path) of the 2d image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
 
 ## 2.3. 3D Image Channel Selector
@@ -169,11 +161,11 @@ Element **\<image3dchannelselector>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| image3dresourceid | ST\_ResourceID | required | Specifies the id of the 3d image resource |
+| image3dID | ST\_ResourceID | required | Specifies the id of the 3d image resource |
 | srcchannel | ST\_ChannelName | required | Specifies which channel to reference in the 3d image resource |
 | dstchannel | ST\_ChannelName | _srcchannel_ | Specifies which channel the source channel should be mapped to during a sampling procedure. Will default to srcchannel if not given |
-| minvalue | xs:double | _0.0_ | Specifies how the minimal possible value of the source channel is interpreted in the output. |
-| maxvalue | xs:double | _0.0_ | Specifies how the maxmimal possible value of the source channel is interpreted in the output. MUST be larger than minvalue. |
+| minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of the source channel is interpreted in the output. |
+| maxvalue | ST\_Number | _1.0_ | Specifies how the maxmimal possible value of the source channel is interpreted in the output. MUST be larger than minvalue. |
 |interpolationmethod | ST\_InterpolationMethod | _linear_ | "linear" or "nearest" neighbor interpolation |
 | tilestyleu | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
 | tilestylev | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
@@ -206,7 +198,7 @@ MUST be one of "repeat", "mirror", "clamp", "ignore" and "solid". This property 
 
 - If the interpolation method of a \<image3dchannelselector> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image ressource.
 
-- If the interpolation method of a <image3dchannelselector> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by linearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image ressource. 
+- If the interpolation method of a <image3dchannelselector> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by linearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image ressource.
 
 **Function of the \<image3dchannelselector>**:
 1. The referenced 3D Image Stack gives a voxel grid of RGBA (RGB, Grey-Alpha, Grey) values distributed in a cube ([0..res_x] x [0..res_y] x [0..res_z]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5).
@@ -238,10 +230,10 @@ Element **\<texturestack>**
 | id | ST\_ResourceID | required | Specifies the id of the texturestack |
 
 The texture stack has two purposes:
-1. It defines multiple destination channels whose values are filled by sampled values of 
+1. It defines multiple destination channels, \<dstchannel>-elements, whose values are filled by sampled values of 
 a \<image3dchannelselector> with the matching "dstchannel" attribute.
 
-2. In each of the desitnation channels multiple layers of values can be composited, e.g. to allow boolean opeartions on these scalar fields.
+2. Each of the desitnation is built up by compositing multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on these scalar fields.
 
 The texturestack element MUST contain at least one destination channel child.
 
@@ -254,13 +246,13 @@ Element **\<dstchannel>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | name | ST\_ChannelName | required | Specifies the name of this destination channel |
-| background | xs:number | required | Specifies the background value of this channel |
+| background | ST\_Number | required | Specifies the background value of this channel |
 
 A destination channel specifies a name of a channel that can be sampled from a texturestack element.
 The background value is the value tha serves as a base for the compositing that takes place in the texturelayer elements
 within the \<texturestack>-element, and serves as a base for when a \<solid> channelselector is evaluated outside its range according to ... .
 
-The names of <dstchannel> must be unique within a \<texturestack>-element.
+The names of <dstchannel>-elements must be unique within a \<texturestack>-element.
 
 
 ## 2.4.2 texturelayer element
@@ -271,11 +263,12 @@ Element **\<texturelayer>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
+| transform | ST\_Matrix3D | required | Transformation of the texturestack coordinate system into the texturelayer coordinate system |
 | compositing | ST\_CompositingFunction | required | Determines whether a layer is added or multiplied with its sublayers |
-| srcalpha | ST_Number | required |	Numeric scale factor [-1,1] for the source layer |
-| dstalpha | ST_Number | required |	Numeric scale factor [-1,1] for the destination layer |
+| srcalpha | ST\_Number | required |	Numeric scale factor [-1,1] for the source layer |
+| dstalpha | ST\_Number | required |	Numeric scale factor [-1,1] for the destination layer |
 
-Each <texturelayer> element MUST contain three properties which determine how it should be composited with the texture layers
+Each <texturelayer>-element MUST contain three properties which determine how it should be composited with the texture layers
 below it in the texture stack. These properties are:
 
 **compositing**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping object. This compositing value SHOULD either be "add" or "multiply".  These functions either add or multiply the voxel values of the source layer with the corresponding voxels in the destination layer.
@@ -320,7 +313,7 @@ Element **\<volumedata>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| requiredproperties | ... | optional | comma sperated list of required properties for this volumedata element |
+| requiredproperties | ST\_RequiredProperties | optional | comma sperated list of required properties for this volumedata element |
 
 The \<volumedata> element references voxel based 3D texture resources and determines how the various channels in these \<texturestack>s are mapped to specific properties of the part to be defined by this addition. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type model or solidsupport.
 
@@ -329,6 +322,8 @@ up to one \<color> element, and an arbitray number of \<property> elements.
 
 If a consumer does not support any of the required volumedata elements, it MUST warn the user or the appropriate upstream processes
 that it cannot process all contents in this 3MF instance.
+
+TODO: required properties in XSD as simple type
 
 ## 3.2.1 Levelset element
 
@@ -340,7 +335,8 @@ Element **\<levelset>**
 | --- | --- | --- | --- |
 | texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the levelset function |
 | channel | ST\_ChannelName | required | Name of the channel that holds the levelset function |
-| solidthreshold | ST_Number | *0.0* | All locations whose levelset function evaluates to a value \< or \>= than solidthreshold are consired within or outside of the specified object, respecively.|
+| solidthreshold | ST\_Number | *0.0* | All locations whose levelset function evaluates to a value \< or \>= than solidthreshold are consired within or outside of the specified object, respecively.|
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
 
 
 The \<levelset> element is used to defines the boundary of the object to be specified as
@@ -355,13 +351,13 @@ The mapping from object coordinates to the coordiante system of the correspondin
 
 Element **\<color>**
 
-Limits on values \<=0, \>=1 
+TODO: Limits on values \<=0, \>=1 
 
 ![color XML structure](images/color.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Transformation | required | Transformation of the object coordinate system into the texturestackid coordinate system |
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
 | texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds houses the channels to be used in the child color elements. |
 
 The \<color> element is used to define the color of the object.
@@ -373,7 +369,9 @@ The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-e
 
 Element **\<red>-, \<green>- and \<blue>**
 
-of
+![colorchannel XML structure](images/redgreenblue.png)
+
+pf
 
 Complex type **\<colorchannel>**
 
@@ -396,7 +394,7 @@ Element **\<composite>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Transformation | required | Transformation of the object coordinate system into the texturestackid coordinate system |
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
 | texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the channels used in the child \<materialmapping>-elements |
 | basematerialid | ST\_ResourceID | required | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
 
@@ -414,7 +412,7 @@ Element **\<materialmapping>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| srcchannel | ST\_ChannelName | required | Source channel for the values of this material |
+| channel | ST\_ChannelName | required | Source channel for the values of this material |
 | pindex | ST\_ResourceIndex | required | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent
@@ -428,14 +426,15 @@ If the sum of all values in it's child \<materialmapping>-elements is "0" ... TO
 ## 3.2.4 Property element
 
 Element **\<property>**
+
 ![property XML structure](images/property.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Transformation | required | Transformation of the object coordinate system into the texturestackid coordinate system |
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
 | texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the channel used by this property |
 | channel | ST\_ChannelName | required | Name of the channel that serves as source for this properties scalar value |
-| name | ST\_PropertyNamespaceName | required | Namespace and name of this property property |
+| name | xs:QName | required | Namespace and name of this property property |
 
 The \<property> element allows to assign any point in space a scalar value of a freely definable property.
 This can be used to assign, e.g. opacity, conductivity, ...
@@ -452,40 +451,18 @@ TODO:
 See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/blob/master/glossary.md).
 
 ## Appendix B. 3MF XSD Schema
-
+see: [volumetric.xsd](volumetric.xsd)
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/beamlattice/2017/02" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xml="http://www.w3.org/XML/1998/namespace"targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
-  <xs:annotation>
-    <xs:documentation>
-      <![CDATA[
-    Schema notes:
- 
-    Items within this schema follow a simple naming convention of appending a prefix indicating the type of element for references:
- 
-    Unprefixed: Element names
-    CT_: Complex types
-    ST_: Simple types
-   
-    ]]>
-    </xs:documentation>
-  </xs:annotation>
-  
-</xs:schema>
 ```
-
 
 # Appendix C. Standard Namespace
 
-BeamLattice    [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/112)
+Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11)
 
 # Appendix D: Example file
 
+see: [Examples/3dmodel.model](Examples/3dmodel.model)
 ```xml
-<?xml version="1.0" encoding="utf-8"?>
-<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" requiredextensions="v">
-
-</model>
 ```
 
 # References
