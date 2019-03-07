@@ -72,14 +72,15 @@ See [the standard 3MF Software Conformance documentation](https://github.com/3MF
 # Part I: 3MF Documents
 
 # Chapter 1. Overview of Additions
-This document describes new elements, each of which is OPTIONAL for producers, but core features with some exceptions (see below, various types of 3d volumetric data types) MUST be supported by consumers that specify support for this volumetric extension of 3MF. Not all types of volumetric textures make sense for all printing technologies and consumers may choose to ignore color, composite materials, or properties that do not match their hardware. 
-The proposed extensions enable the embedding of voxel data within 3mf files. This will enable the representation of objects that are characterized by variable material properties throughout their volume, like opacity, color, strength etc. 
+This document describes new elements, each of which is OPTIONAL for producers, but core features with some exceptions (see below, various types of 3d volumetric data types) MUST be supported by consumers that specify support for this volumetric extension of 3MF. Not all types of volumetric information make sense for all printing technologies and consumers may choose to ignore color, composite materials, or properties that do not match their hardware. 
+The proposed extensions enable the embedding of volumetric data within 3MF files. This will enable the representation of objects that are characterized by variable material properties throughout their volume, like opacity, color, strength etc. 
 
 Addition:
--	explain how surface/volume properties work together
--	Proposed language for volumetric / surface property language: (from Alan)
--	Volumetric content always clipped to mesh surface. Surface properties are as thin as possible to achieve the affect (printer dependent).  Unspecified surface properties come from the volumetric material.
-
+- explain how surface/volume properties work together
+- Proposed language for volumetric / surface property language: (from Alan)
+    
+    Volumetric content always clipped to mesh surface. Surface properties are as thin as possible to achieve the affect (printer dependent).
+- Unspecified surface properties come from the volumetric material.
 
 
 
@@ -91,7 +92,7 @@ Addition:
 
 This document describes new elements, each of which is OPTIONAL for producers, but MUST be supported by consumers that specify support for this volumetric extension of 3MF.
 
-The central idea of this extension is to enrich the geometry notion of 3MF with volumetic elements that can represent spacially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
+The central idea of this extension is to enrich the geometry notion of 3MF with volumetic elements that can represent spatially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
 
 While this is meant to be an exact specification of geometric, material and in fact arbitary properties, and consumers MUST interpret it as such, the intent is also for applications in which editors can use the data structures for efficient interoperability and post processing the geometry in an intermediate step.
 
@@ -118,21 +119,31 @@ Element **\<image3d>**
 | resolutiony | xs:positiveinteger | required | Resolution of all child \<image3dsheet>-elements in second dimension in pixels. |
 | resolutionz | xs:positiveinteger | required | Resolution of all child \<image3dsheet>-elements in third dimension in pixels. |
 
-Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG or JPEG images that represent a stack of images.
+Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
 There MUST be exactly resolutionz \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
 All images in an image stack MUST have the same x- and y-resolution that is specified in the resolutionx and resolutiony-attributes, respecitvely.
 
-Each image MUST contain the same channels that have a name tag that describes its purpose and can be referenced inside the texture objects that make up the volumetric texture compositing layers.
-For PNG and JPEG images, the channel tags "R","G", "B" and "A" have been reserved. 
+Image3D stacks, and thus the underlying \<image3dsheet> elements, SHOULD provide the channels "R", "G", "B" and "A".
+
+Specific rules apply if an image3dsheet does not provide these channels:
+- If an image3dsheet does not provide a color channel "R", "B" or "G" but provides a greyscale channel, sampling this color color channel will
+return the value of the greyscale channel.
+- If an image3dsheet does not provide an alpha channel "A", sampling "A" will behave as if the image3dsheet contained a fully saturated alpha channel.
 
 
 ## 2.1.1 File Formats
-PNG and JPEG images provide acceptable compression and bitdepth for color or property information and material mixing ratios.
+PNG images can provide acceptable compression and bitdepth for the levelset-function, color information, material mixing ratios or arbitrary property information.
 
-TODO: i.e. 16 bit per channel; possible as RGB or RGBA  ("truecolor"/"truecolor with alpha" 16 bit https://www.w3.org/TR/PNG/#11IHDR )
-For PNG and JPEG images, the channel names "R", "G", "B" and "A" are reserved.
+The following describes recomendations for the channel bit depth of PNG images used in this specification based on the nomenclature in the specification of PNG (https://www.w3.org/TR/PNG).
+
+- A levelset-function can be deduced from an image with binary values,
+i.e. from images of image types "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
+
+- Color information, material mixing ratios and arbitrary proeprties can be deduced from PNG images with arbitrary color depth.
+To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16.
+Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
 
 ## 2.1.2 OPC package layout
 TODO
@@ -179,7 +190,7 @@ For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map
 
 **tilestyle-u, -v or -w**:
 
-MUST be one of "repeat", "mirror", "clamp", "ignore" and "solid". This property determines the behavior of the sampler of this texture for texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation:
+MUST be one of "repeat", "mirror", "clamp", and "ignore". This property determines the behavior of the sampler of this texture for texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
 1. "repeat" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
@@ -187,18 +198,16 @@ MUST be one of "repeat", "mirror", "clamp", "ignore" and "solid". This property 
 2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture SHOULD be reflected across a plane perpendicular to the axis in question following this formula:
 </br>s’ = s ... TODO
 
-3. "clamp" will restrict the texel value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
+3. "clamp" will restrict the texture coordinate value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-4. "ignore" will discard this texel if the texture coordinate s falls outside the [0,1] range. This is useful if a texture is used as a volumetric Decal of sorts that affects only a limited region in the volume.
-
-5. "solid" will return the property defined in the background attribute.
+4. "ignore" will discard channelselector's value if the texture coordinate s falls outside the [0,1] range. This is useful if a texture is used as a volumetric decal of sorts that affects only a limited region in the volume.
 
 **interpolationmethod**:
 
 - If the interpolation method of a \<image3dchannelselector> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image ressource.
 
-- If the interpolation method of a <image3dchannelselector> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by linearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image ressource.
+- If the interpolation method of a <image3dchannelselector> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image ressource.
 
 **Function of the \<image3dchannelselector>**:
 1. The referenced 3D Image Stack gives a voxel grid of RGBA (RGB, Grey-Alpha, Grey) values distributed in a cube ([0..res_x] x [0..res_y] x [0..res_z]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5).
@@ -207,7 +216,7 @@ MUST be one of "repeat", "mirror", "clamp", "ignore" and "solid". This property 
 
 3. The **tilestyle** extends the voxel grid to infinity: to extend the pointwise defined pixel values to a mapping ρ:Z^3→Z through the rules ...  defined above.
 
-4. The interpolation method defines a function on the full coordinate space. In mathematical terms, this defines a well-defined map ρ:R^3→Z, with values between 0 and 2^bitdepth-1.
+4. The interpolation method defines a function on the full coordinate space. In mathematical terms, this defines a map ρ:R^3→Z, with values between 0 and 2^bitdepth-1.
 
 5. In a final normalization step, the coordinates are mapped to the unit cube, and the values are mapped between the minvalue and maxvalue, thus giving a normalized function
 φ:R^3→R, 
@@ -230,12 +239,11 @@ Element **\<texturestack>**
 | id | ST\_ResourceID | required | Specifies the id of the texturestack |
 
 The texture stack has two purposes:
-1. It defines multiple destination channels, \<dstchannel>-elements, whose values are filled by sampled values of 
-a \<image3dchannelselector> with the matching "dstchannel" attribute.
+1. It defines multiple destination channels, \<dstchannel>-elements, whose values can be retrieved by sampling the \<image3dchannelselector> with the matching "dstchannel" attribute.
 
-2. Each of the desitnation is built up by compositing multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on these scalar fields.
+2. Each of the desitnation is built up by compositing multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<image3dchannelselector>s.
 
-The texturestack element MUST contain at least one destination channel child.
+The texturestack element MUST contain at least one destination channel child element.
 
 ## 2.4.1 Destination channel element
 
@@ -249,8 +257,8 @@ Element **\<dstchannel>**
 | background | ST\_Number | required | Specifies the background value of this channel |
 
 A destination channel specifies a name of a channel that can be sampled from a texturestack element.
-The background value is the value tha serves as a base for the compositing that takes place in the texturelayer elements
-within the \<texturestack>-element, and serves as a base for when a \<solid> channelselector is evaluated outside its range according to ... .
+The background value is the value that serves as a base for the compositing that takes place in the texturelayer elements
+within the \<texturestack>-element.
 
 The names of <dstchannel>-elements must be unique within a \<texturestack>-element.
 
@@ -264,25 +272,34 @@ Element **\<texturelayer>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | transform | ST\_Matrix3D | required | Transformation of the texturestack coordinate system into the texturelayer coordinate system |
-| compositing | ST\_CompositingFunction | required | Determines whether a layer is added or multiplied with its sublayers |
+| compositing | ST\_CompositingFunction | required | Determines how this layer is applied to its sublayers. Allowed values are "add" or "multiply". |
 | srcalpha | ST\_Number | required |	Numeric scale factor [-1,1] for the source layer |
 | dstalpha | ST\_Number | required |	Numeric scale factor [-1,1] for the destination layer |
 
 Each <texturelayer>-element MUST contain three properties which determine how it should be composited with the texture layers
 below it in the texture stack. These properties are:
 
-**compositing**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping object. This compositing value SHOULD either be "add" or "multiply".  These functions either add or multiply the voxel values of the source layer with the corresponding voxels in the destination layer.
+**compositing**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping object.  These functions either add or multiply the voxel values of the source layer with the corresponding voxels in the destination layer.
 
-**srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the voxel values in the source layer during the compositing process.
+Let "s" denote the value of the source-channel, "d" the current value of the destination channel, then the modified value of the destination channel "d'" after compositing is calculated according the the compositing method:
+- "add":
+    
+    d' = src_alpha * s + dst_alpha * d
 
-**dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the voxel values in the destination during the compositing process.
+- "multiply":
+
+    d' = src_alpha * s * dst_alpha * d
+
+**srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the compositing process.
+
+**dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the compositing process.
 
 Figure 4-1 shows an example of two layers within a texture stack and the result using various compositing functions with different source and destination alpha values.
 
 A texturelayer MUST contain at least one \<image3dchannelselector> element. The dstchannel attribute of the each \<image3dchannelselector> within a texturelayer element must match a \<destinationlayer> element within this \<texturelayer>.
 The name of each \<destinationlayer> element must only occur at most once as dstchannel attribute in one of the \<image3dchannelselector>.
 
-Destination channels that are not mentioned in as dstchannel attribtue in this list are not modifed by this \<texturelayer>.
+Destination channels that are not mentioned in as dstchannel attribute in this list are not modifed by this \<texturelayer>.
 
 ![Example of different compisting method and src/dst alpha values](images/compositing.png)
 
@@ -299,7 +316,7 @@ Element **\<mesh>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| v:volumedata | CT\_VolumeData | optional | The entry point to volumetric information in this specification. |
+| v:volumedata | CT\_VolumeData | optional | The entry point to volumetric information of this specification. |
 
 
 The volumetric data \<volumedata> element is a new OPTIONAL element which extends the root triangular mesh representation (i.e. \<mesh> element).
@@ -315,7 +332,7 @@ Element **\<volumedata>**
 | --- | --- | --- | --- |
 | requiredproperties | ST\_RequiredProperties | optional | comma sperated list of required properties for this volumedata element |
 
-The \<volumedata> element references voxel based 3D texture resources and determines how the various channels in these \<texturestack>s are mapped to specific properties of the part to be defined by this addition. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type model or solidsupport.
+The \<volumedata> element references voxel based 3D texture resources and determines how the various channels in these \<texturestack>s are mapped to specific properties of the part defined by this addition. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 
 The volumedata element can contain up to one <levelset> child element, up to one <composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
@@ -339,19 +356,22 @@ Element **\<levelset>**
 | transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
 
 
-The \<levelset> element is used to defines the boundary of the object to be specified as
+The \<levelset> element is used to define the boundary of the enclosing \<object>-element as
 the set of locations where the value of the levelset function equals the solidthreshold attribute.
+Locations where the levelset function is smaller and larger than the solidthreshold indicate the interior and exterior of the object, respectively.
 
-The levelset function is given by "destination channel" within the \<texturestack>
+The levelset function is given by the "destination channel" within the \<texturestack>
 with resource id matching the texturestackid-attribute and with name matching the "channel"-attribute of the \<levelset>-element.
+
 The mapping from object coordinates to the coordiante system of the corresponding texturestack is given by the transform attribute.
+
+##### Figure  3-1: Illustration of different local coordinate systems
+![Illustration of different local coordinate systems](images/coordinatesystems.png)
 
 
 ## 3.2.2 Color element
 
 Element **\<color>**
-
-TODO: Limits on values \<=0, \>=1 
 
 ![color XML structure](images/color.png)
 
@@ -381,7 +401,7 @@ Complex type **\<colorchannel>**
 | --- | --- | --- | --- |
 | srcchannel | ST\_ChannelName | required | Source channel for the values of this color channel|
 
-Each element instance of CT\_ColorChannel MUST have an attreibute "srcchannel" that MUST
+Each element instance of CT\_ColorChannel MUST have an attribute "srcchannel" that
 references a destination channel from the \<texturestack> with id matching the texturestackid of the parent \<color> element.
 
 If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
@@ -401,10 +421,7 @@ Element **\<composite>**
 
 The <composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
 
-The \<composite> element MUST have the texturestackid attribute
-
-This element MUST contain at least one <materialmapping> element, which will encode the relative contribution of a specific
-basematerial to the material mix.
+This element MUST contain at least one <materialmapping> element, which will encode the relative contribution of a specific basematerial to the material mix.
 
 ## 3.2.5 Material mapping element
 
@@ -414,16 +431,18 @@ Element **\<materialmapping>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| channel | ST\_ChannelName | required | Source channel for the values of this material |
+| srcchannel | ST\_ChannelName | required | Source channel for the values of this material |
 | pindex | ST\_ResourceIndex | required | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent
 \<composite>-element.
 
-If the sampled value of a channel \<0 it must be evaluated as "0".
+If the sampled value of a channel is \<0 it must be evaluated as "0".
 
-If the sum of all values in it's child \<materialmapping>-elements is "0" ... TODO. PRODICER should not due that, consumer MUST ... . Potentialy define a minimal value.
+If the sum of all values in it's child \<materialmapping>-elements is "0" ... TODO. PRODOCER should not do that, consumer MUST ... . Potentialy define a minimal value.
 
+Each element instance of CT\_MaterialMapping MUST have an attribute "srcchannel" that
+references a destination channel from the \<texturestack> with id matching the texturestackid of the parent \<composite> element.
 
 ## 3.2.4 Property element
 
@@ -471,4 +490,4 @@ see: [Examples/3dmodel.model](Examples/3dmodel.model)
 
 See [the standard 3MF References](https://github.com/3MFConsortium/spec_resources/blob/master/references.md).
 
-Copyright 3MF Consortium 2018.
+Copyright 3MF Consortium 2019.

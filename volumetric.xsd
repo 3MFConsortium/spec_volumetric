@@ -190,7 +190,6 @@
 			<xs:enumeration value="mirror"/>
 			<xs:enumeration value="clamp"/>
 			<xs:enumeration value="ignore"/>
-			<xs:enumeration value="solid"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ST_InterpolationMethod">
