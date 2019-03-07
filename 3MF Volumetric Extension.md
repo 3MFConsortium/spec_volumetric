@@ -146,6 +146,9 @@ To achieve high accuracy, producers SHOULD store such information in image chann
 Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
 
 ## 2.1.2 OPC package layout
+- Recommendation of where to put files in package (similar to 2d-textures)
+- sheets for an image3dstack-object should be located in same OPC "folder".
+
 TODO
 
 
