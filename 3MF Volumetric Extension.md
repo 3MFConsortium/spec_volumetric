@@ -180,7 +180,7 @@ Element **\<image3dchannelselector>**
 | dstchannel | ST\_ChannelName | _srcchannel_ | Specifies which channel the source channel should be mapped to during a sampling procedure. Will default to srcchannel if not given |
 | minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of the source channel is interpreted in the output. |
 | maxvalue | ST\_Number | _1.0_ | Specifies how the maxmimal possible value of the source channel is interpreted in the output. MUST be larger than minvalue. |
-|interpolationmethod | ST\_InterpolationMethod | _linear_ | "linear" or "nearest" neighbor interpolation |
+|filter |ST\_Filter | _linear_ | "linear" or "nearest" neighbor interpolation |
 | tilestyleu | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
 | tilestylev | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
 | tilestylew | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
@@ -195,7 +195,7 @@ For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map
 
 MUST be one of "repeat", "mirror", "clamp", and "ignore". This property determines the behavior of the sampler of this texture for texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
-1. "repeat" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
+1. "wrap" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
 
 2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture SHOULD be reflected across a plane perpendicular to the axis in question following this formula:
@@ -204,9 +204,9 @@ MUST be one of "repeat", "mirror", "clamp", and "ignore". This property determin
 3. "clamp" will restrict the texture coordinate value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-4. "ignore" will discard channelselector's value if the texture coordinate s falls outside the [0,1] range. This is useful if a texture is used as a volumetric decal of sorts that affects only a limited region in the volume.
+4. "none" will discard the channelselector's value if the texture coordinate s falls outside the [0,1] range. This is useful if a texture is used as a volumetric decal of sorts that affects only a limited region in the volume.
 
-**interpolationmethod**:
+**filter**:
 
 - If the interpolation method of a \<image3dchannelselector> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image ressource.
 
@@ -244,7 +244,7 @@ Element **\<texturestack>**
 The texture stack has two purposes:
 1. It defines multiple destination channels, \<dstchannel>-elements, whose values can be retrieved by sampling the \<image3dchannelselector> with the matching "dstchannel" attribute.
 
-2. Each of the desitnation is built up by compositing multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<image3dchannelselector>s.
+2. Each of the desitnation is built up by blending multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<image3dchannelselector>s.
 
 The texturestack element MUST contain at least one destination channel child element.
 
@@ -260,7 +260,7 @@ Element **\<dstchannel>**
 | background | ST\_Number | required | Specifies the background value of this channel |
 
 A destination channel specifies a name of a channel that can be sampled from a texturestack element.
-The background value is the value that serves as a base for the compositing that takes place in the texturelayer elements
+The background value is the value that serves as a base for the blending that takes place in the texturelayer elements
 within the \<texturestack>-element.
 
 The names of <dstchannel>-elements must be unique within a \<texturestack>-element.
@@ -275,7 +275,7 @@ Element **\<texturelayer>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | transform | ST\_Matrix3D | required | Transformation of the texturestack coordinate system into the texturelayer coordinate system |
-| compositing | ST\_CompositingFunction | required | Determines how this layer is applied to its sublayers. Allowed values are "add" or "multiply". |
+| blendmetho | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "mix" or "multiply". |
 | srcalpha | ST\_Number | required |	Numeric scale factor [-1,1] for the source layer |
 | dstalpha | ST\_Number | required |	Numeric scale factor [-1,1] for the destination layer |
 
@@ -284,27 +284,27 @@ below it in the texture stack. These properties are:
 
 **compositing**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping object.  These functions either add or multiply the voxel values of the source layer with the corresponding voxels in the destination layer.
 
-Let "s" denote the value of the source-channel, "d" the current value of the destination channel, then the modified value of the destination channel "d'" after compositing is calculated according the the compositing method:
-- "add":
-    
+Let "s" denote the value of the source-channel, "d" the current value of the destination channel, then the modified value of the destination channel "d'" after blending is calculated according the the blendmethod:
+- "mix":
+
     d' = src_alpha * s + dst_alpha * d
 
 - "multiply":
 
-    d' = src_alpha * s * dst_alpha * d
+    d' = s * d
 
-**srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the compositing process.
+**srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
 
-**dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the compositing process.
+**dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the blending process.
 
-Figure 4-1 shows an example of two layers within a texture stack and the result using various compositing functions with different source and destination alpha values.
+Figure 4-1 shows an example of two layers within a texture stack and the result using various blending functions with different source and destination alpha values.
 
 A texturelayer MUST contain at least one \<image3dchannelselector> element. The dstchannel attribute of the each \<image3dchannelselector> within a texturelayer element must match a \<destinationlayer> element within this \<texturelayer>.
 The name of each \<destinationlayer> element must only occur at most once as dstchannel attribute in one of the \<image3dchannelselector>.
 
 Destination channels that are not mentioned in as dstchannel attribute in this list are not modifed by this \<texturelayer>.
 
-![Example of different compisting method and src/dst alpha values](images/compositing.png)
+![Example of different blending method and src/dst alpha values](images/blending.png)
 
 
 

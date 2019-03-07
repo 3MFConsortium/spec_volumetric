@@ -27,14 +27,12 @@
 			<dstchannel name="r" background="0"/>
 			<dstchannel name="g" background="0"/>
 			<dstchannel name="b" background="0"/>
-			<texturelayer transform="1 0 0 ... "
-				srcalpha="1" dstalpha="0" compositing="add">
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
 				<image3dchannelselector image3dID="4" srcchannel="r" min="0" max="1"/>
 				<image3dchannelselector image3dID="4" srcchannel="g" min="0" max="1"/>
 				<image3dchannelselector image3dID="4" srcchannel="b" min="0" max="1"/>
 			</texturelayer>
 		</v:texturestack>
-
 		<object id="1" name="Box" type="model" pid="2" pindex="0">
 			<mesh>
 				<vertices>
@@ -115,11 +113,11 @@
 					<triangle v1="25" v2="17" v3="4" pid="2" p1="0" />
 					<triangle v1="4" v2="15" v3="25" pid="2" p1="0" />
 				</triangles>
-				<v:volumedata >
+				<v:volumedata
 					<color transform="1 0 0 ..." texturestackid="12">
-						<red srcchannel="r"/>
-						<green srcchannel="g"/>
-						<blue srcchannel="b"/>
+						<red channel="r"/>
+						<green channel="g"/>
+						<blue channel="b"/>
 					</color>
 				</v:volumedata>
 			</mesh>

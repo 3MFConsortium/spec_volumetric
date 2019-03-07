@@ -75,7 +75,7 @@
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required"/>
 		<xs:attribute name="srcalpha" type="ST_Number" use="required"/>
 		<xs:attribute name="dstalpha" type="ST_Number" use="required"/>
-		<xs:attribute name="compositing" type="ST_CompositingFunction" use="required"/>
+		<xs:attribute name="blendmethod" type="ST_BlendMethod" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -86,12 +86,12 @@
 		<xs:attribute name="image3dID" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="srcchannel" type="ST_ChannelName" use="required"/>
 		<xs:attribute name="dstchannel" type="ST_ChannelName" use="required"/>
-		<xs:attribute name="interpolationmethod" type="ST_InterpolationMethod" use="optional" default="linear"/>
+		<xs:attribute name="filter" type="ST_Filter" use="optional" default="linear"/>
 		<xs:attribute name="min" type="ST_Number" use="optional" default="0.0"/>
 		<xs:attribute name="max" type="ST_Number" use="optional" default="1.0"/>
-		<xs:attribute name="tilestyleu" type="ST_TileStyle" use="optional" default="repeat"/>
-		<xs:attribute name="tilestylev" type="ST_TileStyle" use="optional" default="repeat"/>
-		<xs:attribute name="tilestylew" type="ST_TileStyle" use="optional" default="repeat"/>
+		<xs:attribute name="tilestyleu" type="ST_TileStyle" use="optional" default="wrap"/>
+		<xs:attribute name="tilestylev" type="ST_TileStyle" use="optional" default="wrap"/>
+		<xs:attribute name="tilestylew" type="ST_TileStyle" use="optional" default="wrap"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -186,13 +186,13 @@
 	</xs:simpleType>
 	<xs:simpleType name="ST_TileStyle">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="repeat"/>
+			<xs:enumeration value="wrap"/>
 			<xs:enumeration value="mirror"/>
 			<xs:enumeration value="clamp"/>
-			<xs:enumeration value="ignore"/>
+			<xs:enumeration value="none"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="ST_InterpolationMethod">
+	<xs:simpleType name="ST_Filter">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="nearest"/>
 			<xs:enumeration value="linear"/>
@@ -223,9 +223,9 @@
 			<xs:pattern value="((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="ST_CompositingFunction">
+	<xs:simpleType name="ST_BlendMethod">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="add"/>
+			<xs:enumeration value="mix"/>
 			<xs:enumeration value="multiply"/>
 		</xs:restriction>
 	</xs:simpleType>

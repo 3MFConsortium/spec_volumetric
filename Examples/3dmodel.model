@@ -15,7 +15,6 @@
 			<base name="ABS white" displaycolor="#808000FF"/>
 		</basematerial>
 
-
 		<v:image3d id="3" resolutionx="100" resolutiony="100" resolutionz="100" name="Image">
 			<image3dsheet path="3d/data/image_1.png" />
 			<image3dsheet path="3d/data/image_2.png" />
@@ -37,18 +36,18 @@
 			<dstchannel name="mat2" background="0"/>
 			<dstchannel name="mat3" background="1"/>
 
-			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="add">
 				<image3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
 				<image3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1"/>
 				<image3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
 			</texturelayer>
 			
-			<texturelayer transform="1 0 0..." compositing="multiply">
+			<texturelayer transform="1 0 0..." blendmethod="multiply">
 				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
 				<image3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
 			</texturelayer>
 
-			<texturelayer transform="1 0 0..." compositing="multiply">
+			<texturelayer transform="1 0 0..." blendmethod="multiply">
 				<image3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
 			</texturelayer>
 			
@@ -56,11 +55,11 @@
 
 		<v:texturestack id="11">
 			<dstchannel name="theoutchannel" background="100"/>
-			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
-				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="-1" max="1" tilestyleu="ignore"/>
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
+				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="-1" max="1" tilestyleu="none"/>
 			</texturelayer>
 			
-			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
 				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="0" max="1"/>
 			</texturelayer>
 		</v:texturestack>
@@ -69,7 +68,7 @@
 			<dstchannel name="r" background="0"/>
 			<dstchannel name="g" background="0"/>
 			<dstchannel name="b" background="0"/>
-			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" compositing="add">
+			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
 				<image3dchannelselector image3dID="4" srcchannel="r" min="0" max="1"/>
 				<image3dchannelselector image3dID="4" srcchannel="g" min="0" max="1"/>
 				<image3dchannelselector image3dID="4" srcchannel="b" min="0" max="1"/>
@@ -167,14 +166,14 @@
 					</composite>
 					
 					<color transform="1 0 0 ..." texturestackid="12">
-						<red srcchannel="r"/>
-						<green srcchannel="g"/>
-						<blue srcchannel="b"/>
+						<red channel="r"/>
+						<green channel="g"/>
+						<blue channel="b"/>
 					</color>
 
 					<property name="namespace:conductivity" transform="1 0 0 ..." texturestackid="10" channel="mat1"/>
 					<property name="namespace:opacity" transform="1 0 0 ..." texturestackid="10" channel="mat2"/>
-
+					
 				</v:volumedata>
 			</mesh>
 		</object>
