@@ -1,35 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" xmlns:m="http://schemas.microsoft.com/3dmanufacturing/material/2015/02" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" xmlns:l="http://schemas.autodesk.com/dmg/loadcase/2016/08" xmlns:t="http://schemas.autodesk.com/dmg/tetrahedron/2017/01" xmlns:b="http://schemas.microsoft.com/3dmanufacturing/beamlattice/2017/02" xmlns:bt="http://schemas.autodesk.com/dmg/beamlatticetag/2017/02" xmlns:s="http://schemas.microsoft.com/3dmanufacturing/slice/2015/07">
+<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US"
+xmlns:m="http://schemas.microsoft.com/3dmanufacturing/material/2015/02"
+xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06"
+xmlns:l="http://schemas.autodesk.com/dmg/loadcase/2016/08" 
+xmlns:b="http://schemas.microsoft.com/3dmanufacturing/beamlattice/2017/02"
+xmlns:s="http://schemas.microsoft.com/3dmanufacturing/slice/2015/07"
+xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 	<resources>
 		<m:colorgroup id="2">
 			<m:color color="#808080FF" />
 		</m:colorgroup>
 
-		<basematerial id="100">
-			<base name="Aluminum" displaycolor="#808080FF"/>
-			<base name="Titanium" displaycolor="#808000FF"/>
-			<base name="Stainless Steel" displaycolor="#008080FF"/>
-		</basematerial>
-		<basematerial id="101">
-			<base name="PLA blue" displaycolor="#808080FF"/>
-			<base name="ABS white" displaycolor="#808000FF"/>
-		</basematerial>
-
-
 		<v:image3d id="3" resolutionx="100" resolutiony="100" resolutionz="100" name="Image">
-			<image3dsheet path="3d/data/image_1.png" />
-			<image3dsheet path="3d/data/image_2.png" />
-			<image3dsheet path="3d/data/image_3.png" />
-			<image3dsheet path="3d/data/image_4.png" />
-			<image3dsheet path="3d/data/image_5.png" />
+			<image3dsheet path="/3D/volumetric/Image/image_1.png" />
+			<image3dsheet path="/3D/volumetric/Image/image_2.png" />
+			<image3dsheet path="/3D/volumetric/Image/image_3.png" />
+			<image3dsheet path="/3D/volumetric/Image/image_4.png" />
+			<image3dsheet path="/3D/volumetric/Image/image_5.png" />
 		</v:image3d>
 
 		<v:image3d id="4" resolutionx="100" resolutiony="100" resolutionz="100" name="Otherimage">
-			<image3dsheet path="3d/data/imageOther_1.png" />
-			<image3dsheet path="3d/data/imageOther_2.png" />
-			<image3dsheet path="3d/data/imageOther_3.png" />
-			<image3dsheet path="3d/data/imageOther_4.png" />
-			<image3dsheet path="3d/data/imageOther_5.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_1.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_2.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_3.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_4.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_5.png" />
 		</v:image3d>
 
 		<v:texturestack id="10">
@@ -37,18 +32,20 @@
 			<dstchannel name="mat2" background="0"/>
 			<dstchannel name="mat3" background="1"/>
 			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="add">
-				<image3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
-				<image3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1"/>
-				<image3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
+				<sourceimage3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
+				<sourceimage3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1"/>
+				<sourceimage3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
 			</texturelayer>
 			<texturelayer transform="1 0 0..." blendmethod="multiply">
-				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
-				<image3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
+				<sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
+				<sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
 			</texturelayer>
-			<texturelayer transform="1 0 0..." blendmethod="multiply">
-				<image3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
+			<texturelayer transform="1 0 0..." blendmethod="mask">
+				<maskingimage3dchannelselector image3dID="4" srcchannel="a" dstchannel="a" min="0" max="1"/>
+				<sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat1" min="0" max="1"/>
 			</texturelayer>
 		</v:texturestack>
+
 		<object id="1" name="Box" type="model" pid="2" pindex="0">
 			<mesh>
 				<vertices>
@@ -129,11 +126,9 @@
 					<triangle v1="25" v2="17" v3="4" pid="2" p1="0" />
 					<triangle v1="4" v2="15" v3="25" pid="2" p1="0" />
 				</triangles>
-				<v:volumedata requiredproperties="namespace:conductivity">
-					<property name="namespace:conductivity" transform="1 0 0 ..."
-						texturestackid="10" channel="mat1"/>
-					<property name="namespace:opacity" transform="1 0 0 ..."
-						texturestackid="10" channel="mat2"/>
+				<v:volumedata>
+					<property name="namespace:conductivity" transform="1 0 0 ..." texturestackid="10" channel="mat1"/>
+					<property name="namespace:opacity" transform="1 0 0 ..." texturestackid="10" channel="mat2"  required="false"/>
 				</v:volumedata>
 			</mesh>
 		</object>

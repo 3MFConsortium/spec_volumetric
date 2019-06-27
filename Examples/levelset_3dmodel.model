@@ -1,39 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" xmlns:m="http://schemas.microsoft.com/3dmanufacturing/material/2015/02" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" xmlns:l="http://schemas.autodesk.com/dmg/loadcase/2016/08" xmlns:t="http://schemas.autodesk.com/dmg/tetrahedron/2017/01" xmlns:b="http://schemas.microsoft.com/3dmanufacturing/beamlattice/2017/02" xmlns:bt="http://schemas.autodesk.com/dmg/beamlatticetag/2017/02" xmlns:s="http://schemas.microsoft.com/3dmanufacturing/slice/2015/07">
+<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US"
+xmlns:m="http://schemas.microsoft.com/3dmanufacturing/material/2015/02"
+xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06"
+xmlns:l="http://schemas.autodesk.com/dmg/loadcase/2016/08" 
+xmlns:b="http://schemas.microsoft.com/3dmanufacturing/beamlattice/2017/02"
+xmlns:s="http://schemas.microsoft.com/3dmanufacturing/slice/2015/07"
+xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 	<resources>
 		<m:colorgroup id="2">
 			<m:color color="#808080FF" />
 		</m:colorgroup>
 
-		<basematerial id="100">
-			<base name="Aluminum" displaycolor="#808080FF"/>
-			<base name="Titanium" displaycolor="#808000FF"/>
-			<base name="Stainless Steel" displaycolor="#008080FF"/>
-		</basematerial>
-		<basematerial id="101">
-			<base name="PLA blue" displaycolor="#808080FF"/>
-			<base name="ABS white" displaycolor="#808000FF"/>
-		</basematerial>
-
 		<v:image3d id="4" resolutionx="100" resolutiony="100" resolutionz="100" name="Otherimage">
-			<image3dsheet path="3d/data/imageOther_1.png" />
-			<image3dsheet path="3d/data/imageOther_2.png" />
-			<image3dsheet path="3d/data/imageOther_3.png" />
-			<image3dsheet path="3d/data/imageOther_4.png" />
-			<image3dsheet path="3d/data/imageOther_5.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_1.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage//imageOther_2.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage//imageOther_3.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage//imageOther_4.png" />
+			<image3dsheet path="/3D/volumetric/Otherimage//imageOther_5.png" />
 		</v:image3d>
-		
+
 		<v:texturestack id="11">
 			<dstchannel name="theoutchannel" background="100"/>
 			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
-				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel"
-					min="-1" max="1" tilestyleu="none"/>
+				<sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel"	
+				min="-1" max="1" tilestyleu="none"/>
 			</texturelayer>
+			
 			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
-				<image3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel"
-					min="0" max="1"/>
+				<sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel"
+				min="0" max="1"/>
 			</texturelayer>
 		</v:texturestack>
+
 		<object id="1" name="Box" type="model" pid="2" pindex="0">
 			<mesh>
 				<vertices>
@@ -116,7 +114,7 @@
 				</triangles>
 				<v:volumedata>
 					<levelset transform="1 0 0 ..." texturestackid="11" channel="theoutchannel"
-						solidthreshold="0"/>
+					solidthreshold="0"/>
 				</v:volumedata>
 			</mesh>
 		</object>
