@@ -173,7 +173,7 @@
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
 		<xs:attribute name="name" type="xs:QName" use="required" />
-		<xs:attribute name="required" type="xs:Boolean" use="required" />
+		<xs:attribute name="required" type="xs:boolean" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 

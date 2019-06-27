@@ -109,7 +109,7 @@ A producer using the volumetric specification MUST mark the extension as require
 
 Element **\<image3d>**
 
-![Image3D XML structure](images/image3d.png)
+![Image3D XML structure](images/element_image3d.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -149,36 +149,38 @@ Most professional image editing tools an standard implementations of the PNG for
 ## 2.1.2 OPC package layout
 It is RECOMMENDED that producers of 3MF Documents use the following part naming convention:
 
-Paths of image3dsheet SHOULD consist of segments "/volumetric/" as the first segment, the name of a image3d-element that references this image3dsheet as second segment (for example "/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the image3dsheet MUST be associated with the 3D Model part via the 3D Texture relationship.
+Paths of image3dsheet SHOULD consist four segments "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this image3dsheet as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the image3dsheet MUST be associated with the 3D Model part via the 3D Texture relationship.
 
 This implies that all image3dsheet parts for an image3d-object SHOULD be located in same OPC folder.
+
+![image3dsheet XML structure](images/OPC_overview.png)
+
 
 
 ## 2.2 3D Image Sheet
 
 Element **\<image3dsheet>**
 
-![image3dsheet XML structure](images/image3dsheet.png)
+![image3dsheet XML structure](images/element_image3dsheet.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | path | ST\_UriReference | required | Specifies the OPC part name (i.e. path) of the image data file |
 
-![Physical representation of an \<image3d> and an \<image3dsheet>-element](images/image3dphysical.png)
-
 Each \<image3dsheet> element has one property which MUST be present. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
 
 ## 2.3. 3D Image Channel Selector
+ 
+Elements  **\<sourceimage3dchannelselector>** and **\<maskingimage3dchannelselector>**
+![3D Image Channel Selector XML structure](images/elements_image3dchannelselectors.png)
 
-Element **\<sourceimage3dchannelselector>**
-and
-Element **\<maskingimage3dchannelselector>**
+of
 
-of type
+Complex type
 **\<CT_Image3DChannelSelector>**
 
-![3D Image Channel Selector XML structure](images/image3dchannelselector.png)
+![3D Image Channel Selector XML structure](images/ct_image3dchannelselector.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -192,7 +194,7 @@ of type
 | tilestylev | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
 | tilestylew | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
 
-Elements of type \<CT_Image3DChannelSelector> define the way in which individual channels from volumetric image resources can be referenced inside various texture objects. Each channel reference MUST contain a texture resource id that maps to an actual \<image3d> element.
+Elements of type \<CT_Image3DChannelSelector> define the way in which individual channels from volumetric image resources can be referenced inside the texture layer elements. Each channel reference MUST contain a texture resource id that maps to an actual \<image3d> element.
 
 In addition, the elements of type \<CT_Image3DChannelSelector> MUST contain two string attributes which determine which channel to reference and how they should be mapped within the volumetric image. The channel name string can use any of the reserved channel names (i.e. "R", "G", "B", or "A"). 
 
@@ -200,7 +202,7 @@ For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map
 
 **tilestyle-u, -v or -w**:
 
-MUST be one of "repeat", "mirror", "clamp", and "none". This property determines the behavior of the sampler of this texture for texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
+MUST be one of "wrap", "mirror", "clamp", and "none". This property determines the behavior of the sampler of this texture for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
 1. "wrap" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
@@ -214,26 +216,33 @@ MUST be one of "repeat", "mirror", "clamp", and "none". This property determines
 4. "none" will discard the channelselector's value if the texture coordinate s falls outside the [0,1] range. This is useful if a texture is used as a volumetric decal of sorts that affects only a limited region in the volume.
 
 **filter**:
+The filter attribute defines the interpolation method.
 
 - If the interpolation method of an elements of type \<CT_Image3DChannelSelector> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image ressource.
 
 - If the interpolation method of an elements of type \<CT_Image3DChannelSelector> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image ressource.
 
 **Function of instances of type \<CT_Image3DChannelSelector>**:
-1. The referenced 3D Image Stack gives a voxel grid of RGBA (RGB, Grey-Alpha, Grey) values distributed in a cube ([0..res_x] x [0..res_y] x [0..res_z]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5).
+1. The referenced 3D Image gives a voxel grid of RGBA (RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..res_x] x [0..res_y] x [0..res_z]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5).
 
-2. The channel selector selects one of those channels and gives integer values (between 0 and 2^bitdepth-1) at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5) with ix = 0..res_x – 1, iy = 0..res_y – 1, iz = 0..res_z – 1.
+2. The \<CT_Image3DChannelSelector> selects one of those channels and gives integer values (between 0 and 2^bitdepth-1) at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5) with ix = 0..res_x – 1, iy = 0..res_y – 1, iz = 0..res_z – 1.
 
-3. The **tilestyle** extends the voxel grid to infinity: to extend the pointwise defined pixel values to a mapping ρ:Z^3→Z through the rules 1-4 defined above.
+3. The **tilestyle** extends the voxel grid to infinity: they extend the pointwise defined pixel values to a mapping
+  
+    ρ:Z^3→Z through the rules 1-4 defined above.
 
-4. The interpolation method defines a function on the full coordinate space. In mathematical terms, this defines a map ρ:R^3→Z, with values between 0 and 2^bitdepth-1.
+4. The interpolation method defines a function on the full coordinate space. In mathematical terms, this defines a mapping
+
+    ρ':R^3→Z, with values between 0 and 2^bitdepth-1.
 
 5. In a final normalization step, the coordinates are mapped to the unit cube, and the values are mapped between the minvalue and maxvalue, thus giving a normalized function
-φ:R^3→R, 
-(x,y,z)→minvalue⁡+ (ρ (x*res_x,y*res_y,z*res_z))/(2^bitdepth-1)*(maxvalue-minvalue)
 
+    φ:R^3→R:
+    
+    (x,y,z) → minvalue ⁡+ ρ'(x\*res_x,y\*res_y,z\*res_z)
+    \*(maxvalue-minvalue)/(2^bitdepth-1)
 
-The following image shows the channel selection process:
+The following image illustrates the channel selection process:
 
 ![3D Image Channel Selector process](images/image3dchannelselectorprocess.png)
 
@@ -242,24 +251,28 @@ The following image shows the channel selection process:
 
 Element **\<texturestack>**
 
-![texturestack XML structure](images/texturestack.png)
+![texturestack XML structure](images/element_texturestack.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | Specifies the id of the texturestack |
 
-The texture stack has two purposes:
-1. It defines multiple destination channels, \<dstchannel>-elements, whose values can be retrieved by sampling the \<sourceimage3dchannelselector> with the matching "dstchannel" attribute.
+The texture stack is a resource within a 3MF model that defines how volumetric data
+from multiple \<CT_Image3DChannelSelector> is composited to yield multiple custom scalar field (dstchannels) in 3d. This custom scalar field of a \<texturestack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see []().
 
-2. Each of the destination channels is built up by blending multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<sourceimage3dchannelselector>s.
+1. It defines multiple destination channels, \<dstchannel>-elements. Each destinaton channel is a scalar field in 3d, whose values can be retrieved by sampling this texturestack.
 
-The texturestack element MUST contain at least one destination channel child element.
+2. The sampled values of each destination channel are built up by blending multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<sourceimage3dchannelselector> elements.
+
+The texturestack element MUST contain at least one \<dstchannel> child element.
+
+![Illustration of the composited value of 2 channels within a texturestack](images/)
 
 ## 2.4.1 Destination channel element
 
 Element **\<dstchannel>**
 
-![dstchannel XML structure](images/dstchannel.png)
+![dstchannel XML structure](images/element_dstchannel.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -277,7 +290,7 @@ The names of <dstchannel>-elements must be unique within a \<texturestack>-eleme
 
 Element **\<texturelayer>**
 
-![texturelayer XML structure](images/texturelayer.png)
+![texturelayer XML structure](images/element_texturelayer.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -286,12 +299,11 @@ Element **\<texturelayer>**
 | srcalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the source layer. Required if blendmethod is "mix". |
 | dstalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the destination layer. Required if blendmethod is "mix".  |
 
-Each <texturelayer>-element MUST contain three properties which determine how it should be composited with the texture layers
-below it in the texture stack. These properties are:
+Each <texturelayer>-element modify the accumulated value of the destination channels of a texture stack. This modification is defined by the following attributes:
 
-**blendmethod**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping object.  These functions either add or multiply the voxel values of the source layer with the corresponding voxels in the destination layer.
+**blendmethod**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping objects. These functions either "add" or "multiply" the values of the destination layer with the corresponding values in the source layer.
 
-Let "s" denote the value of the source-channel, "d" the current value of the destination channel, then the modified value of the destination channel "d'" after blending is calculated according the the blendmethod:
+Let "s" denote the value of the source channel, "d" the current value of the destination channel, then the modified value of the destination channel "d'" after blending is calculated according to the blendmethod:
 - "mix":
 
     d' = src_alpha * s + dst_alpha * d
@@ -305,7 +317,7 @@ Let "s" denote the value of the source-channel, "d" the current value of the des
     d' = m * s + (1 - m) * d
 
     Here, m is the value of the dstchannel of the \<maskingimage3dchannelselector> element of this texturelayer.
-    blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
+    The blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
 
 **srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
 
@@ -315,8 +327,8 @@ Figure 4-1 shows an example of two layers within a texture stack and the result 
 
 If the blendmethod is "mask", a texturelayer MUST contain exactly one \<maskingimage3dchannelselector> element.
 
-A texturelayer MUST contain at least one \<sourceimage3dchannelselector> element. The dstchannel attribute of the each \<sourceimage3dchannelselector> within a texturelayer element MUST match a \<destinationlayer> element within this \<texturelayer>.
-The name of each \<destinationlayer> element MOST occur at most once as dstchannel attribute in one of the \<sourceimage3dchannelselector>.
+A texturelayer MUST contain at least one \<sourceimage3dchannelselector> element. The dstchannel attribute of the each \<sourceimage3dchannelselector> within a texturelayer element MUST match a \<dstchannel> element within this \<texturelayer>.
+The name of each \<dstchannel> element MUST occur at most once as dstchannel attribute in one of the \<sourceimage3dchannelselector>.
 
 Destination channels that are not mentioned in as dstchannel attribute in this list are not modifed by this \<texturelayer>.
 
@@ -328,7 +340,7 @@ Destination channels that are not mentioned in as dstchannel attribute in this l
  
 Element **\<mesh>**
 
-![mesh XML structure](images/mesh.png)
+![mesh XML structure](images/element_mesh.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -341,26 +353,18 @@ The volumetric data \<volumedata> element is a new OPTIONAL element which extend
  
 Element **\<volumedata>**
 
-![volumedata XML structure](images/volumedata.png)
-
-<!--
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| requiredproperties | ST\_RequiredProperties | optional | comma sperated list of required properties for this volumedata element |
--->
+![volumedata XML structure](images/element_volumedata.png)
 
 The \<volumedata> element references voxel based 3D texture resources and determines how the various channels in these \<texturestack>s are mapped to specific properties of the part defined by this addition. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 
 The volumedata element can contain up to one <levelset> child element, up to one <composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
 
-TODO: required properties in XSD as simple type
-
 ## 3.2.1 Levelset element
 
 Element **\<levelset>**
 
-![levelset XML structure](images/levelset.png)
+![levelset XML structure](images/element_levelset.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -379,15 +383,15 @@ with resource id matching the texturestackid-attribute and with name matching th
 
 The mapping from object coordinates to the coordiante system of the corresponding texturestack is given by the transform attribute.
 
-##### Figure  3-1: Illustration of different local coordinate systems
-![Illustration of different local coordinate systems](images/coordinatesystems.png)
+##### Figure  3-1: Illustration of different local coordinate systems and blendmethods
+![Illustration of different local coordinate  systems and blendmethods](images/fig_coordinatesystems.png)
 
 
 ## 3.2.2 Color element
 
 Element **\<color>**
 
-![color XML structure](images/color.png)
+![color XML structure](images/element_color.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -395,21 +399,21 @@ Element **\<color>**
 | texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds houses the channels to be used in the child color elements. |
 
 The \<color> element is used to define the color of the object.
-Color format is RGB between normalized to the [0 - 1] range.
+The color format is RGB between normalized to the [0 - 1] range.
 
 The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
 
 ## 3.2.3 Color channel elements
 
-Element **\<red>, \<green> and \<blue>**
+Elements **\<red>, \<green> and \<blue>**
 
-![colorchannel XML structure](images/redgreenblue.png)
+![colorchannel XML structure](images/elements_redgreenblue.png)
 
 of
 
 Complex type **\<colorchannel>**
 
-![colorchannel XML structure](images/colorchannel.png)
+![colorchannel XML structure](images/ct_colorchannel.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -425,7 +429,7 @@ If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<
 
 Element **\<composite>**
 
-![composite XML structure](images/composite.png)
+![composite XML structure](images/element_composite.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -441,7 +445,7 @@ This element MUST contain at least one <materialmapping> element, which will enc
 
 Element **\<materialmapping>**
 
-![materialmapping XML structure](images/materialmapping.png)
+![materialmapping XML structure](images/element_materialmapping.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -462,7 +466,7 @@ references a destination channel from the \<texturestack> with id matching the t
 
 Element **\<property>**
 
-![property XML structure](images/property.png)
+![property XML structure](images/element_property.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -470,7 +474,7 @@ Element **\<property>**
 | texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the channel used by this property |
 | channel | ST\_ChannelName | required | Name of the channel that serves as source for this properties scalar value |
 | name | xs:QName | required | Namespace and name of this property property |
-| required | xs:Boolean | optional | Indicator whether this property is required to process this 3MF document instance. |
+| required | xs:boolean | optional | Indicator whether this property is required to process this 3MF document instance. |
 
 The \<property> element allows to assign any point in space a scalar value of a freely definable property.
 This can be used to assign, e.g. opacity, conductivity, ...
