@@ -79,10 +79,9 @@ Addition:
 - explain how surface/volume properties work together
 - Proposed language for volumetric / surface property language: (from Alan)
     
-Volumetric content is always clipped to surface of the mesh that embedds it. If a property defined at the surface of an object conflicts with the property defined by this extension within the object, a surface layer should be defined as thin as possible to achieve the surface property. Outside this thin surface region, the volumetric property should be applied everywhere within the object.
+Volumetric content is always clipped to surface of the mesh that embedds it. If a property defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Away from this thin surface region, the volumetric property should be applied everywhere within the object.
 
-The properties at surface regions that are not explicitly specified, are given by the volumetric properties.
-
+The properties at surface regions that are not explicitly specified are given by the volumetric properties.
 
 # Part I: 3MF Documents
 
@@ -115,15 +114,15 @@ Element **\<image3d>**
 | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | Specifies an identifier for this image3d resource. |
 | name | xs:string | required | 3d image resource name used for annotations purposes. |
-| resolutionx | xs:positiveinteger | required | Resolution of all child \<image3dsheet>-elements in first dimension in pixels. |
-| resolutiony | xs:positiveinteger | required | Resolution of all child \<image3dsheet>-elements in second dimension in pixels. |
-| resolutionz | xs:positiveinteger | required | Resolution of all child \<image3dsheet>-elements in third dimension in pixels. |
+| sizex | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in first dimension in pixels. |
+| sizey | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in second dimension in pixels. |
+| sheetcount | xs:positiveinteger | required | Number of \<image3dsheet>-elements within this \<image3d> element. |
 
 Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
-There MUST be exactly resolutionz \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
+There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
-All images in an image stack MUST have the same x- and y-resolution that is specified in the resolutionx and resolutiony-attributes, respecitvely.
+All images in an image stack MUST have the same x- and y-size that is specified in the sizex and sizey-attributes, respecitvely. sizex, sizey and sheetcount MUST not exceed 1024^3-1, each.
 
 Image3D stacks, and thus the underlying \<image3dsheet> elements, SHOULD provide the channels "R", "G", "B" and "A".
 
@@ -153,7 +152,7 @@ Paths of image3dsheet SHOULD consist four segments "/3D/volumetric/" as the firs
 
 This implies that all image3dsheet parts for an image3d-object SHOULD be located in same OPC folder.
 
-![image3dsheet XML structure](images/OPC_overview.png)
+![OPC package layout](images/OPC_overview.png)
 
 
 

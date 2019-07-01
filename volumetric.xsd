@@ -34,9 +34,9 @@
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute name="resolutionx" type="xs:positiveInteger" use="required"/>
-		<xs:attribute name="resolutiony" type="xs:positiveInteger" use="required"/>
-		<xs:attribute name="resolutionz" type="xs:positiveInteger" use="required"/>
+		<xs:attribute name="sizex" type="xs:positiveInteger" use="required"/>
+		<xs:attribute name="sizey" type="xs:positiveInteger" use="required"/>
+		<xs:attribute name="sheetcount" type="xs:positiveInteger" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
