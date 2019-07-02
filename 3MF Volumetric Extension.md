@@ -120,11 +120,9 @@ Element **\<image3d>**
 
 Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
-There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
+All image3dsheets within an image3d MUST have the same x- and y-size that is specified in the sizex and sizey-attributes, respecitvely. sizex, sizey and sheetcount MUST not exceed 1024^3, each. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
-All images in an image stack MUST have the same x- and y-size that is specified in the sizex and sizey-attributes, respecitvely. sizex, sizey and sheetcount MUST not exceed 1024^3-1, each.
-
-Image3D stacks, and thus the underlying \<image3dsheet> elements, SHOULD provide the channels "R", "G", "B" and "A".
+Image3D objects, and thus the underlying \<image3dsheet> elements, SHOULD provide the channels "R", "G", "B" or "A". All image3dsheets within an image3d MUST provide the same channels, and each channel MUST have the same bit-depth accross all image3dsheets.
 
 Specific rules apply if an image3dsheet does not provide these channels:
 - If an image3dsheet does not provide a color channel "R", "B" or "G" but provides a greyscale channel, sampling any color channel will
@@ -140,7 +138,7 @@ The following describes recomendations for the channel bit depth of PNG images u
 - A levelset-function can be deduced from an image with binary values,
 i.e. from images of image types "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
 
-- Color information, material mixing ratios and arbitrary proeprties can be deduced from PNG images with arbitrary color depth.
+- Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary color depth.
 
 To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16.
 Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
@@ -187,13 +185,13 @@ Complex type
 | srcchannel | ST\_ChannelName | required | Specifies which channel to reference in the 3d image resource |
 | dstchannel | ST\_ChannelName | _srcchannel_ | Specifies which channel the source channel should be mapped to during a sampling procedure. Will default to srcchannel if not given |
 | minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of the source channel is interpreted in the output. |
-| maxvalue | ST\_Number | _1.0_ | Specifies how the maxmimal possible value of the source channel is interpreted in the output. MUST be larger than minvalue. |
+| maxvalue | ST\_Number | _1.0_ | Specifies how the maxmimal possible value of the source channel is interpreted in the output. |
 |filter |ST\_Filter | _linear_ | "linear" or "nearest" neighbor interpolation |
 | tilestyleu | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
 | tilestylev | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
 | tilestylew | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
 
-Elements of type \<CT_Image3DChannelSelector> define the way in which individual channels from volumetric image resources can be referenced inside the texture layer elements. Each channel reference MUST contain a texture resource id that maps to an actual \<image3d> element.
+Elements of type \<CT_Image3DChannelSelector> define the way in which individual channels from volumetric image resources can be referenced inside the volumetric layer elements. Each channel reference MUST contain a resource id that maps to an actual \<image3d> element.
 
 In addition, the elements of type \<CT_Image3DChannelSelector> MUST contain two string attributes which determine which channel to reference and how they should be mapped within the volumetric image. The channel name string can use any of the reserved channel names (i.e. "R", "G", "B", or "A"). 
 
@@ -201,7 +199,7 @@ For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map
 
 **tilestyle-u, -v or -w**:
 
-MUST be one of "wrap", "mirror", "clamp", and "none". This property determines the behavior of the sampler of this texture for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
+MUST be one of "wrap", "mirror", "clamp", and "none". This property determines the behavior of the sampler of this channel for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
 1. "wrap" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
@@ -212,7 +210,7 @@ MUST be one of "wrap", "mirror", "clamp", and "none". This property determines t
 3. "clamp" will restrict the texture coordinate value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-4. "none" will discard the channelselector's value if the texture coordinate s falls outside the [0,1] range. This is useful if a texture is used as a volumetric decal of sorts that affects only a limited region in the volume.
+4. "none" will discard the channelselector's value if the 3d texture coordinate s falls outside the [0,1] range. This is useful if a 3d texture is used as a volumetric decal of sorts that affects only a limited region in the volume.
 
 **filter**:
 The filter attribute defines the interpolation method.
@@ -246,26 +244,26 @@ The following image illustrates the channel selection process:
 ![3D Image Channel Selector process](images/image3dchannelselectorprocess.png)
 
 
-## 2.4. Texture stack element
+## 2.4. Volumetric Stack element
 
-Element **\<texturestack>**
+Element **\<volumetricstack>**
 
-![texturestack XML structure](images/element_texturestack.png)
+![volumetricstack XML structure](images/element_volumetricstack.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | Specifies the id of the texturestack |
+| id | ST\_ResourceID | required | Specifies the id of this volumetricstack |
 
-The texture stack is a resource within a 3MF model that defines how volumetric data
-from multiple \<CT_Image3DChannelSelector> is composited to yield multiple custom scalar field (dstchannels) in 3d. This custom scalar field of a \<texturestack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see []().
+The volumetric stack is a resource within a 3MF model that defines how volumetric data
+from multiple \<CT_Image3DChannelSelector> is composited to yield multiple custom scalar field (dstchannels) in 3d. This custom scalar field of a \<volumetricstack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see []().
 
-1. It defines multiple destination channels, \<dstchannel>-elements. Each destinaton channel is a scalar field in 3d, whose values can be retrieved by sampling this texturestack.
+1. It defines multiple destination channels, \<dstchannel>-elements. Each destinaton channel is a scalar field in 3d, whose values can be retrieved by sampling this volumetricstack.
 
-2. The sampled values of each destination channel are built up by blending multiple layers, the \<texturelayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<sourceimage3dchannelselector> elements.
+2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<sourceimage3dchannelselector> elements.
 
-The texturestack element MUST contain at least one \<dstchannel> child element.
+The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more 2^20 <dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 <volumetriclayer> child-elements.
 
-![Illustration of the composited value of 2 channels within a texturestack](images/)
+![Illustration of the composited value of 2 channels within a volumetricstack](images/)
 
 ## 2.4.1 Destination channel element
 
@@ -278,27 +276,26 @@ Element **\<dstchannel>**
 | name | ST\_ChannelName | required | Specifies the name of this destination channel |
 | background | ST\_Number | required | Specifies the background value of this channel |
 
-A destination channel specifies a name of a channel that can be sampled from a texturestack element.
-The background value is the value that serves as a base for the blending that takes place in the texturelayer elements
-within the \<texturestack>-element.
+A destination channel specifies a name of a channel that can be sampled from a volumetricstack element.
+The background value is the value that serves as a base for the blending that takes place in the volumetriclayer elements
+within the \<volumetricstack>-element.
 
-The names of <dstchannel>-elements must be unique within a \<texturestack>-element.
+The names of <dstchannel>-elements must be unique within a \<volumetricstack>-element.
 
+## 2.4.2 Volumetric Layer element
 
-## 2.4.2 texturelayer element
+Element **\<volumetriclayer>**
 
-Element **\<texturelayer>**
-
-![texturelayer XML structure](images/element_texturelayer.png)
+![volumetriclayer XML structure](images/element_volumetriclayer.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Matrix3D | required | Transformation of the texturestack coordinate system into the texturelayer coordinate system |
+| transform | ST\_Matrix3D | required | Transformation of the volumetricstack coordinate system into the volumetriclayer coordinate system |
 | blendmethod | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "mix", "multiply" or "mask". |
 | srcalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the source layer. Required if blendmethod is "mix". |
 | dstalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the destination layer. Required if blendmethod is "mix".  |
 
-Each <texturelayer>-element modify the accumulated value of the destination channels of a texture stack. This modification is defined by the following attributes:
+Each <volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
 
 **blendmethod**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping objects. These functions either "add" or "multiply" the values of the destination layer with the corresponding values in the source layer.
 
@@ -315,21 +312,21 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     d' = m * s + (1 - m) * d
 
-    Here, m is the value of the dstchannel of the \<maskingimage3dchannelselector> element of this texturelayer.
+    Here, m is the value of the dstchannel of the \<maskingimage3dchannelselector> element of this volumetriclayer.
     The blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
 
 **srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
 
 **dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the blending process.
 
-Figure 4-1 shows an example of two layers within a texture stack and the result using various blending functions with different source and destination alpha values.
+Figure 4-1 shows an example of two layers within a volumetric stack and the result using various blending functions with different source and destination alpha values.
 
-If the blendmethod is "mask", a texturelayer MUST contain exactly one \<maskingimage3dchannelselector> element.
+If the blendmethod is "mask", a volumetriclayer MUST contain exactly one \<maskingimage3dchannelselector> element.
 
-A texturelayer MUST contain at least one \<sourceimage3dchannelselector> element. The dstchannel attribute of the each \<sourceimage3dchannelselector> within a texturelayer element MUST match a \<dstchannel> element within this \<texturelayer>.
+A volumetriclayer MUST contain at least one \<sourceimage3dchannelselector> element. The dstchannel attribute of the each \<sourceimage3dchannelselector> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
 The name of each \<dstchannel> element MUST occur at most once as dstchannel attribute in one of the \<sourceimage3dchannelselector>.
 
-Destination channels that are not mentioned in as dstchannel attribute in this list are not modifed by this \<texturelayer>.
+Destination channels that are not mentioned in as dstchannel attribute in this list are not modifed by this \<volumetriclayer>.
 
 ![Example of different blending method and src/dst alpha values](images/blending.png)
 
@@ -354,7 +351,7 @@ Element **\<volumedata>**
 
 ![volumedata XML structure](images/element_volumedata.png)
 
-The \<volumedata> element references voxel based 3D texture resources and determines how the various channels in these \<texturestack>s are mapped to specific properties of the part defined by this addition. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
+The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties witin the interior volume of the enclosing mesh. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 
 The volumedata element can contain up to one <levelset> child element, up to one <composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
@@ -367,20 +364,20 @@ Element **\<levelset>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the levelset function |
+| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the levelset function |
 | channel | ST\_ChannelName | required | Name of the channel that holds the levelset function |
 | solidthreshold | ST\_Number | *0.0* | All locations whose levelset function evaluates to a value \< or \>= than solidthreshold are consired within or outside of the specified object, respecively.|
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 
 The \<levelset> element is used to define the boundary of the enclosing \<object>-element as
 the set of locations where the value of the levelset function equals the solidthreshold attribute.
 Locations where the levelset function is smaller and larger than the solidthreshold indicate the interior and exterior of the object, respectively.
 
-The levelset function is given by the "destination channel" within the \<texturestack>
-with resource id matching the texturestackid-attribute and with name matching the "channel"-attribute of the \<levelset>-element.
+The levelset function is given by the "destination channel" within the \<volumetricstack>
+with resource id matching the volumetricstackid-attribute and with name matching the "channel"-attribute of the \<levelset>-element.
 
-The mapping from object coordinates to the coordiante system of the corresponding texturestack is given by the transform attribute.
+The mapping from object coordinates to the coordiante system of the corresponding volumetricstack is given by the transform attribute.
 
 ##### Figure  3-1: Illustration of different local coordinate systems and blendmethods
 ![Illustration of different local coordinate  systems and blendmethods](images/fig_coordinatesystems.png)
@@ -394,8 +391,8 @@ Element **\<color>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
-| texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds houses the channels to be used in the child color elements. |
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds houses the channels to be used in the child color elements. |
 
 The \<color> element is used to define the color of the object.
 The color format is RGB between normalized to the [0 - 1] range.
@@ -419,7 +416,7 @@ Complex type **\<colorchannel>**
 | srcchannel | ST\_ChannelName | required | Source channel for the values of this color channel|
 
 Each element instance of CT\_ColorChannel MUST have an attribute "srcchannel" that
-references a destination channel from the \<texturestack> with id matching the texturestackid of the parent \<color> element.
+references a destination channel from the \<volumetricstack> with id matching the volumetricstackid of the parent \<color> element.
 
 If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
 
@@ -432,8 +429,8 @@ Element **\<composite>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
-| texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the channels used in the child \<materialmapping>-elements |
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels used in the child \<materialmapping>-elements |
 | basematerialid | ST\_ResourceID | required | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
 
 The <composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
@@ -459,7 +456,7 @@ If the sampled value of a channel is \<0 it must be evaluated as "0".
 If the sum of all values in it's child \<materialmapping>-elements is "0" ... TODO. PRODOCER should not do that, consumer MUST ... . Potentialy define a minimal value.
 
 Each element instance of CT\_MaterialMapping MUST have an attribute "srcchannel" that
-references a destination channel from the \<texturestack> with id matching the texturestackid of the parent \<composite> element.
+references a destination channel from the \<volumetricstack> with id matching the volumetricstackid of the parent \<composite> element.
 
 ## 3.2.4 Property element
 
@@ -469,8 +466,8 @@ Element **\<property>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the texturestack coordinate system |
-| texturestackid | ST\_ResourceID | required | ResourceID of the texturestack that holds the channel used by this property |
+| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channel used by this property |
 | channel | ST\_ChannelName | required | Name of the channel that serves as source for this properties scalar value |
 | name | xs:QName | required | Namespace and name of this property property |
 | required | xs:boolean | optional | Indicator whether this property is required to process this 3MF document instance. |

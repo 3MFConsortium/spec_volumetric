@@ -22,7 +22,7 @@
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="texturestack" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:element ref="volumetricstack" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
@@ -48,11 +48,11 @@
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_TextureStack">
+	<xs:complexType name="CT_VolumetricStack">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="2147483647"/>
-			<xs:element ref="texturelayer" minOccurs="1" maxOccurs="2147483647"/>
+			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="1048576"/>
+			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -118,7 +118,7 @@
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="texturestackid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="volumetricstackid" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
 		<xs:attribute name="solidthreshold" type="ST_Number" use="optional" default="0" />
@@ -132,7 +132,7 @@
 			<xs:element ref="blue"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="texturestackid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="volumetricstackid" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
@@ -150,7 +150,7 @@
 			<xs:element ref="materialmapping" minOccurs="1" maxOccurs="2147483647"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="texturestackid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="volumetricstack" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:attribute name="basematerialid" type="ST_ResourceID" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -169,7 +169,7 @@
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="texturestackid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="volumetricstackid" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
 		<xs:attribute name="name" type="xs:QName" use="required" />
@@ -241,9 +241,9 @@
 	<!-- Elements -->
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="image3dsheet" type="CT_Image3DSheet"/>
-	<xs:element name="texturestack" type="CT_TextureStack"/>
+	<xs:element name="volumetricstack" type="CT_VolumetricStack"/>
 	<xs:element name="dstchannel" type="CT_DestinationChannel"/>
-	<xs:element name="texturelayer" type="CT_TextureLayer"/>
+	<xs:element name="volumetriclayer" type="CT_VolumetricLayer"/>
 	<xs:element name="sourceimage3dchannelselector" type="CT_Image3DChannelSelector"/>
 	<xs:element name="maskingimage3dchannelselector" type="CT_Image3DChannelSelector"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
