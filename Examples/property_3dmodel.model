@@ -27,24 +27,24 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_5.png" />
 		</v:image3d>
 
-		<v:texturestack id="10">
+		<v:volumetricstack id="10">
 			<dstchannel name="mat1" background="0"/>
 			<dstchannel name="mat2" background="0"/>
 			<dstchannel name="mat3" background="1"/>
-			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="add">
+			<volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="add">
 				<sourceimage3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
 				<sourceimage3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1"/>
 				<sourceimage3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
-			</texturelayer>
-			<texturelayer transform="1 0 0..." blendmethod="multiply">
+			</volumetriclayer>
+			<volumetriclayer transform="1 0 0..." blendmethod="multiply">
 				<sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
 				<sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
-			</texturelayer>
-			<texturelayer transform="1 0 0..." blendmethod="mask">
+			</volumetriclayer>
+			<volumetriclayer transform="1 0 0..." blendmethod="mask">
 				<maskingimage3dchannelselector image3dID="4" srcchannel="a" dstchannel="a" min="0" max="1"/>
 				<sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat1" min="0" max="1"/>
-			</texturelayer>
-		</v:texturestack>
+			</volumetriclayer>
+		</v:volumetricstack>
 
 		<object id="1" name="Box" type="model" pid="2" pindex="0">
 			<mesh>
@@ -127,8 +127,8 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 					<triangle v1="4" v2="15" v3="25" pid="2" p1="0" />
 				</triangles>
 				<v:volumedata>
-					<property name="namespace:conductivity" transform="1 0 0 ..." texturestackid="10" channel="mat1"/>
-					<property name="namespace:opacity" transform="1 0 0 ..." texturestackid="10" channel="mat2"  required="false"/>
+					<property name="namespace:conductivity" transform="1 0 0 ..." volumetricstackid="10" channel="mat1"/>
+					<property name="namespace:opacity" transform="1 0 0 ..." volumetricstackid="10" channel="mat2"  required="false"/>
 				</v:volumedata>
 			</mesh>
 		</object>

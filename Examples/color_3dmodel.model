@@ -19,16 +19,16 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_5.png" />
 		</v:image3d>
 
-		<v:texturestack id="12">
+		<v:volumetricstack id="12">
 			<dstchannel name="r" background="0"/>
 			<dstchannel name="g" background="0"/>
 			<dstchannel name="b" background="0"/>
-			<texturelayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
+			<volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
 				<sourceimage3dchannelselector image3dID="4" srcchannel="r" min="0" max="1"/>
 				<sourceimage3dchannelselector image3dID="4" srcchannel="g" min="0" max="1"/>
 				<sourceimage3dchannelselector image3dID="4" srcchannel="b" min="0" max="1"/>
-			</texturelayer>
-		</v:texturestack>
+			</volumetriclayer>
+		</v:volumetricstack>
 
 		<object id="1" name="Box" type="model" pid="2" pindex="0">
 			<mesh>
@@ -111,7 +111,7 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 					<triangle v1="4" v2="15" v3="25" pid="2" p1="0" />
 				</triangles>
 				<v:volumedata>
-					<color transform="1 0 0 ..." texturestackid="12">
+					<color transform="1 0 0 ..." volumetricstackid="12">
 						<red channel="r"/>
 						<green channel="g"/>
 						<blue channel="b"/>

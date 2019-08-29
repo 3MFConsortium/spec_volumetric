@@ -261,7 +261,7 @@ from multiple \<CT_Image3DChannelSelector> is composited to yield multiple custo
 
 2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<sourceimage3dchannelselector> elements.
 
-The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more 2^20 <dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 <volumetriclayer> child-elements.
+The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^20 <dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 <volumetriclayer> child-elements.
 
 ![Illustration of the composited value of 2 channels within a volumetricstack](images/)
 
