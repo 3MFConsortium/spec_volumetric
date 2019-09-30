@@ -136,11 +136,11 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 					<triangle v1="4" v2="15" v3="25" pid="2" p1="0" />
 				</triangles>
 				<v:volumedata>
-					<composite transform="1 0 0 ..." volumetricstackid="10" basematerialid="100">
-						<materialmapping channel="mat1" pindex="0"/>
-						<materialmapping channel="mat2" pindex="1"/>
-						<materialmapping channel="mat3" pindex="2"/>
-					</composite>
+					<v:composite transform="1 0 0 ..." volumetricstackid="10" basematerialid="100">
+						<v:materialmapping channel="mat1" pindex="0"/>
+						<v:materialmapping channel="mat2" pindex="1"/>
+						<v:materialmapping channel="mat3" pindex="2"/>
+					</v:composite>
 				</v:volumedata>
 			</mesh>
 		</object>

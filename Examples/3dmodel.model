@@ -22,59 +22,59 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 		</basematerial>
 
 		<v:image3d id="3" resolutionx="100" resolutiony="100" resolutionz="100" name="Image">
-			<image3dsheet path="/3D/volumetric/Image/image_1.png" />
-			<image3dsheet path="/3D/volumetric/Image/image_2.png" />
-			<image3dsheet path="/3D/volumetric/Image/image_3.png" />
-			<image3dsheet path="/3D/volumetric/Image/image_4.png" />
-			<image3dsheet path="/3D/volumetric/Image/image_5.png" />
+			<v:image3dsheet path="/3D/volumetric/Image/image_1.png" />
+			<v:image3dsheet path="/3D/volumetric/Image/image_2.png" />
+			<v:image3dsheet path="/3D/volumetric/Image/image_3.png" />
+			<v:image3dsheet path="/3D/volumetric/Image/image_4.png" />
+			<v:image3dsheet path="/3D/volumetric/Image/image_5.png" />
 		</v:image3d>
 
 		<v:image3d id="4" resolutionx="100" resolutiony="100" resolutionz="100" name="Otherimage">
-			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_1.png" />
-			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_2.png" />
-			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_3.png" />
-			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_4.png" />
-			<image3dsheet path="/3D/volumetric/Otherimage/imageOther_5.png" />
+			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_1.png" />
+			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_2.png" />
+			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_3.png" />
+			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_4.png" />
+			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_5.png" />
 		</v:image3d>
 
 		<v:volumetricstack id="10">
-			<dstchannel name="mat1" background="0"/>
-			<dstchannel name="mat2" background="0"/>
-			<dstchannel name="mat3" background="1"/>
-			<volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="add">
-				<sourceimage3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
-				<sourceimage3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1"/>
-				<sourceimage3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
-			</volumetriclayer>
-			<volumetriclayer transform="1 0 0..." blendmethod="multiply">
-				<sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
-				<sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
-			</volumetriclayer>
-			<volumetriclayer transform="1 0 0..." blendmethod="mask">
-				<maskingimage3dchannelselector image3dID="4" srcchannel="a" dstchannel="a" min="0" max="1"/>
-				<sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat1" min="0" max="1"/>
-			</volumetriclayer>
+			<v:dstchannel name="mat1" background="0"/>
+			<v:dstchannel name="mat2" background="0"/>
+			<v:dstchannel name="mat3" background="1"/>
+			<v:volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="add">
+				<v:sourceimage3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
+				<v:sourceimage3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1"/>
+				<v:sourceimage3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
+			</v:volumetriclayer>
+			<v:volumetriclayer transform="1 0 0..." blendmethod="multiply">
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat3" min="0" max="1"/>
+			</v:volumetriclayer>
+			<v:volumetriclayer transform="1 0 0..." blendmethod="mask">
+				<v:maskingimage3dchannelselector image3dID="4" srcchannel="a" dstchannel="a" min="0" max="1"/>
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="g" dstchannel="mat1" min="0" max="1"/>
+			</v:volumetriclayer>
 		</v:volumetricstack>
 
 		<v:volumetricstack id="11">
-			<dstchannel name="theoutchannel" background="100"/>
-			<volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
-				<sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="-1" max="1" tilestyleu="none"/>
-			</volumetriclayer>
-			<volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
-				<sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="0" max="1"/>
-			</volumetriclayer>
+			<v:dstchannel name="theoutchannel" background="100"/>
+			<v:volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="-1" max="1" tilestyleu="none"/>
+			</v:volumetriclayer>
+			<v:volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="r" dstchannel="theoutchannel" min="0" max="1"/>
+			</v:volumetriclayer>
 		</v:volumetricstack>
 
 		<v:volumetricstack id="12">
-			<dstchannel name="r" background="0"/>
-			<dstchannel name="g" background="0"/>
-			<dstchannel name="b" background="0"/>
-			<volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
-				<sourceimage3dchannelselector image3dID="4" srcchannel="r" min="0" max="1"/>
-				<sourceimage3dchannelselector image3dID="4" srcchannel="g" min="0" max="1"/>
-				<sourceimage3dchannelselector image3dID="4" srcchannel="b" min="0" max="1"/>
-			</volumetriclayer>
+			<v:dstchannel name="r" background="0"/>
+			<v:dstchannel name="g" background="0"/>
+			<v:dstchannel name="b" background="0"/>
+			<v:volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="r" min="0" max="1"/>
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="g" min="0" max="1"/>
+				<v:sourceimage3dchannelselector image3dID="4" srcchannel="b" min="0" max="1"/>
+			</v:volumetriclayer>
 		</v:volumetricstack>
 
 		<object id="1" name="Box" type="model" pid="2" pindex="0">
@@ -159,22 +159,22 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 				</triangles>
 				
 				<v:volumedata>
-					<levelset transform="1 0 0 ..." volumetricstackid="11" channel="theoutchannel" solidthreshold="0"/>
+					<v:levelset transform="1 0 0 ..." volumetricstackid="11" channel="theoutchannel" solidthreshold="0"/>
 
-					<composite transform="1 0 0 ..." volumetricstackid="10" basematerialid="100">
-						<materialmapping channel="mat1" pindex="0"/>
-						<materialmapping channel="mat2" pindex="1"/>
-						<materialmapping channel="mat3" pindex="2"/>
-					</composite>
+					<v:composite transform="1 0 0 ..." volumetricstackid="10" basematerialid="100">
+						<v:materialmapping channel="mat1" pindex="0"/>
+						<v:materialmapping channel="mat2" pindex="1"/>
+						<v:materialmapping channel="mat3" pindex="2"/>
+					</v:composite>
 					
-					<color transform="1 0 0 ..." volumetricstackid="12">
-						<red channel="r"/>
-						<green channel="g"/>
-						<blue channel="b"/>
-					</color>
+					<v:color transform="1 0 0 ..." volumetricstackid="12">
+						<v:red channel="r"/>
+						<v:green channel="g"/>
+						<v:blue channel="b"/>
+					</v:color>
 
-					<property name="namespace:conductivity" transform="1 0 0 ..." volumetricstackid="10" channel="mat1"/>
-					<property name="namespace:opacity" transform="1 0 0 ..." volumetricstackid="10" channel="mat2"  required="false"/>
+					<v:property name="namespace:conductivity" transform="1 0 0 ..." volumetricstackid="10" channel="mat1"/>
+					<v:property name="namespace:opacity" transform="1 0 0 ..." volumetricstackid="10" channel="mat2"  required="false"/>
 					
 				</v:volumedata>
 			</mesh>

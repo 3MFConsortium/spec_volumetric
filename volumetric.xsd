@@ -67,7 +67,7 @@
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 	
-	<xs:complexType name="CT_TextureLayer">
+	<xs:complexType name="CT_VolumetricLayer">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:element ref="maskingimage3dchannelselector" minOccurs="0" maxOccurs="1"/>
@@ -84,7 +84,7 @@
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="image3dID" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="srcchannel" type="ST_ChannelName" use="required"/>
 		<xs:attribute name="dstchannel" type="ST_ChannelName" use="required"/>
 		<xs:attribute name="filter" type="ST_Filter" use="optional" default="linear"/>

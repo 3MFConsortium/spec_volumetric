@@ -69,19 +69,6 @@ See [the standard 3MF Language Notes documentation](https://github.com/3MFConsor
 
 See [the standard 3MF Software Conformance documentation](https://github.com/3MFConsortium/spec_resources/blob/master/software_conformance.md).
 
-# Part I: 3MF Documents
-
-# Chapter 1. Overview of Additions
-This document describes new elements, each of which is OPTIONAL for producers, but core features with some exceptions (see below, various types of 3d volumetric data types) MUST be supported by consumers that specify support for this volumetric extension of 3MF. Not all types of volumetric information make sense for all printing technologies and consumers may choose to ignore color, composite materials, or other properties that do not match their hardware.
-The proposed extensions enable the embedding of volumetric data within 3MF files. This will enable the representation of objects that are characterized by variable material properties throughout their volume, like opacity, color, strength etc. 
-
-Addition:
-- explain how surface/volume properties work together
-- Proposed language for volumetric / surface property language: (from Alan)
-    
-Volumetric content is always clipped to surface of the mesh that embedds it. If a property defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Away from this thin surface region, the volumetric property should be applied everywhere within the object.
-
-The properties at surface regions that are not explicitly specified are given by the volumetric properties.
 
 # Part I: 3MF Documents
 
@@ -181,19 +168,19 @@ Complex type
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| image3dID | ST\_ResourceID | required | Specifies the id of the 3d image resource |
+| image3did | ST\_ResourceID | required | Specifies the id of the 3d image resource |
 | srcchannel | ST\_ChannelName | required | Specifies which channel to reference in the 3d image resource |
 | dstchannel | ST\_ChannelName | _srcchannel_ | Specifies which channel the source channel should be mapped to during a sampling procedure. Will default to srcchannel if not given |
 | minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of the source channel is interpreted in the output. |
 | maxvalue | ST\_Number | _1.0_ | Specifies how the maxmimal possible value of the source channel is interpreted in the output. |
-|filter |ST\_Filter | _linear_ | "linear" or "nearest" neighbor interpolation |
+| filter |ST\_Filter | _linear_ | "linear" or "nearest" neighbor interpolation |
 | tilestyleu | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
 | tilestylev | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
 | tilestylew | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
 
 Elements of type \<CT_Image3DChannelSelector> define the way in which individual channels from volumetric image resources can be referenced inside the volumetric layer elements. Each channel reference MUST contain a resource id that maps to an actual \<image3d> element.
 
-In addition, the elements of type \<CT_Image3DChannelSelector> MUST contain two string attributes which determine which channel to reference and how they should be mapped within the volumetric image. The channel name string can use any of the reserved channel names (i.e. "R", "G", "B", or "A"). 
+In addition, the elements of type \<CT_Image3DChannelSelector> MUST contain two string attributes which determine which channel to reference and how they should be mapped within the volumetric image. The srcchannel name string can use any of the reserved channel names (i.e. "R", "G", "B", or "A"). 
 
 For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map to the same value. For images, which lack an alpha channel, any sampling operation on channel "A" should always return an alpha value of 1.0. The \<image3d> resource MUST be defined before being referenced by an element of type \<CT_Image3DChannelSelector> in the 3MF model document to simplify the parser.
 
@@ -261,7 +248,7 @@ from multiple \<CT_Image3DChannelSelector> is composited to yield multiple custo
 
 2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<sourceimage3dchannelselector> elements.
 
-The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^20 <dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 <volumetriclayer> child-elements.
+The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^20 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 \<volumetriclayer> child-elements.
 
 ![Illustration of the composited value of 2 channels within a volumetricstack](images/)
 
@@ -280,7 +267,7 @@ A destination channel specifies a name of a channel that can be sampled from a v
 The background value is the value that serves as a base for the blending that takes place in the volumetriclayer elements
 within the \<volumetricstack>-element.
 
-The names of <dstchannel>-elements must be unique within a \<volumetricstack>-element.
+The names of \<dstchannel>-elements must be unique within a \<volumetricstack>-element.
 
 ## 2.4.2 Volumetric Layer element
 
@@ -295,7 +282,7 @@ Element **\<volumetriclayer>**
 | srcalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the source layer. Required if blendmethod is "mix". |
 | dstalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the destination layer. Required if blendmethod is "mix".  |
 
-Each <volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
+Each \volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
 
 **blendmethod**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping objects. These functions either "add" or "multiply" the values of the destination layer with the corresponding values in the source layer.
 
@@ -328,7 +315,7 @@ The name of each \<dstchannel> element MUST occur at most once as dstchannel att
 
 Destination channels that are not mentioned in as dstchannel attribute in this list are not modifed by this \<volumetriclayer>.
 
-![Example of different blending method and src/dst alpha values](images/blending.png)
+![Example of different blending methods and parameters and src- or dst-alpha values](images/blending.png)
 
 # Chapter 3 Additions to Mesh
 
@@ -353,8 +340,12 @@ Element **\<volumedata>**
 
 The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties witin the interior volume of the enclosing mesh. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 
-The volumedata element can contain up to one <levelset> child element, up to one <composite> child element,
+The volumedata element can contain up to one \<levelset> child element, up to one \<composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
+
+Volumetric content is always clipped to the surface of the mesh that embedds it. If a property (color or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
+
+The properties at surface regions that are not explicitly specified are given by the volumetric properties.
 
 ## 3.2.1 Levelset element
 
@@ -392,10 +383,10 @@ Element **\<color>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
-| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds houses the channels to be used in the child color elements. |
+| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels to be used in the child color elements. |
 
 The \<color> element is used to define the color of the object.
-The color format is RGB between normalized to the [0 - 1] range.
+The color format is RGB normalized to the [0-1] range.
 
 The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
 
@@ -416,7 +407,7 @@ Complex type **\<colorchannel>**
 | srcchannel | ST\_ChannelName | required | Source channel for the values of this color channel|
 
 Each element instance of CT\_ColorChannel MUST have an attribute "srcchannel" that
-references a destination channel from the \<volumetricstack> with id matching the volumetricstackid of the parent \<color> element.
+references a destination channel from the \<volumetricstack> with Id matching the volumetricstackid of the parent \<color> element.
 
 If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
 
@@ -433,9 +424,9 @@ Element **\<composite>**
 | volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels used in the child \<materialmapping>-elements |
 | basematerialid | ST\_ResourceID | required | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
 
-The <composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
+The \<composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
 
-This element MUST contain at least one <materialmapping> element, which will encode the relative contribution of a specific basematerial to the material mix.
+This element MUST contain at least one \<materialmapping> element, which will encode the relative contribution of a specific basematerial to the material mix.
 
 ## 3.2.5 Material mapping element
 
@@ -468,7 +459,7 @@ Element **\<property>**
 | --- | --- | --- | --- |
 | transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
 | volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channel used by this property |
-| channel | ST\_ChannelName | required | Name of the channel that serves as source for this properties scalar value |
+| channel | ST\_ChannelName | required | Name of the channel that serves as source for the scalar value representing this property. |
 | name | xs:QName | required | Namespace and name of this property property |
 | required | xs:boolean | optional | Indicator whether this property is required to process this 3MF document instance. |
 
