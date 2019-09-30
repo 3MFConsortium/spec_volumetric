@@ -21,7 +21,7 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 			<base name="ABS white" displaycolor="#808000FF"/>
 		</basematerial>
 
-		<v:image3d id="3" resolutionx="100" resolutiony="100" resolutionz="100" name="Image">
+		<v:image3d id="3" sizex="100" sizey="100" sheetcount="100" name="Image">
 			<v:image3dsheet path="/3D/volumetric/Image/image_1.png" />
 			<v:image3dsheet path="/3D/volumetric/Image/image_2.png" />
 			<v:image3dsheet path="/3D/volumetric/Image/image_3.png" />
@@ -29,7 +29,7 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 			<v:image3dsheet path="/3D/volumetric/Image/image_5.png" />
 		</v:image3d>
 
-		<v:image3d id="4" resolutionx="100" resolutiony="100" resolutionz="100" name="Otherimage">
+		<v:image3d id="4" sizex="100" sizey="100" sheetcount="100" name="Otherimage">
 			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_1.png" />
 			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_2.png" />
 			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_3.png" />
@@ -41,7 +41,7 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 			<v:dstchannel name="mat1" background="0"/>
 			<v:dstchannel name="mat2" background="0"/>
 			<v:dstchannel name="mat3" background="1"/>
-			<v:volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="add">
+			<v:volumetriclayer transform="1 0 0 ... " srcalpha="1" dstalpha="0" blendmethod="mix">
 				<v:sourceimage3dchannelselector image3dID="3" srcchannel="r" dstchannel="mat1" min="0" max="1"/>
 				<v:sourceimage3dchannelselector image3dID="3" srcchannel="b" dstchannel="mat2" min="0" max="1"/>
 				<v:sourceimage3dchannelselector image3dID="3" srcchannel="g" dstchannel="mat3" min="0" max="1"/>

@@ -11,7 +11,7 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11">
 			<m:color color="#808080FF" />
 		</m:colorgroup>
 
-		<v:image3d id="4" resolutionx="100" resolutiony="100" resolutionz="100" name="Otherimage">
+		<v:image3d id="4" sizex="100" sizey="100" sheetcount="100" name="Otherimage">
 			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_1.png" />
 			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_2.png" />
 			<v:image3dsheet path="/3D/volumetric/Otherimage/imageOther_3.png" />
