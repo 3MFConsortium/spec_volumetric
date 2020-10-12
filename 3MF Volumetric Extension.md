@@ -299,7 +299,7 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     d' = m * s + (1 - m) * d
 
-    Here, m is the value of the dstchannel of the \<maskingimage3dchannelselector> element of this volumetriclayer.
+    Here, m is the value of the srcchannel of the \<maskingimage3dchannelselector> element of this volumetriclayer.
     The blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
 
 **srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
