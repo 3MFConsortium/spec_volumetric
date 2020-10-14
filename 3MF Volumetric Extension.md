@@ -338,7 +338,7 @@ Element **\<volumedata>**
 
 ![volumedata XML structure](images/element_volumedata.png)
 
-The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties witin the interior volume of the enclosing mesh. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
+The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties within the interior volume of the enclosing mesh. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 
 The volumedata element can contain up to one \<levelset> child element, up to one \<composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
@@ -409,8 +409,7 @@ Complex type **\<colorchannel>**
 Each element instance of CT\_ColorChannel MUST have an attribute "srcchannel" that
 references a destination channel from the \<volumetricstack> with Id matching the volumetricstackid of the parent \<color> element.
 
-If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
-
+The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
 ## 3.2.4 Composite element
 
@@ -460,21 +459,25 @@ Element **\<property>**
 | transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
 | volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channel used by this property |
 | channel | ST\_ChannelName | required | Name of the channel that serves as source for the scalar value representing this property. |
-| name | xs:QName | required | Namespace and name of this property property |
+| name | xs:QName | required | Namespace and name of this property. |
 | required | xs:boolean | optional | Indicator whether this property is required to process this 3MF document instance. |
 
 The \<property> element allows to assign any point in space a scalar value of a freely definable property.
 This can be used to assign, e.g. opacity, conductivity, ...
 
-The names of \<property>-elements MUST be unique within a \<volumedata>.
+The names of \<property>-elements MUST be unique within a \<volumedata>. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
+The interpretation of the value MUST be defined by the owner of the namespace. 
+
+If the interpretation of a property might result in a conflict with the standard volumedata-elements (levelset, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
+
+If a physical unit is necessary the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
+
+The specifications of private namespaces (i.e. that are not ratified by the 3MF Consortium) need to be negotiated between parties in the ecosystem.
 
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<properties> required to represent the design intent of a model as `required`.
 
-TODO:
-- rules for property versus composite (if they do not make sense together)
-- rules for physical units
-- rules for where to put namespace information ... ? Print ticket?
+
 
 # Part II. Appendixes
 
