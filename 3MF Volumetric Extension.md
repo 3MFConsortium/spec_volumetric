@@ -386,7 +386,7 @@ Element **\<color>**
 | volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels to be used in the child color elements. |
 
 The \<color> element is used to define the color of the object.
-The color format is RGB normalized to the [0-1] range.
+The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
 The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
 
@@ -408,8 +408,6 @@ Complex type **\<colorchannel>**
 
 Each element instance of CT\_ColorChannel MUST have an attribute "srcchannel" that
 references a destination channel from the \<volumetricstack> with Id matching the volumetricstackid of the parent \<color> element.
-
-The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
 ## 3.2.4 Composite element
 
