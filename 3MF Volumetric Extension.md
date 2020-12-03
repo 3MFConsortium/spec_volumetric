@@ -5,7 +5,7 @@
 
 
 
-| **Version** | 0.2.0 |
+| **Version** | 0.2.1 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -358,7 +358,7 @@ Element **\<levelset>**
 | volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the levelset function |
 | channel | ST\_ChannelName | required | Name of the channel that holds the levelset function |
 | solidthreshold | ST\_Number | *0.0* | All locations whose levelset function evaluates to a value \< or \>= than solidthreshold are consired within or outside of the specified object, respecively.|
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| transform | ST\_Matrix3D | optional | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 
 The \<levelset> element is used to define the boundary of the enclosing \<object>-element as
@@ -382,7 +382,7 @@ Element **\<color>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| transform | ST\_Matrix3D | optional | Transformation of the object coordinate system into the volumetricstack coordinate system |
 | volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels to be used in the child color elements. |
 
 The \<color> element is used to define the color of the object.
@@ -417,7 +417,7 @@ Element **\<composite>**
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| transform | ST\_Matrix3D | optional | Transformation of the object coordinate system into the volumetricstack coordinate system |
 | volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels used in the child \<materialmapping>-elements |
 | basematerialid | ST\_ResourceID | required | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
 
