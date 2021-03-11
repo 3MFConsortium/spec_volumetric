@@ -5,7 +5,7 @@
 
 
 
-| **Version** | 0.2.1 |
+| **Version** | 0.2.2 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -150,8 +150,18 @@ Element **\<image3dsheet>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | path | ST\_UriReference | required | Specifies the OPC part name (i.e. path) of the image data file |
+| minvalue | ST\_Number | optional | Specifies how the minimal possible value of a channel in this image3dsheet is interpreted when being sampled. |
+| maxvalue | ST\_Number | optional | Specifies how the maximal possible value of a channel in this image3dsheet is interpreted when being sampled. |
+
 
 Each \<image3dsheet> element has one property which MUST be present. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
+
+A channel in an image3dsheet with N bits can represent integer values between 0 and 2^N-1.
+If minvalue and maxvalue are specified, then sampling a channel will not return an integer value but instead this integer value will be mapped within the range between minvalue and maxvalue.
+
+sampledRealValue = sampledIntegerValue*(maxvalue-minvalue)/(2^N-1) + minvalue.
+
+TODO: update Formula
 
 
 ## 2.3. 3D Image Channel Selector
@@ -171,8 +181,6 @@ Complex type
 | image3did | ST\_ResourceID | required | Specifies the id of the 3d image resource |
 | srcchannel | ST\_ChannelName | required | Specifies which channel to reference in the 3d image resource |
 | dstchannel | ST\_ChannelName | _srcchannel_ | Specifies which channel the source channel should be mapped to during a sampling procedure. Will default to srcchannel if not given |
-| minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of the source channel is interpreted in the output. |
-| maxvalue | ST\_Number | _1.0_ | Specifies how the maxmimal possible value of the source channel is interpreted in the output. |
 | filter |ST\_Filter | _linear_ | "linear" or "nearest" neighbor interpolation |
 | tilestyleu | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
 | tilestylev | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
@@ -225,6 +233,8 @@ The filter attribute defines the interpolation method.
     
     (x,y,z) → minvalue ⁡+ ρ'(x\*res_x,y\*res_y,z\*res_z)
     \*(maxvalue-minvalue)/(2^bitdepth-1)
+    
+    TODO: update Formula
 
 The following image illustrates the channel selection process:
 
