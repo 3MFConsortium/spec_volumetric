@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" xmlns:m="http://schemas.microsoft.com/3dmanufacturing/material/2015/02" xmlns:p="http://schemas.microsoft.com/3dmanufacturing/production/2015/06" xmlns:b="http://schemas.microsoft.com/3dmanufacturing/beamlattice/2017/02" xmlns:s="http://schemas.microsoft.com/3dmanufacturing/slice/2015/07" xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2019/07">
+	<resources>
+		<!-- u,v,w means:
+				(0,0,0) maps to voxel (0,0,0)
+				(1,1,1) maps to voxel (sizex-1,sizey-1,sheetcount-1) -->
+		<v:image3d id="2" sizex="1125" sizey="682" sheetcount="394" minvalue="0" maxvalue="1" >
+			<!-- lets specifically define the channels -->
+			<v:channel name="R"/>
+			<v:channel name="G"/>
+			<v:channel name="B"/>
+			<v:image3dsheet path="/3D/data/image000000.png"/>
+			
+			<!-- say a channel has N-bits
+				channelvalue 0     will become minvalue when sampled
+				channelvalue 2^N-1 will become maxvalue when sampled
+			-->
+			<v:image3dsheet path="/3D/data/image000001.png" minvalue="-0.2" maxvalue="2"/>
+			<!-- ... -->
+		</v:image3d>
+		
+		<!-- this provides a function of (u,v,w)
+			uvw=[0,0,0] maps to left back bottom corner of the image3d
+			uvw=[1,1,1] maps to right front bottom corner of the image3d
+			
+			if the image3d returns a value F at (u,v,w), the channelfromimage3d returns a value valueoffset + F(valuescale)
+		-->
+		<v:channelfromimage3d id="22" image3did="2" channel="R" filter="linear" valueoffset="0" valuescale="1" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:channelfromimage3d id="23" image3did="2" channel="G" filter="linear" valueoffset="-2" valuescale="4" tilestyleu="wrap" tilestylev="clamp" tilestylew="mirror"/>
+		<v:channelfromimage3d id="24" image3did="2" channel="B" filter="linear" valueoffset="0" valuescale="1" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+
+		<!-- can sample "R", "G", "B" at (u,v,w) -->
+		<v:volumetricstack id="4">
+			<v:dstchannel name="R" background="0"/>
+			<v:dstchannel name="G" background="0"/>
+			<v:dstchannel name="B" background="0"/>
+			
+			<v:volumetriclayer blendmethod="multiply">
+				<v:channelmapping sourceid="22" dstchannel="R"/>
+				<v:channelmapping sourceid="23" dstchannel="G"/>
+				<v:channelmapping sourceid="24" dstchannel="B"/>
+			</v:volumetriclayer>
+		</v:volumetricstack>
+		
+		<!-- can sample "R", "G", "B" at (u,v,w) -->
+		<v:volumetricstack id="5">
+			<v:dstchannel name="R" background="1"/>
+			<v:dstchannel name="G" background="1"/>
+			<v:dstchannel name="B" background="1"/>
+			<v:volumetriclayer blendmethod="multiply">
+				<v:channelmapping sourceid="22" dstchannel="R"/>
+				<v:channelmapping sourceid="23" dstchannel="G"/>
+				<v:channelmapping sourceid="24" dstchannel="B"/>
+			</v:volumetriclayer>
+			<v:volumetriclayer blendmethod="add">
+				<v:channelmapping sourceid="22" dstchannel="R"/>
+				<v:channelmapping sourceid="23" dstchannel="G"/>
+				<v:channelmapping sourceid="24" dstchannel="B"/>
+			</v:volumetriclayer>
+		</v:volumetricstack>
+		
+		<object id="1" name="Boundary Mesh" type="model" p:UUID="3f9b844f-ecd8-4315-b873-4901fad45540">
+			<mesh>
+				<vertices>
+					<vertex x="27.662642" y="84.070984" z="0" />
+					<!-- ... -->
+				</vertices>
+				<triangles>
+					<triangle v1="0" v2="1" v3="2" />
+					<!-- ... -->
+				</triangles>
+				<v:volumedata>
+					<!-- This here defines the uvw(x,y,z)=transform*(x,y,z) simply by transforming the object coordinates
+							   uvw(x,y,z) = transform(x,y,z)
+							If transform == Identity
+							then uvw(x,z,y) = (x,y,z). i.e. uvw is the object coordinates within in the object coordinate system -->
+					<v:color sourceid="4" transform="0.00560109 0 0 0 0.0092421 0 0 0 0.0159997 -0.116119 -0.516182 0">
+						<!-- sampling color:red(x,y,z) samples stackid4's "R"-channel at uvw(x,y,z) -->
+						<v:red channel="R"/>
+						<v:green channel="G"/>
+						<v:blue channel="B"/>
+					</v:color>
+					
+					<v:boundary sourceid="5" channel="G" transform="0.00560109 0 0 0 0.0092421 0 0 0 0.0159997 0 0 0"/>
+				</v:volumedata>
+			</mesh>
+		</object>
+	</resources>
+	<build p:UUID="926ab33d-70cd-48d5-9f61-c8ca3ace7cc3">
+		<item objectid="1" p:UUID="84036920-dabd-4371-95ef-4387a51b2888" transform="0.70710678118 0 0.70710678118 0 1 0 -0.70710678118 0 0.70710678118 0 0 0"/>
+	</build>
+</model>
