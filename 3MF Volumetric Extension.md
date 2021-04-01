@@ -315,6 +315,11 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     d' = s * d
 
+- "min"/"max": (this is used for boolean operations of distance. distance fields being special cases of levelset functions)
+   
+    d' = s * d
+
+
 **srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
 
 **dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the blending process.
@@ -359,7 +364,17 @@ Element **\<volumedata>**
 
 ![volumedata XML structure](images/element_volumedata.png)
 
-The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties witin the interior volume of the enclosing mesh. The root mesh object determines the boundary geometry that acts as a trimming mesh for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
+The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties within the interior volume of the enclosing mesh.
+
+Any property defined in the volumedata element is clipped by a specific clipping geometry.
+
+The basic clipping geometry is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account geometry defined by e.g. the beamlattices specification.
+
+If \<boundary> exists, the printable geometry is defined by the intersection of basic clipping geometry and the interior of the levelset.
+Otherwise printable geometry equals the basic clipping geometry.
+
+- Boundary element (if exists) needs to be clipped by surface geometry of enclosing mesh. This defines the clipping geometry for all other elements within the volumedata element 
+The surface of the enclosing \<mesh object> determines the boundary geometry that acts as a trimming surface for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 
 The volumedata element can contain up to one \<levelset> child element, up to one \<composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
