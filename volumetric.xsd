@@ -22,6 +22,7 @@
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:element ref="channelfromimage3d" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:element ref="volumetricstack" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -30,6 +31,7 @@
 	<xs:complexType name="CT_Image3D">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:element ref="channel" minOccurs="1" maxOccurs="1048576"/>
 			<xs:element ref="image3dsheet" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
@@ -37,6 +39,8 @@
 		<xs:attribute name="sizex" type="xs:positiveInteger" use="required"/>
 		<xs:attribute name="sizey" type="xs:positiveInteger" use="required"/>
 		<xs:attribute name="sheetcount" type="xs:positiveInteger" use="required"/>
+		<xs:attribute name="minvalue" type="ST_Number" use="required"/>
+		<xs:attribute name="maxvalue" type="ST_Number" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -45,6 +49,8 @@
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="path" type="ST_UriReference" use="required"/>
+		<xs:attribute name="minvalue" type="ST_Number" use="optional"/>
+		<xs:attribute name="maxvalue" type="ST_Number" use="optional"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -58,7 +64,7 @@
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_DestinationChannel">
+	<xs:complexType name="CT_Channel">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
@@ -70,29 +76,36 @@
 	<xs:complexType name="CT_VolumetricLayer">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="maskingimage3dchannelselector" minOccurs="0" maxOccurs="1"/>
-			<xs:element ref="sourceimage3dchannelselector" minOccurs="1" maxOccurs="2147483647"/>
+			<xs:element ref="channelmapping" minOccurs="1" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="transform" type="ST_Matrix3D" use="required"/>
-		<xs:attribute name="srcalpha" type="ST_Number" use="required"/>
-		<xs:attribute name="dstalpha" type="ST_Number" use="required"/>
+		<xs:attribute name="transform" type="ST_Matrix3D" use="required"/> <!-- ? -->
 		<xs:attribute name="blendmethod" type="ST_BlendMethod" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-		<xs:complexType name="CT_Image3DChannelSelector">
+	<xs:complexType name="CT_ChannelFromImage3D">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
+		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="srcchannel" type="ST_ChannelName" use="required"/>
-		<xs:attribute name="dstchannel" type="ST_ChannelName" use="required"/>
+		<xs:attribute name="channel" type="ST_ChannelName" use="required"/>
 		<xs:attribute name="filter" type="ST_Filter" use="optional" default="linear"/>
-		<xs:attribute name="min" type="ST_Number" use="optional" default="0.0"/>
-		<xs:attribute name="max" type="ST_Number" use="optional" default="1.0"/>
+		<xs:attribute name="valueoffset" type="ST_Number" use="optional" default="0.0"/>
+		<xs:attribute name="valuescale" type="ST_Number" use="optional" default="1.0"/>
 		<xs:attribute name="tilestyleu" type="ST_TileStyle" use="optional" default="wrap"/>
 		<xs:attribute name="tilestylev" type="ST_TileStyle" use="optional" default="wrap"/>
 		<xs:attribute name="tilestylew" type="ST_TileStyle" use="optional" default="wrap"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="CT_ChannelMapping">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="srcchannel" type="ST_ChannelName" use="required"/>
+		<xs:attribute name="dstchannel" type="ST_ChannelName" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -105,7 +118,7 @@
 
 	<xs:complexType name="CT_VolumeData">
 		<xs:sequence>
-				<xs:element ref="levelset" minOccurs="0" maxOccurs="1"/>
+				<xs:element ref="boundary" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="composite" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="color" minOccurs="0" maxOccurs="1"/>
 				<xs:element ref="property" minOccurs="0" maxOccurs="2147483647"/>
@@ -114,11 +127,11 @@
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_Levelset">
+	<xs:complexType name="CT_Boundary">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="volumetricstackid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
 		<xs:attribute name="solidthreshold" type="ST_Number" use="optional" default="0" />
@@ -132,7 +145,7 @@
 			<xs:element ref="blue"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="volumetricstackid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
@@ -150,7 +163,7 @@
 			<xs:element ref="materialmapping" minOccurs="1" maxOccurs="2147483647"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="volumetricstack" type="ST_ResourceID" use="required" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:attribute name="basematerialid" type="ST_ResourceID" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -169,7 +182,7 @@
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="volumetricstackid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
 		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
 		<xs:attribute name="name" type="xs:QName" use="required" />
@@ -178,13 +191,6 @@
 	</xs:complexType>
 
 	<!-- Simple Types -->
-	<xs:simpleType name="ST_ClippingMode">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="none"/>
-			<xs:enumeration value="inside"/>
-			<xs:enumeration value="outisde"/>
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="ST_TileStyle">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="wrap"/>
@@ -228,7 +234,6 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="mix"/>
 			<xs:enumeration value="multiply"/>
-			<xs:enumeration value="mask"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ST_Matrix3D">
@@ -242,12 +247,13 @@
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="image3dsheet" type="CT_Image3DSheet"/>
 	<xs:element name="volumetricstack" type="CT_VolumetricStack"/>
-	<xs:element name="dstchannel" type="CT_DestinationChannel"/>
+	<xs:element name="channel" type="CT_Channel"/>
+	<xs:element name="dstchannel" type="CT_Channel"/>
 	<xs:element name="volumetriclayer" type="CT_VolumetricLayer"/>
-	<xs:element name="sourceimage3dchannelselector" type="CT_Image3DChannelSelector"/>
-	<xs:element name="maskingimage3dchannelselector" type="CT_Image3DChannelSelector"/>
+  <xs:element name="channelmapping" type="CT_ChannelMapping"/>
+	<xs:element name="channelfromimage3d" type="CT_ChannelFromImage3D"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
-	<xs:element name="levelset" type="CT_Levelset"/>
+	<xs:element name="boundary" type="CT_Boundary"/>
 	<xs:element name="composite" type="CT_Composite"/>
 	<xs:element name="materialmapping" type="CT_MaterialMapping"/>
 	<xs:element name="color" type="CT_Color"/>
