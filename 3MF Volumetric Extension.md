@@ -82,7 +82,7 @@ The central idea of this extension is to enrich the geometry notion of 3MF with 
 
 While this is meant to be an exact specification of geometric, material and in fact arbitary properties, and consumers MUST interpret it as such, the intent is also for applications in which editors can use the data structures for efficient interoperability and post processing the geometry in an intermediate step.
 
-A producer using the levelset element of the volumetric specification MUST mark the extension as required, as described in the core specification.
+A producer using the levelset element of the volumetric specification MUST mark the extension as required, as described in the core specification. This makes sure that consumers can ignore volumetric properties that are not defining the geometry of parts to be manufactured.
 
 ##### Figure 2-1: Overview of model XML structure of 3MF with volumetric additions
 
@@ -305,9 +305,10 @@ Element **\<volumetriclayer>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | transform | ST\_Matrix3D | required | Transformation of the volumetricstack coordinate system into the volumetriclayer coordinate system |
-| blendmethod | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "mix" or "multiply". |
+| blendmethod | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "mix", "multiply", "min", "max" or "mask". |
 | srcalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the source layer. Required if blendmethod is "mix". |
 | dstalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the destination layer. Required if blendmethod is "mix".  |
+| maskid | ST\_ResourceId | optional |	The resource id of a ChannelFromImage3D resource which shall be used for masking. Required if blendmethod is "mask".  |
 
 Each \volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
 
@@ -326,6 +327,12 @@ Let "s" denote the value of the source channel, "d" the current value of the des
    
     d' = min(s,d) or d' = max(s,d) 
 
+- "mask":
+
+    d' = m * s + (1 - m) * d
+
+    Here, m is the value of the srcchannel of the \<maskingimage3dchannelselector> element of this volumetriclayer.
+    The blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
 
 **srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
 
