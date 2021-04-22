@@ -82,7 +82,7 @@ The central idea of this extension is to enrich the geometry notion of 3MF with 
 
 While this is meant to be an exact specification of geometric, material and in fact arbitary properties, and consumers MUST interpret it as such, the intent is also for applications in which editors can use the data structures for efficient interoperability and post processing the geometry in an intermediate step.
 
-A producer using the volumetric specification MUST mark the extension as required, as described in the core specification.
+A producer using the levelset element of the volumetric specification MUST mark the extension as required, as described in the core specification.
 
 ##### Figure 2-1: Overview of model XML structure of 3MF with volumetric additions
 
