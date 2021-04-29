@@ -80,6 +80,7 @@
 		</xs:sequence>
 		<xs:attribute name="transform" type="ST_Matrix3D" use="required"/> <!-- ? -->
 		<xs:attribute name="blendmethod" type="ST_BlendMethod" use="required"/>
+		<xs:attribute name="maskid" type="ST_ResourceId" use="optional"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
