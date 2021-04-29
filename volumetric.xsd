@@ -104,7 +104,6 @@
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="srcchannel" type="ST_ChannelName" use="required"/>
 		<xs:attribute name="dstchannel" type="ST_ChannelName" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
