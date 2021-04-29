@@ -170,17 +170,12 @@ If `minvalue` is not explcicitly specified, the `minvalue` acts of the enclosing
 If `maxvalue` is not explcicitly specified, the `maxvalue` acts of the enclosing \<image3dsheet>-element must be used for this \<image3dsheet>.
 
 
-## 3.3. 3D Image Channel Selector
+## 3.3. Channel from Image3D
  
-Element **\<sourceimage3dchannelselector>**
-![3D Image Channel Selector XML structure](images/elements_image3dchannelselectors.png)
+Element type
+**\<channelfromimage3d>**
 
-of
-
-Complex type
-**\<CT_ChannelFromImage3D>**
-
-![3D Image Channel Selector XML structure](images/ct_image3dchannelselector.png)
+![Channel from Image3D XML structure](images/element_channelfromimage3d.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
@@ -310,6 +305,10 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     d' = src_alpha * s + dst_alpha * d
 
+    **srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
+
+    **dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the blending process.
+
 - "multiply":
 
     d' = s * d
@@ -320,14 +319,12 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
 - "mask":
 
-    d' = m * s + (1 - m) * d
-
-    Here, m is the value of the srcchannel of the \<maskingimage3dchannelselector> element of this volumetriclayer.
     The blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
 
-**srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
+    d' = m * s + (1 - m) * d
 
-**dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the blending process.
+    Here, m is the value of the channel provided by the \<channelfromimage3d> refered to by the "maskid" attribute of this volumetriclayer.
+    
 
 Figure 4-1 shows an example of two layers within a volumetric stack and the result using various blending functions with different source and destination alpha values.
 A volumetriclayer MUST contain at least one \<channelmapping> element. The dstchannel attribute of the each \<channelmapping> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
@@ -345,7 +342,6 @@ Element **\<channelmapping>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | The resource id of a ChannelFromImage3D resource |
-| srcchannel | ST\_ChannelName | required | Source channel for the values of this channelmapping |
 | dstchannel | ST\_ChannelName | required | Name of the destination channel that should be manipulated by this channelmapping within this volumetric layer |
 
 # Chapter 4 Additions to Mesh
