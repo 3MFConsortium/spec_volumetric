@@ -291,23 +291,27 @@ Element **\<volumetriclayer>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | transform | ST\_Matrix3D | required | Transformation of the volumetricstack coordinate system into the volumetriclayer coordinate system |
-| blendmethod | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "mix", "multiply", "min", "max" or "mask". |
-| srcalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the source layer. Required if blendmethod is "mix". |
-| dstalpha | ST\_Number | optional |	Numeric scale factor [-1,1] for the destination layer. Required if blendmethod is "mix".  |
+| blendmethod | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
+| srcalpha | ST\_Number | optional |	Numeric scale factor for the source layer. Required if blendmethod is "weightedsum". |
+| dstalpha | ST\_Number | optional |	Numeric scale factor for the destination layer. Required if blendmethod is "weightedsum".  |
 | maskid | ST\_ResourceId | optional |	The resource id of a ChannelFromImage3D resource which shall be used for masking. Required if blendmethod is "mask".  |
 
 Each \volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
 
-**blendmethod**: controls how the current layer (known as the source layer) is blended with the layers below it as well as with the stack’s background value and potential overlapping objects. These functions either "add" or "multiply" the values of the destination layer with the corresponding values in the source layer.
+**blendmethod**: controls according to which formula the current layer (known as the source layer) is blended with the layers below it or with the stack’s background value.
 
 Let "s" denote the value of the source channel, "d" the current value of the destination channel, then the modified value of the destination channel "d'" after blending is calculated according to the blendmethod:
-- "mix":
+
+- "weightedsum":
 
     d' = src_alpha * s + dst_alpha * d
 
-    **srcalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the source layer during the blending process.
+    **srcalpha**: is a scalar value which is multiplied with the sampled values in the source layer during the blending process.
 
-    **dstalpha**: is a scalar value that SHOULD be in the range [-1, 1] which is multiplied with the sampled values in the destination during the blending process.
+    **dstalpha**: is a scalar value which is multiplied with the sampled values in the destination during the blending process.
+    
+    TODO: Refer to example image below, add example using e.g. [0.5, 0.5] for a physical quantiy, and [1,-1] for a levelset.
+    TODO: The producer is responsible to choose parameters srcalpha and dstalpha, such that sampling them e.g. a physical property, is sensible.
 
 - "multiply":
 
@@ -322,9 +326,11 @@ Let "s" denote the value of the source channel, "d" the current value of the des
     The blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
 
     d' = m * s + (1 - m) * d
-
+    
     Here, m is the value of the channel provided by the \<channelfromimage3d> refered to by the "maskid" attribute of this volumetriclayer.
     
+    __Note__: The blendmethod "mask" implements the same formula as the blendmethod "mix" for the rgb-values of an \<multiproperties>-element in the [Materials and Properties Extension specification, Chapter 5](https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-5-multiproperties).
+
 
 Figure 4-1 shows an example of two layers within a volumetric stack and the result using various blending functions with different source and destination alpha values.
 A volumetriclayer MUST contain at least one \<channelmapping> element. The dstchannel attribute of the each \<channelmapping> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
@@ -481,7 +487,10 @@ The \<materialmapping> element defines the relative contribution of a specific m
 
 If the sampled value of a channel is \<0 it must be evaluated as "0".
 
-If the sum of all values in it's child \<materialmapping>-elements is "0" ... TODO. PRODOCER should not do that, consumer MUST ... . Potentialy define a minimal value.
+Procuer MUST not create files where the sum of all values in it's child \<materialmapping>-elements is smaller then Epsilon TODO. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
+
+- If we have N materials, then 
+Ratio of Material i at point X: value of channel i at point X / sum(all N channels at point X)
 
 Each element instance of CT\_MaterialMapping MUST have an attribute "srcchannel" that
 references a destination channel from the \<volumetricstack> with id matching the volumetricstackid of the parent \<composite> element.
