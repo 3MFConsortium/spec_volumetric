@@ -80,9 +80,9 @@ This document describes new elements, each of which is OPTIONAL for producers, b
 
 The central idea of this extension is to enrich the geometry notion of 3MF with volumetic elements that can represent spatially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
 
-While this is meant to be an exact specification of geometric, material and in fact arbitary properties, and consumers MUST interpret it as such, the intent is also for applications in which editors can use the data structures for efficient interoperability and post processing the geometry in an intermediate step.
+This extension is meant to be an exact specification of geometric, appearance, material and in fact arbitary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the data structures for efficient interoperability and post processing the geometry and properties described in this extension.
 
-A producer using the levelset element of the volumetric specification MUST mark the extension as required, as described in the core specification. This makes sure that consumers can ignore volumetric properties that are not defining the geometry of parts to be manufactured.
+A producer using the levelset element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as required. Consumers of 3MF files that do not mark the volumetric extension as are thus assured that the geometric shape of the objects in this 3MF file are not altered by the volmetric specification.
 
 ##### Figure 2-1: Overview of model XML structure of 3MF with volumetric additions
 
@@ -133,21 +133,13 @@ return the value of the greyscale channel.
 ## 3.1.1 File Formats
 PNG images can provide acceptable compression and bitdepth for the levelset-function, color information, material mixing ratios or arbitrary property information.
 
-The following describes recomendations for the channel bit depth of PNG images used in this specification based on the nomenclature in the specification of PNG (https://www.w3.org/TR/PNG).
+The following describes recommendations for the channel bit depth of PNG images used in this specification and is based on the nomenclature in the specification of the Portable Network Graphics (PNG, https://www.w3.org/TR/PNG) format.
 
-- A levelset-function can be deduced from an image with binary values,
-i.e. from images of image types "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
+- Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary channel depth. It is RECOMMENDED to store color into RGB-channels within a PNG.
 
-- Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary color depth.
+- It is RECOMMENDED to store information that will be used as levelset/boundary in PNGs with one channel only. A levelset-function can be deduced from a channel with binary values, i.e. from images of image type "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
 
-To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16.
-Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
-
-It is recommended to store information that will be used as levelset/boundary in PNGs with one channel only.
-It is recommended to store color into RGB-channels into PNG.
-
-Shall we forbid multi-image PNGs?
-
+To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
 
 
 ## 3.1.2 OPC package layout
@@ -158,7 +150,6 @@ Paths of image3dsheet SHOULD consist four segments "/3D/volumetric/" as the firs
 This implies that all image3dsheet parts for an image3d-object SHOULD be located in same OPC folder.
 
 ![OPC package layout](images/OPC_overview.png)
-
 
 
 ## 3.2 3D Image Sheet
