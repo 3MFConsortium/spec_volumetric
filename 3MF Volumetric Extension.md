@@ -5,7 +5,7 @@
 
 
 
-| **Version** | 0.2.3 |
+| **Version** | 0.2.4 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -82,7 +82,7 @@ The central idea of this extension is to enrich the geometry notion of 3MF with 
 
 This extension is meant to be an exact specification of geometric, appearance, material and in fact arbitary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the data structures for efficient interoperability and post processing the geometry and properties described in this extension.
 
-A producer using the levelset element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as required. Consumers of 3MF files that do not mark the volumetric extension as are thus assured that the geometric shape of the objects in this 3MF file are not altered by the volmetric specification.
+A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as required. Consumers of 3MF files that do not mark the volumetric extension as are thus assured that the geometric shape of the objects in this 3MF file are not altered by the volmetric specification.
 
 ##### Figure 2-1: Overview of model XML structure of 3MF with volumetric additions
 
@@ -115,8 +115,6 @@ Element **\<image3d>**
 | sizex | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in first dimension in pixels. |
 | sizey | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in second dimension in pixels. |
 | sheetcount | xs:positiveinteger | required | Number of \<image3dsheet>-elements within this \<image3d> element. |
-| minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of a channel in this image is interpreted as output. |
-| maxvalue | ST\_Number | _1.0_ | Specifies how the maximal possible value of a channel in this image is interpreted as output. |
 
 Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
@@ -125,9 +123,9 @@ All image3dsheets within an image3d MUST have the same x- and y-size that is spe
 Image3D objects, and thus the underlying \<image3dsheet> elements, SHOULD provide the channels "R", "G", "B" or "A". All image3dsheets within an image3d MUST provide the same channels, and each channel MUST have the same bit-depth accross all image3dsheets.
 
 Specific rules apply if an image3dsheet does not provide these channels:
-- If an image3dsheet does not provide a color channel "R", "B" or "G" but provides a greyscale channel, sampling any color channel will
+- If an  \<image3dsheet> does not provide a color channel "R", "B" or "G" but provides a greyscale channel, sampling any color channel will
 return the value of the greyscale channel.
-- If an image3dsheet does not provide an alpha channel "A", sampling "A" will behave as if the image3dsheet contained a fully saturated alpha channel.
+- If an  \<image3dsheet> does not provide an alpha channel "A", sampling "A" will behave as if the  \<image3dsheet> contained a fully saturated alpha channel.
 
 
 ## 3.1.1 File Formats
@@ -137,7 +135,7 @@ The following describes recommendations for the channel bit depth of PNG images 
 
 - Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary channel depth. It is RECOMMENDED to store color into RGB-channels within a PNG.
 
-- It is RECOMMENDED to store information that will be used as levelset/boundary in PNGs with one channel only. A levelset-function can be deduced from a channel with binary values, i.e. from images of image type "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
+- It is RECOMMENDED to store information that will be used as levelset to represent a boundary in PNGs with one channel only. A levelset-function can be deduced from a channel with binary values, i.e. from images of image type "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
 
 To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
 
@@ -145,9 +143,9 @@ To achieve high accuracy, producers SHOULD store such information in image chann
 ## 3.1.2 OPC package layout
 It is RECOMMENDED that producers of 3MF Documents use the following part naming convention:
 
-Paths of image3dsheet SHOULD consist four segments "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this image3dsheet as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the image3dsheet MUST be associated with the 3D Model part via the 3D Texture relationship.
+Paths of  \<image3dsheet> SHOULD consist four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this  \<image3dsheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the  \<image3dsheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
 
-This implies that all image3dsheet parts for an image3d-object SHOULD be located in same OPC folder.
+This implies that all  \<image3dsheet> parts for an image3d-object SHOULD be located in same OPC folder.
 
 ![OPC package layout](images/OPC_overview.png)
 
@@ -164,11 +162,9 @@ Element **\<image3dsheet>**
 | minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of a channel in this image is interpreted as output. |
 | maxvalue | ST\_Number | _1.0_ | Specifies how the maximal possible value of a channel in this image is interpreted as output. |
 
-Each \<image3dsheet> element has one property which MUST be present. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
+Each \<image3dsheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
-If `minvalue` is not explcicitly specified, the `minvalue` acts of the enclosing \<image3dsheet>-element must be used for this \<image3dsheet>.
-If `maxvalue` is not explcicitly specified, the `maxvalue` acts of the enclosing \<image3dsheet>-element must be used for this \<image3dsheet>.
-
+The `minvalue` and `maxvalue` determine how the minamal and maximal value of any channel within the referenced PNG-file shall be interpreted. Channel values inbetween must be linearly interpolated. Specifying different `minvalue` and `maxvalue`-attributes for different \<image3dsheet>s is optional, but allows producers to more efficiently encode values in different regions of an object.
 
 ## 3.3. Channel from Image3D
  
@@ -383,7 +379,7 @@ Otherwise printable geometry equals the basic clipping geometry.
 - Boundary element (if exists) needs to be clipped by surface geometry of enclosing mesh. This defines the clipping geometry for all other elements within the volumedata element 
 The surface of the enclosing \<mesh object> determines the boundary geometry that acts as a trimming surface for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 
-The volumedata element can contain up to one \<levelset> child element, up to one \<composite> child element,
+The volumedata element can contain up to one \<boundary> child element, up to one \<composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
 
 Volumetric content is always clipped to the surface of the mesh that embedds it. If a property (color or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
@@ -394,22 +390,22 @@ The properties at surface regions that are not explicitly specified are given by
 
 Element **\<boundary>**
 
-![levelset XML structure](images/element_levelset.png)
+![boundary XML structure](images/element_boundary.png)
 
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
-| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the levelset function |
-| channel | ST\_ChannelName | required | Name of the channel that holds the levelset function |
+| volumetricstackid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds a levelset function which defines the boundary |
+| channel | ST\_ChannelName | required | Name of the channel that holds a levelset function which defines the boundary |
 | solidthreshold | ST\_Number | *0.0* | All locations whose levelset function evaluates to a value \< or \>= than solidthreshold are consired within or outside of the specified object, respecively.|
 | transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 
-The \<levelset> element is used to define the boundary of the enclosing \<object>-element as
-the set of locations where the value of the levelset function equals the solidthreshold attribute.
+The \<boundary> element is used to define the boundary of the enclosing \<object>-element as
+the set of locations where the value of the referenced levelset function equals the solidthreshold attribute.
 Locations where the levelset function is smaller and larger than the solidthreshold indicate the interior and exterior of the object, respectively.
 
 The levelset function is given by the "destination channel" within the \<volumetricstack>
-with resource id matching the volumetricstackid-attribute and with name matching the "channel"-attribute of the \<levelset>-element.
+with resource id matching the volumetricstackid-attribute and with name matching the "channel"-attribute of the \<boundary>-element.
 
 The mapping from object coordinates to the coordiante system of the corresponding volumetricstack is given by the transform attribute.
 
@@ -515,7 +511,7 @@ This can be used to assign, e.g. opacity, conductivity, ...
 The names of \<property>-elements MUST be unique within a \<volumedata>. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
 The interpretation of the value MUST be defined by the owner of the namespace. 
 
-If the interpretation of a property might result in a conflict with the standard volumedata-elements (levelset, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
+If the interpretation of a property might result in a conflict with the standard volumedata-elements (boundary, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
 
 If a physical unit is necessary the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
 
