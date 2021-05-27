@@ -5,7 +5,7 @@
 
 
 
-| **Version** | 0.2.4 |
+| **Version** | 0.2.5 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -193,43 +193,41 @@ For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map
 
 **tilestyle-u, -v or -w**:
 
-MUST be one of "wrap", "mirror", "clamp", and "none". This property determines the behavior of the sampler of this channel for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
+MUST be one of "wrap", "mirror" and "clamp". This property determines the behavior of the sampler of this channel for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
 1. "wrap" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
 
 2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture SHOULD be reflected across a plane perpendicular to the axis in question following this formula:
-</br>s’ = s ... TODO
+</br>s’ = 1 - abs( s - 2 * floor(s/2) - 1 )
 
 3. "clamp" will restrict the texture coordinate value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-4. "none" will discard the channelselector's value if the 3d texture coordinate s falls outside the [0,1] range. This is useful if a 3d texture is used as a volumetric decal of sorts that affects only a limited region in the volume.
-
 **filter**:
 The filter attribute defines the interpolation method.
 
-- If the interpolation method of an elements of type \<CT_ChannelFromImage3D> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image ressource.
+- If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image ressource.
 
-- If the interpolation method of an elements of type \<CT_ChannelFromImage3D> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image ressource.
+- If the interpolation method of an elements of type \<channelfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image ressource.
 
-**The workings of instances of type \<CT_ChannelFromImage3D>**:
+**The workings \<channelfromimage3d>**:
 1. The referenced 3D Image contains a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..res_x] x [0..res_y] x [0..res_z]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5).
 
 2. Each channel in a 3D Image can be sampled at these half integer positions and returns the value of the respecitve channel which is scaled between its `minvalue` and `maxvalue`.
 
-3. The \<CT_ChannelFromImage3D> selects one of those channels and gives integer values (between 0 and 2^bitdepth-1) at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5) with ix = 0..res_x – 1, iy = 0..res_y – 1, iz = 0..res_z – 1.
+3. The \<channelfromimage3d> selects one of those channels and gives integer values (between 0 and 2^bitdepth-1) at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5) with ix = 0..res_x – 1, iy = 0..res_y – 1, iz = 0..res_z – 1.
     ρ1:[0,1,...,res_x-1]x[0,1,...,res_y-1]x[0,1,...,res_z-1]→R
 
 4. The **tilestyle** maps extends the voxel grid of the image3d to infite integer 3D space: they extend the pointwise defined pixel values to a mapping
   
-    ρ:Z^3→R through the rules 1-4 defined above.
+    ρ:Z^3→R through the rules 1-3 defined above.
 
 5. The `filter` method defines a function on the full coordinate space. In mathematical terms, this defines a mapping
 
     ρ':R^3→R through the filter-rules defined above.
 
-6. In a final scaling step, the coordinates are mapped to the unit cube, and the values linearly scaled via offsetvalue and scalevalue, thus giving a normalized function
+6. In a final scaling step the sampled values are linearly scaled via offsetvalue and scalevalue, thus giving a normalized function
 
     φ:R^3→R:
     
@@ -251,13 +249,13 @@ Element **\<volumetricstack>**
 | id | ST\_ResourceID | required | Specifies the id of this volumetricstack |
 
 The volumetric stack is a resource within a 3MF model that defines how volumetric data
-from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom scalar field (dstchannels) in 3d. This custom scalar field of a \<volumetricstack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see []().
+from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom scalar field in three dimenesions (\<dstchannel>). This custom scalar field of a \<volumetricstack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see []().
 
 1. It defines multiple destination channels, \<dstchannel>-elements. Each destinaton channel is a scalar field in 3d, whose values can be retrieved by sampling this volumetricstack.
 
-2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<sourceimage3dchannelselector> elements.
+2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<channelfromimage3d> elements.
 
-The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^20 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 \<volumetriclayer> child-elements.
+The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^10 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 \<volumetriclayer> child-elements.
 
 ![Illustration of the composited value of 2 channels within a volumetricstack](images/)
 
@@ -290,7 +288,7 @@ Element **\<volumetriclayer>**
 | blendmethod | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
 | srcalpha | ST\_Number | optional |	Numeric scale factor for the source layer. Required if blendmethod is "weightedsum". |
 | dstalpha | ST\_Number | optional |	Numeric scale factor for the destination layer. Required if blendmethod is "weightedsum".  |
-| maskid | ST\_ResourceId | optional |	The resource id of a ChannelFromImage3D resource which shall be used for masking. Required if blendmethod is "mask".  |
+| maskid | ST\_ResourceId | optional |	The resource id of a \<channelfromimage3d> resource which shall be used for masking. Required if blendmethod is "mask".  |
 
 Each \volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
 
@@ -332,7 +330,7 @@ Figure 4-1 shows an example of two layers within a volumetric stack and the resu
 A volumetriclayer MUST contain at least one \<channelmapping> element. The dstchannel attribute of the each \<channelmapping> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
 The name of each \<dstchannel> element MUST occur at most once as dstchannel attribute in one of the \<channelmapping>.
 
-Destination channels that are not mentioned in as dstchannel attribute in this list are not modifed by this \<volumetriclayer>.
+Destination channels that are not mentioned as dstchannel attribute in this list are not modifed by this \<volumetriclayer>.
 
 ![Example of different blending methods and parameters and src- or dst-alpha values](images/blending.png)
 
@@ -368,23 +366,24 @@ Element **\<volumedata>**
 ![volumedata XML structure](images/element_volumedata.png)
 
 The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties within the interior volume of the enclosing mesh.
-
-Any property defined in the volumedata element is clipped by a specific clipping geometry.
-
-The basic clipping geometry is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account geometry defined by e.g. the beamlattices specification.
-
-If \<boundary> exists, the printable geometry is defined by the intersection of basic clipping geometry and the interior of the levelset.
-Otherwise printable geometry equals the basic clipping geometry.
-
-- Boundary element (if exists) needs to be clipped by surface geometry of enclosing mesh. This defines the clipping geometry for all other elements within the volumedata element 
-The surface of the enclosing \<mesh object> determines the boundary geometry that acts as a trimming surface for any volumetric data defined therein. Any data outside the mesh's bounds MUST be ignored. Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
+Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
 
 The volumedata element can contain up to one \<boundary> child element, up to one \<composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
 
-Volumetric content is always clipped to the surface of the mesh that embedds it. If a property (color or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
+The child elements modify the enclosing \<mesh> in two fundamentally different ways:
+1. the child \<boundary> element (if it exists) determines the geometry of the \<mesh object>.
+2. the other child elements modify color, material compostion and other arbitrary properties of the \<mesh object>.
 
-The properties at surface regions that are not explicitly specified are given by the volumetric properties.
+We need to define the clipping surface of a mesh with a \<volumedata> element. The clipping surface is defined as follows:
+1. If no <\boundary> element exists, the clipping surface is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
+2. If the <\boundary> element exists, the clipping surface is defined by the intersection of the geometrty from 1. and the interior of the levelset-channel used in the \<boundary> element.
+
+This clipping surface acts as a trimming surface for any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. 
+
+Volumetric content is always clipped to the clipping surface of the mesh that embedds it. If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
+
+The properties at surface regions that are not explicitly specified are instead given by the volumetric properties.
 
 ## 4.2.1 Boundary element
 
@@ -408,6 +407,10 @@ The levelset function is given by the "destination channel" within the \<volumet
 with resource id matching the volumetricstackid-attribute and with name matching the "channel"-attribute of the \<boundary>-element.
 
 The mapping from object coordinates to the coordiante system of the corresponding volumetricstack is given by the transform attribute.
+
+Regarding conflicting properties:
+1. Produced MUST not define colors, materials or properties via thw two child elements of the \<volumedata> element that are impossible on phsycal grounds (e.g. non-conducting copper).
+2. Consumers that face properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support ABS in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is a established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through a print ticket.
 
 ##### Figure  4-1: Illustration of different local coordinate systems and blendmethods
 ![Illustration of different local coordinate  systems and blendmethods](images/fig_coordinatesystems.png)
