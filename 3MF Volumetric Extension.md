@@ -381,11 +381,15 @@ We need to define the clipping surface of a mesh with a \<volumedata> element. T
 1. If no <\boundary> element exists, the clipping surface is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
 2. If the <\boundary> element exists, the clipping surface is defined by the intersection of the geometrty from 1. and the interior of the levelset-channel used in the \<boundary> element.
 
-This clipping surface acts as a trimming surface for any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. 
+This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
 Volumetric content is always clipped to the clipping surface of the mesh that embedds it. If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
 
 The properties at surface regions that are not explicitly specified are instead given by the volumetric properties.
+
+Conflicting properties must be handled as follows:
+1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on phsycal grounds (e.g. non-conducting copper).
+2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
 ## 4.2.1 Boundary element
 
@@ -409,10 +413,6 @@ The levelset function is given by the "destination channel" within the \<volumet
 with resource id matching the volumetricstackid-attribute and with name matching the "channel"-attribute of the \<boundary>-element.
 
 The mapping from object coordinates to the coordiante system of the corresponding volumetricstack is given by the transform attribute.
-
-Regarding conflicting properties:
-1. Produced MUST not define colors, materials or properties via thw two child elements of the \<volumedata> element that are impossible on phsycal grounds (e.g. non-conducting copper).
-2. Consumers that face properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support ABS in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is a established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through a print ticket.
 
 ##### Figure  4-1: Illustration of different local coordinate systems and blendmethods
 ![Illustration of different local coordinate  systems and blendmethods](images/fig_coordinatesystems.png)
