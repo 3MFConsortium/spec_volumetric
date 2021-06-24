@@ -391,6 +391,7 @@ Conflicting properties must be handled as follows:
 1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on phsycal grounds (e.g. non-conducting copper).
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
+
 ## 4.2.1 Boundary element
 
 Element **\<boundary>**
@@ -431,6 +432,8 @@ Element **\<color>**
 
 The \<color> element is used to define the color of the object.
 The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
+
+This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is usefull for defining parts with with nontransparanet, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with nontransparent materials.
 
 The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
 
