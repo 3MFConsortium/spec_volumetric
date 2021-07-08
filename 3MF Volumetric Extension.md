@@ -391,6 +391,14 @@ Conflicting properties must be handled as follows:
 1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on phsycal grounds (e.g. non-conducting copper).
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
+__Note__: Behavior for overlapping meshes with volumedata elements:
+If multiple volumes defined by the interior of clipping surfaces overlap, the properties in the overlapping volume are defined by the properties of interior of the last clipping surface.
+If the last overlapping object does not have a property of an earlier object that is being overlapped, the resulting volume does not have the property of the overlapped object.
+This makes sure that properties of an overlapped object do not determine any properties of an overlapping object.
+
+TODO: add image from here: https://github.com/3MFConsortium/spec_volumetric/issues/20#issue-853644491  
+
+
 
 ## 4.2.1 Boundary element
 
