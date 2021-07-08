@@ -313,9 +313,11 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     d' = s * d
 
-- "min"/"max": (this is used for boolean operations of distance. distance fields being special cases of levelset functions)
+- "min"/"max":
    
     d' = min(s,d) or d' = max(s,d) 
+    
+    Blending methods "min" and "max" are useful to capture boolean operations between signed distance fields, special cases of levelset functions.
 
 - "mask":
 
