@@ -521,8 +521,11 @@ Element **\<property>**
 | name | xs:QName | required | Namespace and name of this property property |
 | required | xs:boolean | optional | Indicator whether this property is required to process this 3MF document instance. |
 
-The \<property> element allows to assign any point in space a scalar value of a freely definable property.
-This can be used to assign, e.g. opacity, conductivity, ...
+The \<property> element allows to assign any point in space a scalar value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
+
+This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
+A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called ="http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05">.
+The specifications of private namespaces (that are not ratified by the 3MF Consortium) need to be negotiated between producer and consumer of a 3MF file.
 
 The names of \<property>-elements MUST be unique within a \<volumedata>. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
 The interpretation of the value MUST be defined by the owner of the namespace. 
@@ -531,11 +534,14 @@ If the interpretation of a property might result in a conflict with the standard
 
 If a physical unit is necessary the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
 
-The specifications of private namespaces (i.e. that are not ratified by the 3MF Consortium) need to be negotiated between parties in the ecosystem.
-
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<properties> required to represent the design intent of a model as `required`.
 
+
+ 
+ 
+ 
+ 
 TODO:
 - rules for property versus composite (if they do not make sense together)
 - rules for physical units
