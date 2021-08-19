@@ -135,7 +135,7 @@ The following describes recommendations for the channel bit depth of PNG images 
 
 - Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary channel depth. It is RECOMMENDED to store color into RGB-channels within a PNG.
 
-- It is RECOMMENDED to store information that will be used as levelset to represent a boundary in PNGs with one channel only. A levelset-function can be deduced from a channel with binary values, i.e. from images of image type "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
+- It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A levelset-function can be deduced from a channel with binary values, i.e. from images of image type "Greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
 
 To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
 
@@ -315,9 +315,9 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
 - "min"/"max":
    
-    d' = min(s,d) or d' = max(s,d) 
+    d' = min(s,d) or d' = max(s,d)
     
-    Blending methods "min" and "max" are useful to capture boolean operations between signed distance fields, special cases of levelset functions.
+    Blending methods "min" and "max" are useful to capture boolean operations between signed distance fields, which are special cases of levelset functions.
 
 - "mask":
 
