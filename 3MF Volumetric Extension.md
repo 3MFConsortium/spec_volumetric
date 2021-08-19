@@ -371,6 +371,7 @@ Element **\<volumedata>**
 
 The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties within the interior volume of the enclosing mesh.
 Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
+Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh.
 
 The volumedata element can contain up to one \<boundary> child element, up to one \<composite> child element,
 up to one \<color> element, and an arbitray number of \<property> elements.
