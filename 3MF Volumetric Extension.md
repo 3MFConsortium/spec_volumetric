@@ -111,14 +111,14 @@ Element **\<image3d>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | Specifies an identifier for this image3d resource. |
-| name | xs:string | required | 3d image resource name used for annotations purposes. |
+| name | xs:string | optional | 3d image resource name used for annotations purposes. |
 | sizex | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in first dimension in pixels. |
 | sizey | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in second dimension in pixels. |
 | sheetcount | xs:positiveinteger | required | Number of \<image3dsheet>-elements within this \<image3d> element. |
 
 Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
-All image3dsheets within an image3d MUST have the same x- and y-size that is specified in the sizex and sizey-attributes, respecitvely. sizex, sizey and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by XXX. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
+All image3dsheets within an image3d MUST have the same x- and y-size that is specified in the sizex and sizey-attributes, respecitvely. sizex, sizey and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
 Image3D objects, and thus the underlying \<image3dsheet> elements, SHOULD provide the channels "R", "G", "B" or "A". All image3dsheets within an image3d MUST provide the same channels, and each channel MUST have the same bit-depth accross all image3dsheets.
 
