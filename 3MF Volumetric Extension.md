@@ -191,6 +191,10 @@ In addition, the elements of type \<CT_ChannelFromImage3D> MUST contain two stri
 
 For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map to the same value. For images, which lack an alpha channel, any sampling operation on channel "A" should always return an alpha value of 1.0. The \<image3d> resource MUST be defined before being referenced by an element of type \<CT_ChannelFromImage3D> in the 3MF model document to simplify the parser.
 
+**channel**:
+
+The channel-attribute determines which channel to reference in the 3d image resource. Note that attributes of type \<ST\_ChannelName> are case-sensitive.
+
 **tilestyle-u, -v or -w**:
 
 MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines the behavior of the sampler of this channel for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
