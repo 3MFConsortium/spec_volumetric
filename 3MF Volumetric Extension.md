@@ -159,12 +159,17 @@ Element **\<image3dsheet>**
 | Name   | Type   | Use | Annotation |
 | --- | --- | --- | --- |
 | path | ST\_UriReference | required | Specifies the OPC part name (i.e. path) of the image data file |
-| minvalue | ST\_Number | _0.0_ | Specifies how the minimal possible value of a channel in this image is interpreted as output. |
-| maxvalue | ST\_Number | _1.0_ | Specifies how the maximal possible value of a channel in this image is interpreted as output. |
+| valueoffset | ST\_Number | _0.0_ | Specifies a numerical offset for the values obtained from any channel this `image3dsheet`. |
+| valuescale | ST\_Number | _1.0_ | Specifies a numerical scaling for the values obtained from any channel this `image3dsheet`. |
 
 Each \<image3dsheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
-The `minvalue` and `maxvalue` determine how the minamal and maximal value of any channel within the referenced PNG-file shall be interpreted. Channel values inbetween must be linearly interpolated. Specifying different `minvalue` and `maxvalue`-attributes for different \<image3dsheet>s is optional, but allows producers to more efficiently encode values in different regions of an object.
+The `valueoffset` and `valuescale` determine how the numerical values of any channel within the referenced PNG-file shall be interpreted.
+If a channel in the image-file of this \<image3dsheet> holds a numerical value `V`, it needs to be sampled as `V' = V*valuescale + valueoffset`.
+Specifying different `valueoffset` and `valueoffset`-attributes for different \<image3dsheet>s is optional, but allows producers to more efficiently encode values in different regions of an object.
+
+Any interpolation of values of an \<image3dsheet>-element (c.f. TODO) MUST be performed on the rescaled values `V'` according to the formula above.
+
 
 ## 3.3. Channel from Image3D
  

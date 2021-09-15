@@ -47,8 +47,8 @@
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="path" type="ST_UriReference" use="required"/>
-		<xs:attribute name="minvalue" type="ST_Number" use="optional"/>
-		<xs:attribute name="maxvalue" type="ST_Number" use="optional"/>
+    <xs:attribute name="valueoffset" type="ST_Number" use="optional" default="0.0"/>
+    <xs:attribute name="valuescale" type="ST_Number" use="optional" default="1.0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
