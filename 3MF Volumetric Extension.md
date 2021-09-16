@@ -161,19 +161,19 @@ Element **\<image3dsheet>**
 
 ![image3dsheet XML structure](images/element_image3dsheet.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| path | ST\_UriReference | required | Specifies the OPC part name (i.e. path) of the image data file |
-| valueoffset | ST\_Number | _0.0_ | Specifies a numerical offset for the values obtained from any channel this `image3dsheet`. |
-| valuescale | ST\_Number | _1.0_ | Specifies a numerical scaling for the values obtained from any channel this `image3dsheet`. |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| path | ST\_UriReference | required | | Specifies the OPC part name (i.e. path) of the image data file |
+| valueoffset | ST\_Number | | _0.0_ | Specifies a numerical offset for the values obtained from any channel this `image3dsheet`. |
+| valuescale | ST\_Number | | _1.0_ | Specifies a numerical scaling for the values obtained from any channel this `image3dsheet`. |
 
 Each \<image3dsheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
 The `valueoffset` and `valuescale` determine how the numerical values of any channel within the referenced PNG-file shall be interpreted.
 If a channel in the image-file of this \<image3dsheet> holds a numerical value `V`, it needs to be sampled as `V' = V*valuescale + valueoffset`.
-Specifying different `valueoffset` and `valueoffset`-attributes for different \<image3dsheet>s is optional, but allows producers to more efficiently encode values in different regions of an object.
+Specifying different `valueoffset` and `valuescale`-attributes for different \<image3dsheet>s is optional, but allows producers to more efficiently encode values in different regions of an object.
 
-Any interpolation of values of an \<image3dsheet>-element (c.f. TODO **filter** element) MUST be performed on the rescaled values `V'` according to the formula above.
+Any interpolation of values of an \<image3dsheet>-element (c.f. TODO **filter** atribute) MUST be performed on the rescaled values `V'` according to the formula above. This is relevant if two subsequent \<image3dsheet>-elements have different values for `valueoffset` or `valuescale`.
 
 ## 3.3. Channel from Image3D
  
@@ -228,7 +228,7 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 
 **transform**:
 Transformation of the channel coordinate system into the \<image3d> coordinate system.
-If this channel is being sampled at position `(x,y,z)` (e.g. from a volumetric stack), the underlying \<image3d> must be sampled at normalized texture coordinates `(u,v,w) = T*(x,z,y)`.
+If this channel is being sampled at position `(x,y,z)` (e.g. from within a volumetric stack), the underlying \<image3d> must be sampled at normalized texture coordinates `(u,v,w) = T*(x,y,z)`.
 
 **filter**:
 The filter attribute defines the interpolation method.
@@ -429,7 +429,7 @@ with resource id matching the volumetricstackid-attribute and with name matching
 **transform**:
 
 The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If the boundary-channel of the enclosing \<mesh> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,z,y)`.
+If the boundary-channel of the enclosing \<mesh> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 ##### Figure  4-1: Illustration of different local coordinate systems and blendmethods
 ![Illustration of different local coordinate  systems and blendmethods](images/fig_coordinatesystems.png)
@@ -456,7 +456,7 @@ The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-e
 **transform**:
 
 The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If the \<red>-, \<green>- or \<blue>-channel is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,z,y)`.
+If the \<red>-, \<green>- or \<blue>-channel is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 ## 4.2.3 Color channel elements
 
@@ -499,7 +499,7 @@ This element MUST contain at least one \<materialmapping> element, which will en
 **transform**:
 
 The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,z,y)`.
+If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 ## 4.2.5 Material mapping element
 
@@ -544,7 +544,7 @@ The \<property> element allows to assign any point in space a scalar value of a 
 **transform**:
 
 The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If the channel of a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,z,y)`.
+If the channel of a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
 A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called ="http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05">.
@@ -583,7 +583,7 @@ see: [volumetric.xsd](volumetric.xsd)
 
 # Appendix C. Standard Namespace
 
-Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11/0.5.0-prerelease](http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11/0.5.0-prerelease)
+Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11)
 
 # Appendix D: Example file
 
