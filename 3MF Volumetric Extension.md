@@ -125,9 +125,13 @@ Specific rules apply if an image3dsheet does not provide these channels:
 return the value of the greyscale channel.
 - If an  \<image3dsheet> does not provide an alpha channel "A", sampling "A" will behave as if the  \<image3dsheet> contained a fully saturated alpha channel.
 
-The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5), see figure TODO-figure.
+The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5), see Figure 2-2.
 The \<image3d> is not sampled in these absolute voxel coordinates, but instad in a normalized uvw-texture space: `(u,v,w) \in [0,1]x[0,1]x[0,1]`, where such that `(U,V,W) = (u*sizex,v*sizey,w*sheetcount)`.
 Sampling at a point `(U,V,W)` that is not a half-integer coordinate is done according to the filter-rule, see TODO-link.
+
+##### Figure 2-2: Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)
+
+![Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)](images/voxelcoordinatesystem.png)
 
 ## 3.1.1 File Formats
 PNG images can provide acceptable compression and bitdepth for the levelset-function, color information, material mixing ratios or arbitrary property information.
@@ -171,8 +175,6 @@ Specifying different `valueoffset` and `valueoffset`-attributes for different \<
 
 Any interpolation of values of an \<image3dsheet>-element (c.f. TODO **filter** element) MUST be performed on the rescaled values `V'` according to the formula above.
 
-![3D Image Channel Selector process](images/image3dchannelselectorprocess.png)
-
 ## 3.3. Channel from Image3D
  
 Element type
@@ -210,11 +212,17 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 1. "wrap" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
 
+![Tilestyle wrap](images/tilestyle_wrap.png)
+
 2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture MUST be reflected across a plane perpendicular to the axis in question following this formula:
 </br>s’ = 1 - abs( s - 2 * floor(s/2) - 1 )
 
+![Tilestyle mirror](images/tilestyle_mirror.png)
+
 3. "clamp" will restrict the texture coordinate value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
+
+![Tilestyle mirror](images/tilestyle_clamp.png)
 
 4. "none" will discard the \<CT_ChannelFromImage3D>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<CT_ChannelFromImage3D> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
 
