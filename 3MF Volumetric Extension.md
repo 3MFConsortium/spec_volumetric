@@ -5,7 +5,7 @@
 
 
 
-| **Version** | 0.2.5 |
+| **Version** | 0.5.0 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -583,7 +583,7 @@ see: [volumetric.xsd](volumetric.xsd)
 
 # Appendix C. Standard Namespace
 
-Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11)
+Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11/0.5.0-prerelease](http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11/0.5.0-prerelease)
 
 # Appendix D: Example file
 
