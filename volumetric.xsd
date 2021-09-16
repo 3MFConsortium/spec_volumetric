@@ -31,7 +31,6 @@
 	<xs:complexType name="CT_Image3D">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="channel" minOccurs="1" maxOccurs="1048576"/>
 			<xs:element ref="image3dsheet" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
@@ -76,8 +75,9 @@
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:element ref="channelmapping" minOccurs="1" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="transform" type="ST_Matrix3D" use="required"/> <!-- ? -->
 		<xs:attribute name="blendmethod" type="ST_BlendMethod" use="required"/>
+		<xs:attribute name="srcalpha" type="ST_Number" use="optional"/>
+		<xs:attribute name="dstalpha" type="ST_Number" use="optional"/>
 		<xs:attribute name="maskid" type="ST_ResourceId" use="optional"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
@@ -89,6 +89,7 @@
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="channel" type="ST_ChannelName" use="required"/>
+		<xs:attribute name="transform" type="ST_Matrix3D" use="required"/>
 		<xs:attribute name="filter" type="ST_Filter" use="optional" default="linear"/>
 		<xs:attribute name="valueoffset" type="ST_Number" use="optional" default="0.0"/>
 		<xs:attribute name="valuescale" type="ST_Number" use="optional" default="1.0"/>
@@ -152,7 +153,7 @@
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="srcchannel" type="ST_ChannelName" use="required" />
+		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
