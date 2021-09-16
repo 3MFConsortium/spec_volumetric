@@ -226,8 +226,6 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 
 4. "none" will discard the \<CT_ChannelFromImage3D>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<CT_ChannelFromImage3D> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
 
-![3D Image Channel Selector process](images/image3dchannelselectorprocess.png)
-
 **transform**:
 Transformation of the channel coordinate system into the \<image3d> coordinate system.
 If this channel is being sampled at position `(x,y,z)` (e.g. from a volumetric stack), the underlying \<image3d> must be sampled at normalized texture coordinates `(u,v,w) = T*(x,z,y)`.
