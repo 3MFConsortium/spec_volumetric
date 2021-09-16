@@ -415,16 +415,21 @@ Element **\<boundary>**
 | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds a channel that encodes boundary as a levelset |
 | channel | ST\_ChannelName | required | Name of the channel that holds a levelset function which defines the boundary |
-| solidthreshold | ST\_Number | *0.0* | All locations where the levelset function in the channel evaluates to a value \<, = or \> than `solidthreshold` are consired within, at the surface or outside of the specified object, respecively.|
+| solidthreshold | ST\_Number | *0.0* | Determines the values of the levelset function which are considered inside or outside the specified object  |
 | transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
+The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
-The \<boundary> element is used to define the boundary of the enclosing \<object>-element as
-the set of locations where the value of the referenced levelset function equals the solidthreshold attribute.
-Locations where the levelset function is smaller and larger than the solidthreshold indicate the interior and exterior of the object, respectively.
+**sourceid** and **channel**:
 
-The levelset function is given by the "destination channel" within the \<volumetricstack>
-with resource id matching the volumetricstackid-attribute and with name matching the "channel"-attribute of the \<boundary>-element.
+The levelset function is given by the "dstchannel" within the \<volumetricstack>
+with resource id matching the sourceid-attribute and with name matching the "channel"-attribute of the \<boundary>-element.
+
+**solidthreshold**:
+
+The value of the leveselt function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
+ - If `f\<=solidthreshold`, then `(x,y,z)` is inside the specified object.
+ - If `f\>solidthreshold`, then `(x,y,z)` is outside the specified object.
 
 **transform**:
 
