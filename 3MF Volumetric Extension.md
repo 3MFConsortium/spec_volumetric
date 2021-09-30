@@ -119,15 +119,21 @@ Volumetric data can be encoded as 3d images that consist of voxels. Each \<image
 
 All image3dsheets within an image3d MUST have the same x- and y-size that is specified in the sizex and sizey-attributes, respecitvely. sizex, sizey and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
-Image3D objects, and thus the underlying \<image3dsheet> elements, SHOULD provide the channels "R", "G", "B" or "A". All image3dsheets within an image3d MUST provide the same channels, and each channel MUST have the same bit-depth accross all image3dsheets.
+Image3D objects, and thus the underlying \<image3dsheet> elements, MUST follow one of the input pixel layouts shown in the table below. All image3dsheets within an image3d MUST have the same input pixel layouts, and each channel MUST have the same bit-depth accross all image3dsheets.
 
-Specific rules apply if an image3dsheet does not provide these channels:
-- If an  \<image3dsheet> does not provide a color channel "R", "B" or "G" but provides a greyscale channel, sampling any color channel will
-return the value of the greyscale channel.
-- If an  \<image3dsheet> does not provide an alpha channel "A", sampling "A" will behave as if the  \<image3dsheet> contained a fully saturated alpha channel.
+The following table shows the logical interpretation of sampling the "R", "G", "B" or "A"-channel depending on the input pixel layouts. The meaning of symbols is as follows: R – red, G – green, B – blue, A – alpha, Y – grayscale.
+
+| Input pixel layout | | | | | |
+| --- | --- | --- | --- | --- | --- |
+| RGBA | R | G | B | A |
+| RGB | R | G | B | #FF |
+| YA | Y | Y | Y | A |
+| Y | Y | Y | Y | #FF |
+
+For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic then grayscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same grayscale value. If there is no alpha channel present in the image, the default value #FF (opaque) SHOULD be used.
 
 The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5), see Figure 2-2.
-The \<image3d> is not sampled in these absolute voxel coordinates, but instad in a normalized uvw-texture space: `(u,v,w) \in [0,1]x[0,1]x[0,1]`, where such that `(U,V,W) = (u*sizex,v*sizey,w*sheetcount)`.
+The \<image3d> is not sampled in these absolute voxel coordinates, but instead in a normalized uvw-texture space: `(u,v,w) \in [0,1]x[0,1]x[0,1]`, where such that `(U,V,W) = (u*sizex,v*sizey,w*sheetcount)`.
 Sampling at a point `(U,V,W)` that is not a half-integer coordinate is done according to the filter-rule, see TODO-link.
 
 ##### Figure 2-2: Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)
