@@ -312,11 +312,11 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     d' = s * d
 
-- "min"/"max":
+- "min" or "max":
    
     d' = min(s,d) or d' = max(s,d)
     
-    Blending methods "min" and "max" are useful to capture boolean operations between fields representing levelset functions.
+    Blending methods "min" and "max" are useful to capture boolean operations (union and intersection, respectively) between fields representing levelset functions.
 
 - "mask":
 
