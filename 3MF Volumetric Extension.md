@@ -5,7 +5,7 @@
 
 
 
-| **Version** | 0.5.0 |
+| **Version** | 0.6.0 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -95,6 +95,7 @@ Volumetric Modeling is an efficient approach to encode geometrical shapes and sp
 Where traditional, explicit modelling use boundaries (e.g. NURBS, triangular meshes) to describe surfaces or bodies (if these surfaces form a closed shell), volumetric modeling relies on a mathematical, field based description of the whole volume of the object. This is illustrated in fig. TODO: image of epxlicit boundary vs levelset: 
 
 The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and composition of an object vary in space.
+TODO: image of volumetric color vs iso surfaces with same color.
 
 This is only a brief illustration of the volumetric modelling approach to geometric design and more information can be found e.g. in  . or .
 
@@ -261,8 +262,6 @@ from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom sc
 
 The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^10 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 \<volumetriclayer> child-elements.
 
-![Illustration of the composited value of 2 channels within a volumetricstack](images/blending)
-
 ## 3.4.1 Destination channel element
 
 Element **\<dstchannel>**
@@ -307,8 +306,7 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     **dstalpha**: is a scalar value which is multiplied with the sampled values in the destination during the blending process.
     
-    TODO: Refer to example image below, add example using e.g. [0.5, 0.5] for a physical quantiy, and [1,-1] for a levelset.
-    TODO: The producer is responsible to choose parameters srcalpha and dstalpha, such that sampling them e.g. a physical property, is sensible.
+    The producer of a 3MF file is responsible to choose parameters srcalpha and dstalpha, such that sampling the blended value of a channel, e.g. a physical property, is sensible.
 
 - "multiply":
 
@@ -322,7 +320,7 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
 - "mask":
 
-    The blendmethod "mask" provides a means to use another 3d texture as a volumetric decal that only affects a region of complex shape within the volume.
+    The blendmethod "mask" provides a means to use another channel as a volumetric decal that only affects a region of complex shape within the volume.
 
     d' = m * s + (1 - m) * d
     
@@ -337,8 +335,7 @@ The name of each \<dstchannel> element MUST occur at most once as dstchannel att
 
 Destination channels that are not mentioned as dstchannel attribute in this list are not modifed by this \<volumetriclayer>.
 
-TODO: effect.
-![Example of different blending methods and parameters and src- or dst-alpha values](images/)
+![Example of different blending methods and parameters and src- or dst-alpha values](images/blending.png)
 
 ## 3.4.3 Channelmapping element
 Element **\<channelmapping>**
