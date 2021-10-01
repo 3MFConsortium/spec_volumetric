@@ -11,41 +11,31 @@
 
 ## Table of Contents
 
-[Preface](#preface)
-
-[About this Specification](#11-about-this-specification)
-
-[Document Conventions](#12-document-conventions)
-
-[Language Notes](#13-language-notes)
-
-[Software Conformance](#14-software-conformance)
-
-[Part I: 3MF Documents](#part-i-3mf-documents)
-
-[Chapter 1. Overview of Additions](#chapter-1-overview-of-additions)
-
-[Chapter 2. Object](#chapter-2-object)
-
-
-
-[Part II. Appendices](#part-ii-appendices)
-
-[Appendix A. Glossary](#appendix-a-glossary)
-
-[Appendix B. 3MF XSD Schema](#appendix-b-3mf-xsd-schema)
-
-[Appendix C. Standard Namespace](#appendix-c-standard-namespace)
-
-[Appendix D: Example file](#appendix-d-example-file)
-
-[References](#references)
+- [Preface](#preface)
+  * [About this Specification](#11-about-this-specification)
+  * [Document Conventions](#12-document-conventions)
+  * [Language Notes](#13-language-notes)
+  * [Software Conformance](#14-software-conformance)
+- [Part I: 3MF Documents](#part-i-3mf-documents)
+  * [Chapter 1. Overview of Additions](#chapter-1-overview-of-additions)
+  * [Chapter 2. 3D Image](#chapter-2-3d-image)
+  * [Chapter 3. Channel from 3D Image](#chapter-3-channel-from-3d-image)
+  * [Chapter 4. Volumetric Stack](#chapter-4-volumetric-stack)
+  * [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
+- [Part II. Appendices](#part-ii-appendices)
+  * [Appendix A. Glossary](#appendix-a-glossary)
+  * [Appendix B. 3MF XSD Schema](#appendix-b-3mf-xsd-schema)
+  * [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
+  * [Appendix D: Example file](#appendix-d-example-file)
+- [References](#references)
 
 
 
 # Preface
 
 ## 1.1. About this Specification
+
+![Volumetric image](images/volumetric_image1.png)
 
 This 3MF volumetric specification is an extension to the core 3MF specification. This document cannot stand alone and only applies as an addendum to the core 3MF specification. Usage of this and any other 3MF extensions follow an a la carte model, defined in the core 3MF specification.
 
@@ -56,6 +46,22 @@ Part II, "Appendices," contains additional technical details and schemas too ext
 The information contained in this specification is subject to change. Every effort has been made to ensure its accuracy at the time of publication.
 
 This extension MUST be used only with Core specification 1.3. or higher.
+
+
+## 1.2. Introduction
+Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties that is based on a volumetric description.
+Where traditional, explicit modelling use boundaries (e.g. NURBS, triangular meshes) to describe surfaces or bodies (if these surfaces form a closed shell), volumetric modeling relies on a mathematical, field based description of the whole volume of the object. This is illustrated in Figure 1-1 a).
+
+The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and composition of an object vary in space, c.f. Figure 1-1 b).
+
+This is only a brief illustration of the volumetric modelling approach to geometric design and more information can be found e.g. in  . or .
+
+TODO: image of explicit vs implicit
+TODO: image of volumetric color vs iso surfaces with same color.
+TODO: reference to literature.
+
+_Figure 1-1. Explicit vs. implicit representation_
+![Explicit vs. implicit representation](images/explicit_vs_implicit.png)
 
 ## Document Conventions
 
@@ -70,11 +76,12 @@ See [the standard 3MF Language Notes documentation](https://github.com/3MFConsor
 See [the standard 3MF Software Conformance documentation](https://github.com/3MFConsortium/spec_resources/blob/master/software_conformance.md).
 
 
-# Part I: 3MF Documents
+# Part I. 3MF Documents
 
-# Chapter 1. Overview of Additions
+## Chapter 1. Overview of Additions
 
-![Volumetric image](images/volumetric_image1.png)
+_Figure 1-1 Overview of model XML structure of 3MF with volumetric additions_
+![Overview of model XML structure of 3MF with volumetric additions](images/overview-of-additions.png)
 
 This document describes new elements, each of which is OPTIONAL for producers, but MUST be supported by consumers that specify support for this volumetric extension of 3MF.
 
@@ -84,24 +91,10 @@ This extension is meant to be an exact specification of geometric, appearance, m
 
 A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as required. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volmetric specification.
 
-##### Figure 2-1: Overview of model XML structure of 3MF with volumetric additions
 
-#####
-![Overview of model XML structure of 3MF with volumetric additions](images/figure_2-1.png)
+# Chapter 2. 3D Image
 
-# Chapter 2. Introduction
-## 2.1 Volumetric Modeling
-Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties that is based on a volumetric description.
-Where traditional, explicit modelling use boundaries (e.g. NURBS, triangular meshes) to describe surfaces or bodies (if these surfaces form a closed shell), volumetric modeling relies on a mathematical, field based description of the whole volume of the object. This is illustrated in fig. TODO: image of epxlicit boundary vs levelset: 
-
-The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and composition of an object vary in space.
-TODO: image of volumetric color vs iso surfaces with same color.
-
-This is only a brief illustration of the volumetric modelling approach to geometric design and more information can be found e.g. in  . or .
-
-# Chapter 3. Additions to Resources
-
-## 3.1 3D Image Resources
+## 2.1 3D Image
 
 Element **\<image3d>**
 
@@ -136,11 +129,10 @@ The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Gre
 The \<image3d> is not sampled in these absolute voxel coordinates, but instead in a normalized uvw-texture space: `(u,v,w) \in [0,1]x[0,1]x[0,1]`, where such that `(U,V,W) = (u*sizex,v*sizey,w*sheetcount)`.
 Sampling at a point `(U,V,W)` that is not a half-integer coordinate is done according to the filter-rule, see TODO-link.
 
-##### Figure 2-2: Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)
-
+_Figure 2-2: Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)_
 ![Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)](images/voxelcoordinatesystem.png)
 
-## 3.1.1 File Formats
+## 2.1.1 File Formats
 PNG images can provide acceptable compression and bitdepth for the levelset-function, color information, material mixing ratios or arbitrary property information.
 
 The following describes recommendations for the channel bit depth of PNG images used in this specification and is based on the nomenclature in the specification of the Portable Network Graphics (PNG, https://www.w3.org/TR/PNG) format.
@@ -152,7 +144,7 @@ The following describes recommendations for the channel bit depth of PNG images 
 To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
 
 
-## 3.1.2 OPC package layout
+## 2.1.2 OPC package layout
 It is RECOMMENDED that producers of 3MF Documents use the following part naming convention:
 
 Paths of  \<image3dsheet> SHOULD consist four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this  \<image3dsheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the  \<image3dsheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
@@ -162,7 +154,7 @@ This implies that all  \<image3dsheet> parts for an image3d-object SHOULD be loc
 ![OPC package layout](images/OPC_overview.png)
 
 
-## 3.2 3D Image Sheet
+## 2.2 3D Image Sheet
 
 Element **\<image3dsheet>**
 
@@ -182,7 +174,8 @@ Specifying different `valueoffset` and `valuescale`-attributes for different \<i
 
 Any interpolation of values of an \<image3dsheet>-element (c.f. TODO **filter** atribute) MUST be performed on the rescaled values `V'` according to the formula above. This is relevant if two subsequent \<image3dsheet>-elements have different values for `valueoffset` or `valuescale`.
 
-## 3.3. Channel from Image3D
+
+# 3. Channel from Image3D
  
 Element type
 **\<channelfromimage3d>**
@@ -247,7 +240,7 @@ The filter attribute defines the interpolation method.
 The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
 
-## 3.4. Volumetric Stack element
+# 4. Volumetric Stack
 
 Element **\<volumetricstack>**
 
@@ -266,7 +259,7 @@ from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom sc
 
 The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^10 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 \<volumetriclayer> child-elements.
 
-## 3.4.1 Destination channel element
+## 4.1 Destination channel element
 
 Element **\<dstchannel>**
 
@@ -283,7 +276,7 @@ within the \<volumetricstack>-element.
 
 The names of \<dstchannel>-elements must be unique within a \<volumetricstack>-element.
 
-## 3.4.2 Volumetric Layer element
+## 4.2 Volumetric Layer element
 
 Element **\<volumetriclayer>**
 
@@ -341,7 +334,7 @@ Destination channels that are not mentioned as dstchannel attribute in this list
 
 ![Example of different blending methods and parameters and src- or dst-alpha values](images/blending.png)
 
-## 3.4.3 Channelmapping element
+## 4.3 Channelmapping element
 Element **\<channelmapping>**
 
 ![channelmapping XML structure](images/element_channelmapping.png)
@@ -351,9 +344,9 @@ Element **\<channelmapping>**
 | sourceid | ST\_ResourceID | required | The resource id of a ChannelFromImage3D resource |
 | dstchannel | ST\_ChannelName | required | Name of the destination channel that should be manipulated by this channelmapping within this volumetric layer |
 
-# Chapter 4 Additions to Mesh
+# Chapter 5. Volumetric Data
 
-## 4.1. Volumetric Data extension to Mesh
+## 5.1. Volumetric Data extension to Mesh
  
 Element **\<mesh>**
 
@@ -366,7 +359,7 @@ Element **\<mesh>**
 The volumetric data \<volumedata> element is a new OPTIONAL element which extends the root triangular mesh representation (i.e. \<mesh> element).
 
 
-## 4.2. Volumetric Data
+## 5.2. Volumetric Data
  
 Element **\<volumedata>**
 
@@ -407,9 +400,7 @@ Figure ?-? illustrates overlapping objects with their volume defined by the mesh
 ![Illustration of overlapping meshes with volumedata elements](images/overlap_properties.png)
 
 
-
-
-## 4.2.1 Boundary element
+### 5.2.1 Boundary element
 
 Element **\<boundary>**
 
@@ -444,7 +435,7 @@ If the boundary-channel of the enclosing \<mesh> is being sampled at position `(
 ![Illustration of different local coordinate  systems and blendmethods](images/fig_coordinatesystems.png)
 
 
-## 4.2.2 Color element
+### 5.2.2 Color element
 
 Element **\<color>**
 
@@ -467,7 +458,7 @@ The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-e
 The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
 If the \<red>-, \<green>- or \<blue>-channel is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
-## 4.2.3 Color channel elements
+### 5.2.2.1 Color channel elements
 
 Elements **\<red>, \<green> and \<blue>**
 
@@ -489,7 +480,7 @@ references a destination channel from the \<volumetricstack> with Id matching th
 If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
 
 
-## 4.2.4 Composite element
+## 5.2.3 Composite element
 
 Element **\<composite>**
 
@@ -510,7 +501,7 @@ This element MUST contain at least one \<materialmapping> element, which will en
 The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
 If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
-## 4.2.5 Material mapping element
+## 5.2.4 Material mapping element
 
 Element **\<materialmapping>**
 
@@ -534,7 +525,7 @@ Ratio of Material i at point X: value of channel i at point X / sum(all N channe
 Each element instance of \<CT\_MaterialMapping> MUST have an attribute "srcchannel" that
 references a destination channel from the \<volumetricstack> with id matching the volumetricstackid of the parent \<composite> element.
 
-## 4.2.4 Property element
+### 5.2.4.1 Property element
 
 Element **\<property>**
 
