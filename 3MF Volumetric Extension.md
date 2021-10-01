@@ -29,7 +29,7 @@
 
 
 
-[Part II. Appendixes](#part-ii-appendixes)
+[Part II. Appendices](#part-ii-appendices)
 
 [Appendix A. Glossary](#appendix-a-glossary)
 
@@ -51,7 +51,7 @@ This 3MF volumetric specification is an extension to the core 3MF specification.
 
 Part I, "3MF Documents," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
 
-Part II, "Appendixes," contains additional technical details and schemas too extensive to include in the main body of the text as well as convenient reference information.
+Part II, "Appendices," contains additional technical details and schemas too extensive to include in the main body of the text as well as convenient reference information.
 
 The information contained in this specification is subject to change. Every effort has been made to ensure its accuracy at the time of publication.
 
@@ -400,11 +400,14 @@ Conflicting properties must be handled as follows:
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
 __Note__: Behavior for overlapping meshes with volumedata elements:
-If multiple volumes defined by the interior of clipping surfaces overlap, the properties in the overlapping volume are defined by the properties of interior of the last clipping surface.
-If the last overlapping object does not have a property of an earlier object that is being overlapped, the resulting volume does not have the property of the overlapped object.
-This makes sure that properties of an overlapped object do not determine any properties of an overlapping object.
+If multiple volumes defined by the interior of clipping surfaces overlap, the volumedata elements in the overlapping volume are defined by the volumedata elements of interior of the last clipping surface.
+If the last overlapping object does not have a volumedata element of an earlier object that is being overlapped, the resulting volume does not have the volumedata elements of the overlapped object.
+This makes sure that volumedata elements of an overlapped object do not determine any volumedata elements of an overlapping object.
+Figure ?-? illustrates overlapping objects with their volume defined by the mesh surface and the boundary element of their respective volumedata elements. Evaluating volumedata elements X and volumedata elements Y at different positions p1 to p4.
 
-TODO: add image from here: https://github.com/3MFConsortium/spec_volumetric/issues/20#issue-853644491  
+##### Figure ?-?: Sampling volumedata elements at different positions of overlapping meshes with volumedata
+![Illustration of overlapping meshes with volumedata elements](images/overlap_properties.png)
+
 
 
 
@@ -569,16 +572,7 @@ If a \<property> is marked as `required`, and a consumer does not support it, it
 Producers of 3MF files MUST mark all volumetric \<properties> required to represent the design intent of a model as `required`.
 
 
- 
- 
- 
- 
-TODO:
-- rules for property versus composite (if they do not make sense together)
-- rules for physical units
-- rules for where to put namespace information ... ? Print ticket?
-
-# Part II. Appendixes
+# Part II. Appendices
 
 # Appendix A. Glossary
 
@@ -603,4 +597,4 @@ see: [Examples/3dmodel.model](Examples/3dmodel.model)
 
 See [the standard 3MF References](https://github.com/3MFConsortium/spec_resources/blob/master/references.md).
 
-Copyright 3MF Consortium 2019.
+Copyright 3MF Consortium 2021.
