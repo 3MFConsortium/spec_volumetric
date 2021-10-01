@@ -126,11 +126,11 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 | Input pixel layout | | | | | |
 | --- | --- | --- | --- | --- | --- |
 | RGBA | R | G | B | A |
-| RGB | R | G | B | #FF |
+| RGB | R | G | B | 2^bitdepth-1 |
 | YA | Y | Y | Y | A |
-| Y | Y | Y | Y | #FF |
+| Y | Y | Y | Y | 2^bitdepth-1 |
 
-For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic then grayscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same grayscale value. If there is no alpha channel present in the image, the default value #FF (opaque) SHOULD be used.
+For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic then grayscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same grayscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
 The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5), see Figure 2-2.
 The \<image3d> is not sampled in these absolute voxel coordinates, but instead in a normalized uvw-texture space: `(u,v,w) \in [0,1]x[0,1]x[0,1]`, where such that `(U,V,W) = (u*sizex,v*sizey,w*sheetcount)`.
@@ -205,8 +205,6 @@ Element type
 Elements of type \<CT_ChannelFromImage3D> define the way in which individual channels from volumetric image resources can be referenced inside the volumetric layer elements. Each channel reference MUST contain a resource id that maps to an actual \<image3d> element.
 
 In addition, the elements of type \<CT_ChannelFromImage3D> MUST contain two string attributes which determine which channel to reference and how they should be mapped within the volumetric image. The srcchannel name string can use any of the reserved channel names (i.e. "R", "G", "B", or "A"). 
-
-For grayscale images "R", "G", and "B" are interchangeable and SHOULD always map to the same value. For images, which lack an alpha channel, any sampling operation on channel "A" should always return an alpha value of 1.0. The \<image3d> resource MUST be defined before being referenced by an element of type \<CT_ChannelFromImage3D> in the 3MF model document to simplify the parser.
 
 **channel**:
 
