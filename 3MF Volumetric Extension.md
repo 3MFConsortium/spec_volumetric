@@ -7,7 +7,12 @@
 
 | **Version** | 0.6.0 |
 | --- | --- |
-| **Status** | Draft |
+| **Status** | Pre-release |
+
+**Note**
+
+This version of the 3MF Volumetric Extension is a pre-release version. Consumers and producers can implement this version and use it, however, future version of this sepcification, in particular the "Published" version, might not be backwards compatible to this version.
+
 
 ## Table of Contents
 
