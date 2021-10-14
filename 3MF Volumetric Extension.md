@@ -127,7 +127,7 @@ For example, if the specification says that a certain value is sampled from the 
 
 The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5), see Figure 2-2.
 The \<image3d> is not sampled in these absolute voxel coordinates, but instead in a normalized uvw-texture space: `(u,v,w) \in [0,1]x[0,1]x[0,1]`, where such that `(U,V,W) = (u*sizex,v*sizey,w*sheetcount)`.
-Sampling at a point `(U,V,W)` that is not a half-integer coordinate is done according to the filter-rule, see TODO-link.
+Sampling at a point `(U,V,W)` that is not a half-integer coordinate is done according to the filter-rule, see the [filter attribute on the Channel From Image3D](#chapter-3-channel-from-3d-image).
 
 _Figure 2-2: Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)_
 ![Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)](images/voxelcoordinatesystem.png)
@@ -173,10 +173,10 @@ The `valueoffset` and `valuescale` determine how the numerical values of any cha
 If a channel in the image-file of this \<image3dsheet> holds a numerical value `V`, it needs to be sampled as `V' = V*valuescale + valueoffset`.
 Specifying different `valueoffset` and `valuescale`-attributes for different \<image3dsheet>s is optional, but allows producers to more efficiently encode values in different regions of an object.
 
-Any interpolation of values of an \<image3dsheet>-element (c.f. TODO **filter** atribute) MUST be performed on the rescaled values `V'` according to the formula above. This is relevant if two subsequent \<image3dsheet>-elements have different values for `valueoffset` or `valuescale`.
+Any interpolation of values of an \<image3dsheet>-element (c.f. the [**filter** atribute on the Channel From Image3D](#chapter-3-channel-from-3d-image)) MUST be performed on the rescaled values `V'` according to the formula above. This is relevant if two subsequent \<image3dsheet>-elements have different values for `valueoffset` or `valuescale`.
 
 
-# Chapter 3. Channel from Image3D
+# Chapter 3. Channel from 3D Image
  
 Element type
 **\<channelfromimage3d>**
@@ -255,7 +255,7 @@ Element **\<volumetricstack>**
 | id | ST\_ResourceID | required | Specifies the id of this volumetricstack |
 
 The volumetric stack is a resource within a 3MF model that defines how volumetric data
-from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom scalar field in three dimensions (\<dstchannel>). This custom scalar field of a \<volumetricstack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see TODO: link to volumedata-element[]().
+from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom scalar field in three dimensions (\<dstchannel>). This custom scalar field of a \<volumetricstack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see the [volumedata-element](#chapter-5-volumetric-data).
 
 1. It defines multiple destination channels, \<dstchannel>-elements. Each destinaton channel is a scalar field in 3d, whose values can be retrieved by sampling this volumetricstack.
 
@@ -436,7 +436,6 @@ The value of the leveselt function `f` at a position `(x,y,z)` and the solidthre
 The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
 If the boundary-channel of the enclosing \<mesh> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
-TODO: update Illustration of different coordinate systems in the sampling process
 _Figure 5-2 Illustration of different coordinate systems in the sampling process_
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
@@ -522,7 +521,7 @@ The \<materialmapping> element defines the relative contribution of a specific m
 
 If the sampled value of a channel is `\<0` it must be evaluated as "0".
 
-Procuer MUST not create files where the sum of all values in it's child \<materialmapping>-elements is smaller then Epsilon TODO. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
+Procuer MUST NOT create files where the sum of all values in it's child \<materialmapping>-elements is smaller than `10^-7`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
 - If we have N materials, then 
 Ratio of Material i at point X: value of channel i at point X / sum(all N channels at point X)
