@@ -266,7 +266,7 @@ from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom sc
 
 2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<channelfromimage3d> elements.
 
-The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^10 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^31-1 \<volumetriclayer> child-elements.
+The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^16 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^16 \<volumetriclayer> child-elements.
 
 ## 4.1 Destination channel element
 
