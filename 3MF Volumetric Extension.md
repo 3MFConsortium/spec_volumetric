@@ -298,7 +298,7 @@ Element **\<volumetriclayer>**
 | dstalpha | ST\_Number | optional |	Numeric scale factor for the destination layer. Required if blendmethod is "weightedsum".  |
 | maskid | ST\_ResourceId | optional |	The resource id of a \<channelfromimage3d> resource which shall be used for masking. Required if blendmethod is "mask".  |
 
-Each \volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
+Each \<volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
 
 **blendmethod**: controls according to which formula the current layer (known as the source layer) is blended with the layers below it or with the stack’s background value.
 
