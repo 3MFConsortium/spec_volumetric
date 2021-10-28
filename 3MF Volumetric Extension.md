@@ -57,9 +57,9 @@ This extension MUST be used only with Core specification 1.3. or higher.
 Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
 Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 a): a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
-The volumetric modeling approach relies on a mathematical, field based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso surface is indicated by the blue line.
+The volumetric modeling approach relies on a mathematical, field based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
 
-The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for red stripe at the fron left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a a distriution of three different materials, indicated by three different colors, red, blue and green.
+The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for red stripe at the fron left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a a distribution of three different materials, indicated by three different colors, red, blue and green.
 
 This is only a brief illustration of the volumetric modeling approach to geometric design and more information can be found in [references](#references) \[1\] and \[2\].
 
@@ -110,13 +110,13 @@ Element **\<image3d>**
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required || Specifies an identifier for this image3d resource. |
 | name | xs:string | optional || 3d image resource name used for annotations purposes. |
-| sizex | xs:positiveinteger | required || Size of all child \<image3dsheet>-elements in first dimension in pixels. |
-| sizey | xs:positiveinteger | required || Size of all child \<image3dsheet>-elements in second dimension in pixels. |
+| rowcount | xs:positiveinteger | required || Number of pixel rows in all child \<image3dsheet>-elements. |
+| columncount | xs:positiveinteger | required || Number of pixel columns in all child \<image3dsheet>-elements. |
 | sheetcount | xs:positiveinteger | required || Number of \<image3dsheet>-elements within this \<image3d> element. |
 
 Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
-All image3dsheets within an image3d MUST have the same x- and y-size that is specified in the sizex and sizey-attributes, respecitvely. sizex, sizey and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
+All image3dsheets within an image3d MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respecitvely. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
 Image3D objects, and thus the underlying \<image3dsheet> elements, MUST follow one of the input pixel layouts shown in the table below. All image3dsheets within an image3d MUST have the same input pixel layouts, and each channel MUST have the same bit-depth accross all image3dsheets.
 
@@ -131,12 +131,12 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 
 For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic then grayscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same grayscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
-The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The left-front-bottom corner of this grid corresponds to the (0,0,0) UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `sizex=4`, `sizey=3` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red triples.
-Figure 2-1b) illustrates the voxel coordinates and the UVW-values (red triple) throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>.
+The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ({0,1,...,rowcount-1] x {0,1,...,columncount-1] x [0,1,...,sheetcount-1]). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red triples.
+Figure 2-1b) illustrates the voxel coordinates and the UVW-values throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>. A voxelcoordinate triple `(i,j,k)` corresponds to voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
 
 The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attribues [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
 
-_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid: a) shows a voxex grid of 4 times 3 times 2 voxels. b) shows a sectoin view of the bottom voxels, c) shows a section view of the top voxels_
+_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid: a) shows a voxex grid of 3x4x2 voxels. b) shows a sectoin view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0._
 ![Voxel coordinates and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
