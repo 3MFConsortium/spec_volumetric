@@ -218,20 +218,20 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 1. "wrap" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
 
-    _Figure 3-1: tilestyle wrap_
-    ![Tilestyle wrap](images/tilestyle_wrap.png)
+    _Figure 3-1: tilestyle wrap illustrated throughout the first \<image3dsheet>_
+    ![Tilestyle wrap](images/tilestyle_wrap_w0.png)
 
 2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture MUST be reflected across a plane perpendicular to the axis in question following this formula:
 </br>s’ = 1 - abs( s - 2 * floor(s/2) - 1 )
 
-    _Figure 3-2: tilestyle mirror_
-    ![Tilestyle mirror](images/tilestyle_mirror.png)
+    _Figure 3-2: tilestyle mirror illustrated throughout the first \<image3dsheet>_
+    ![Tilestyle mirror](images/tilestyle_mirror_w0.png)
 
 3. "clamp" will restrict the texture coordinate value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-    _Figure 3-3: tilestyle clamp_
-    ![Tilestyle mirror](images/tilestyle_clamp.png)
+    _Figure 3-3: tilestyle clamp along the u-direction illustrated throughout the first \<image3dsheet>_
+    ![Tilestyle mirror](images/tilestyle_clamp_w0.png)
 
 4. "none" will discard the \<CT_ChannelFromImage3D>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<CT_ChannelFromImage3D> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
 
