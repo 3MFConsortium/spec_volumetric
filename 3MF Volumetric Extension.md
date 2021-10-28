@@ -132,12 +132,12 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic then grayscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same grayscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
 The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The left-front-bottom corner of this grid corresponds to the (0,0,0) UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `sizex=4`, `sizey=3` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red tripples.
-Figure 2-2b) illustrates the voxelcoordinates and the UVW-values (red tripple) throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>.
+Figure 2-1b) illustrates the voxelcoordinates and the UVW-values (red tripple) throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>.
 
 The sampling rules for UVW values are detmerined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attribues [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
 
 _Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid_
-![Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)](images/image3dcoordinates.png)
+![Voxel coordinates and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
 PNG images can provide acceptable compression and bitdepth for the levelset-function, color information, material mixing ratios or arbitrary property information.
