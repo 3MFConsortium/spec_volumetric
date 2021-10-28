@@ -131,12 +131,13 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 
 For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic then grayscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same grayscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
-The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The centers of each voxel (ix, iy, iz) are at the half integer positions (ix + 0.5, iy + 0.5, iz + 0.5), see Figure 2-2.
-The \<image3d> is not sampled in these absolute voxel coordinates, but instead in a normalized uvw-texture space: `(u,v,w) \in [0,1]x[0,1]x[0,1]`, where such that `(U,V,W) = (u*sizex,v*sizey,w*sheetcount)`.
-Sampling at a point `(U,V,W)` that is not a half-integer coordinate is done according to the filter-rule, see the [filter attribute on the Channel From Image3D](#chapter-3-channel-from-3d-image).
+The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The left-front-bottom corner of this grid corresponds to the (0,0,0) UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `sizex=4`, `sizey=3` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red tripples.
+Figure 2-2b) illustrates the voxelcoordinates and the UVW-values (red tripple) throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>.
 
-_Figure 2-2: Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)_
-![Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)](images/voxelcoordinatesystem.png)
+The sampling rules for UVW values are detmerined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attribues [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
+
+_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid_
+![Voxel centers at half integer position and normalized uvw-texture space (2d-illustration)](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
 PNG images can provide acceptable compression and bitdepth for the levelset-function, color information, material mixing ratios or arbitrary property information.
