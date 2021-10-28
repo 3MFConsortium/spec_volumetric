@@ -106,13 +106,13 @@ Element **\<image3d>**
 
 ![Image3D XML structure](images/element_image3d.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| id | ST\_ResourceID | required | Specifies an identifier for this image3d resource. |
-| name | xs:string | optional | 3d image resource name used for annotations purposes. |
-| sizex | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in first dimension in pixels. |
-| sizey | xs:positiveinteger | required | Size of all child \<image3dsheet>-elements in second dimension in pixels. |
-| sheetcount | xs:positiveinteger | required | Number of \<image3dsheet>-elements within this \<image3d> element. |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required || Specifies an identifier for this image3d resource. |
+| name | xs:string | optional || 3d image resource name used for annotations purposes. |
+| sizex | xs:positiveinteger | required || Size of all child \<image3dsheet>-elements in first dimension in pixels. |
+| sizey | xs:positiveinteger | required || Size of all child \<image3dsheet>-elements in second dimension in pixels. |
+| sheetcount | xs:positiveinteger | required || Number of \<image3dsheet>-elements within this \<image3d> element. |
 
 Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
@@ -189,18 +189,18 @@ Element type
 
 ![Channel from Image3D XML structure](images/element_channelfromimage3d.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| id | ST\_ResourceID | required | The resource id of this ChannelFromImage3D resource |
-| image3did | ST\_ResourceID | required | Specifies the id of the 3d image resource |
-| channel | ST\_ChannelName | required | Specifies which channel to reference in the 3d image resource |
-| transform | ST\_Matrix3D | required | Transformation of the channel coordinate system into the \<image3d> coordinate system |
-| valueoffset | ST\_Number | _0.0_ | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D |
-| valuescale | ST\_Number | _1.0_ | Specifies a numerical scaling for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D. |
-| filter |ST\_Filter | _linear_ | "linear" or "nearest" neighbor interpolation |
-| tilestyleu | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
-| tilestylev | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
-| tilestylew | ST\_TileStyle | Required |	Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
+| Name   | Type   | Use | Default| Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | The resource id of this ChannelFromImage3D resource |
+| image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource |
+| channel | ST\_ChannelName | required | | Specifies which channel to reference in the 3d image resource |
+| transform | ST\_Matrix3D | required | | Transformation of the channel coordinate system into the \<image3d> coordinate system |
+| valueoffset | ST\_Number |  | _0.0_ | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D |
+| valuescale | ST\_Number | | _1.0_ | Specifies a numerical scaling for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D. |
+| filter |ST\_Filter | | _linear_ | "linear" or "nearest" neighbor interpolation |
+| tilestyleu | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
+| tilestylev | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
+| tilestylew | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
 
 Elements of type \<CT_ChannelFromImage3D> define the way in which individual channels from volumetric image resources can be referenced inside the volumetric layer elements. Each channel reference MUST contain a resource id that maps to an actual \<image3d> element.
 
@@ -256,9 +256,9 @@ Element **\<volumetricstack>**
 
 ![volumetricstack XML structure](images/element_volumetricstack.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| id | ST\_ResourceID | required | Specifies the id of this volumetricstack |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies the id of this volumetricstack |
 
 The volumetric stack is a resource within a 3MF model that defines how volumetric data
 from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom scalar field in three dimensions (\<dstchannel>). This custom scalar field of a \<volumetricstack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see the [volumedata-element](#chapter-5-volumetric-data).
@@ -275,10 +275,10 @@ Element **\<dstchannel>**
 
 ![dstchannel XML structure](images/element_dstchannel.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| name | ST\_ChannelName | required | Specifies the name of this destination channel |
-| background | ST\_Number | required | Specifies the background value of this channel |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| name | ST\_ChannelName | required | | Specifies the name of this destination channel |
+| background | ST\_Number | required | | Specifies the background value of this channel |
 
 A destination channel specifies a name of a channel that can be sampled from a volumetricstack element.
 The background value is the value that serves as a base for the blending that takes place in the volumetriclayer elements
@@ -292,12 +292,12 @@ Element **\<volumetriclayer>**
 
 ![volumetriclayer XML structure](images/element_volumetriclayer.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| blendmethod | ST\_BlendMethod | required | Determines how this layer is applied to its sublayers. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
-| srcalpha | ST\_Number | optional |	Numeric scale factor for the source layer. Required if blendmethod is "weightedsum". |
-| dstalpha | ST\_Number | optional |	Numeric scale factor for the destination layer. Required if blendmethod is "weightedsum".  |
-| maskid | ST\_ResourceId | optional |	The resource id of a \<channelfromimage3d> resource which shall be used for masking. Required if blendmethod is "mask".  |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| blendmethod | ST\_BlendMethod | required | | Determines how this layer is applied to its sublayers. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
+| srcalpha | ST\_Number | | | Numeric scale factor for the source layer. Required if blendmethod is "weightedsum". |
+| dstalpha | ST\_Number | | | Numeric scale factor for the destination layer. Required if blendmethod is "weightedsum".  |
+| maskid | ST\_ResourceId | | | The resource id of a \<channelfromimage3d> resource which shall be used for masking. Required if blendmethod is "mask".  |
 
 Each \<volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
 
@@ -350,10 +350,10 @@ Element **\<channelmapping>**
 
 ![channelmapping XML structure](images/element_channelmapping.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | The resource id of a ChannelFromImage3D resource |
-| dstchannel | ST\_ChannelName | required | Name of the destination channel that should be manipulated by this channelmapping within this volumetric layer |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| sourceid | ST\_ResourceID | required | | The resource id of a ChannelFromImage3D resource |
+| dstchannel | ST\_ChannelName | required | | Name of the destination channel that should be manipulated by this channelmapping within this volumetric layer |
 
 # Chapter 5. Volumetric Data
 
@@ -362,10 +362,6 @@ Element **\<channelmapping>**
 Element **\<mesh>**
 
 ![mesh XML structure](images/element_mesh.png)
-
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| v:volumedata | CT\_VolumeData | optional | The entry point to volumetric information of this specification. |
 
 The volumetric data \<volumedata> element is a new OPTIONAL element which extends the root triangular mesh representation (i.e. \<mesh> element).
 
@@ -417,12 +413,12 @@ Element **\<boundary>**
 
 ![boundary XML structure](images/element_boundary.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds a channel that encodes boundary as a levelset |
-| channel | ST\_ChannelName | required | Name of the channel that holds a levelset function which defines the boundary |
-| solidthreshold | ST\_Number | *0.0* | Determines the values of the levelset function which are considered inside or outside the specified object  |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds a channel that encodes boundary as a levelset |
+| channel | ST\_ChannelName | required | | Name of the channel that holds a levelset function which defines the boundary |
+| solidthreshold | ST\_Number | | *0.0* | Determines the values of the levelset function which are considered inside or outside the specified object  |
+| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
@@ -434,8 +430,8 @@ with resource id matching the sourceid-attribute and with name matching the "cha
 **solidthreshold**:
 
 The value of the leveselt function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
- - If `f\<=solidthreshold`, then `(x,y,z)` is inside the specified object.
- - If `f\>solidthreshold`, then `(x,y,z)` is outside the specified object.
+ - If `f<=solidthreshold`, then `(x,y,z)` is inside the specified object.
+ - If `f>solidthreshold`, then `(x,y,z)` is outside the specified object.
 
 **transform**:
 
@@ -451,10 +447,10 @@ Element **\<color>**
 
 ![color XML structure](images/element_color.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels to be used in the child color elements. |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channels to be used in the child color elements. |
+| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 The \<color> element is used to define the color of the object.
 The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
@@ -480,9 +476,9 @@ Complex type **\<colorchannel>**
 
 ![colorchannel XML structure](images/ct_colorchannel.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| srcchannel | ST\_ChannelName | required | Source channel for the values of this color channel |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| srcchannel | ST\_ChannelName | required | | Source channel for the values of this color channel |
 
 Each element instance of CT\_ColorChannel MUST have an attribute "srcchannel" that
 references a destination channel from the \<volumetricstack> with Id matching the volumetricstackid of the parent \<color> element.
@@ -496,11 +492,11 @@ Element **\<composite>**
 
 ![composite XML structure](images/element_composite.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channels used in the child \<materialmapping>-elements |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
-| basematerialid | ST\_ResourceID | required | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
+| Name   | Type | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channels used in the child \<materialmapping>-elements |
+| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| basematerialid | ST\_ResourceID | required | | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
 
 The \<composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
 
@@ -517,15 +513,15 @@ Element **\<materialmapping>**
 
 ![materialmapping XML structure](images/element_materialmapping.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| srcchannel | ST\_ChannelName | required | Source channel for the values of this material |
-| pindex | ST\_ResourceIndex | required | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| srcchannel | ST\_ChannelName | required | | Source channel for the values of this material |
+| pindex | ST\_ResourceIndex | required | | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent
 \<composite>-element.
 
-If the sampled value of a channel is `\<0` it must be evaluated as "0".
+If the sampled value of a channel is `<0` it must be evaluated as "0".
 
 Procuer MUST NOT create files where the sum of all values in it's child \<materialmapping>-elements is smaller than `10^-7`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
@@ -541,13 +537,13 @@ Element **\<property>**
 
 ![property XML structure](images/element_property.png)
 
-| Name   | Type   | Use | Annotation |
-| --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | ResourceID of the volumetricstack that holds the channel used by this property |
-| transform | ST\_Matrix3D | required | Transformation of the object coordinate system into the volumetricstack coordinate system |
-| channel | ST\_ChannelName | required | Name of the channel that serves as source for the scalar value representing this property. |
-| name | xs:QName | required | Namespace and name of this property property |
-| required | xs:boolean | optional | Indicator whether this property is required to process this 3MF document instance. |
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channel used by this property |
+| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| channel | ST\_ChannelName | required | | Name of the channel that serves as source for the scalar value representing this property. |
+| name | xs:QName | required | | Namespace and name of this property property |
+| required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
 
 The \<property> element allows to assign any point in space a scalar value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
 
