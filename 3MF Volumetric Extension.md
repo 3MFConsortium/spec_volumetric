@@ -268,7 +268,7 @@ from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom sc
 
 2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean opeartions on the scalar fields provided by different \<channelfromimage3d> elements.
 
-The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^16 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^16 \<volumetriclayer> child-elements.
+The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^16-1 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^16-1 \<volumetriclayer> child-elements.
 
 ## 4.1 Destination channel element
 
@@ -632,8 +632,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:complexType name="CT_VolumetricStack">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="65536"/>
-			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="65536"/>
+			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="65535"/>
+			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="65535"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
