@@ -54,19 +54,20 @@ This extension MUST be used only with Core specification 1.3. or higher.
 
 
 ## 1.2. Introduction
-Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties that is based on a volumetric description.
-Where traditional, explicit modelling use boundaries (e.g. NURBS, triangular meshes) to describe surfaces or bodies (if these surfaces form a closed shell), volumetric modeling relies on a mathematical, field based description of the whole volume of the object. This is illustrated in Figure 1-1 a).
+Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
+Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 a): a NURBS surface deliminates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top paer of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
-The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and composition of an object vary in space, c.f. Figure 1-1 b).
+The volumetric modeling approach relies on a mathematical, field based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso surface is indicated by the blue line.
 
-This is only a brief illustration of the volumetric modelling approach to geometric design and more information can be found e.g. in  . or .
+The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for red stripe at the fron left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a a distriution of three different materials, indicated by three different colors, red, blue and green.
 
-TODO: image of explicit vs implicit
-TODO: image of volumetric color vs iso surfaces with same color.
-TODO: reference to literature.
+This is only a brief illustration of the volumetric modeling approach to geometric design and more information can be found in [references](#references) \[1\] and \[2\].
 
 _Figure 1-1. Explicit vs. implicit representation_
 ![Explicit vs. implicit representation](images/explicit_vs_implicit.png)
+
+_Figure 1-2. Spatially varying properties_
+![Volumetric properties](images/spatially_varying_property.png)
 
 ## Document Conventions
 
@@ -860,6 +861,10 @@ see: [Examples/3dmodel.model](Examples/3dmodel.model)
 
 # References
 
-See [the standard 3MF References](https://github.com/3MFConsortium/spec_resources/blob/master/references.md).
+[1] Pasko, Alexander, et al. "Function representation in geometric modeling: concepts, implementation and applications." The visual computer 11.8 (1995): 429-446.
+
+[2] Wyvill, Brian, Andrew Guy, and Eric Galin. "Extending the csg tree. warping, blending and boolean operations in an implicit surface modeling system." Computer Graphics Forum. Vol. 18. No. 2. Oxford, UK and Boston, USA: Blackwell Publishers Ltd, 1999.
+
+See also [the standard 3MF References](https://github.com/3MFConsortium/spec_resources/blob/master/references.md).
 
 Copyright 3MF Consortium 2021.
