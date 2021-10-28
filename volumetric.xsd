@@ -54,8 +54,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:complexType name="CT_VolumetricStack">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="1048576"/>
-			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="2147483647"/>
+			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="65536"/>
+			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="65536"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
