@@ -577,7 +577,6 @@ Producers of 3MF files MUST mark all volumetric \<properties> required to repres
 See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/blob/master/glossary.md).
 
 ## Appendix B. 3MF XSD Schema for the Volumetric Extension
-see: [volumetric.xsd](volumetric.xsd)
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" xmlns:xs="http://www.w3.org/2001/XMLSchema"
@@ -635,8 +634,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:complexType name="CT_VolumetricStack">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="1048576"/>
-			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="2147483647"/>
+			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="65536"/>
+			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="65536"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
