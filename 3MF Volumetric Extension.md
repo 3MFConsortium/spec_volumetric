@@ -55,7 +55,7 @@ This extension MUST be used only with Core specification 1.3. or higher.
 
 ## 1.2. Introduction
 Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
-Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 a): a NURBS surface deliminates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top paer of the described object is being shown transparently to allow viewing the "inside" of the described object.
+Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 a): a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
 The volumetric modeling approach relies on a mathematical, field based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso surface is indicated by the blue line.
 
@@ -131,12 +131,12 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 
 For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic then grayscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same grayscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
-The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The left-front-bottom corner of this grid corresponds to the (0,0,0) UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `sizex=4`, `sizey=3` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red tripples.
-Figure 2-1b) illustrates the voxelcoordinates and the UVW-values (red tripple) throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>.
+The \<image3d>-element defines a voxel grid of values (e.g. RGB, Grey-Alpha, Grey) values distributed in a cuboid ([0..sizex] x [0..sizey] x [0..sheetcount]). The left-front-bottom corner of this grid corresponds to the (0,0,0) UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `sizex=4`, `sizey=3` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red triples.
+Figure 2-1b) illustrates the voxel coordinates and the UVW-values (red triple) throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>.
 
-The sampling rules for UVW values are detmerined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attribues [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
+The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attribues [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
 
-_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid_
+_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid: a) shows a voxex grid of 4 times 3 times 2 voxels. b) shows a sectoin view of the bottom voxels, c) shows a section view of the top voxels_
 ![Voxel coordinates and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
