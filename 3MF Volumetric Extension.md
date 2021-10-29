@@ -108,8 +108,8 @@ Element **\<image3d>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required || Specifies an identifier for this image3d resource. |
-| name | xs:string | optional || 3d image resource name used for annotations purposes. |
+| id | ST\_ResourceID | required | | Specifies an identifier for this image3d resource. |
+| name | xs:string | | | 3d image resource name used for annotations purposes. |
 | rowcount | xs:positiveinteger | required || Number of pixel rows in all child \<image3dsheet>-elements. |
 | columncount | xs:positiveinteger | required || Number of pixel columns in all child \<image3dsheet>-elements. |
 | sheetcount | xs:positiveinteger | required || Number of \<image3dsheet>-elements within this \<image3d> element. |
@@ -171,8 +171,8 @@ Element **\<image3dsheet>**
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | path | ST\_UriReference | required | | Specifies the OPC part name (i.e. path) of the image data file |
-| valueoffset | ST\_Number | | _0.0_ | Specifies a numerical offset for the values obtained from any channel this `image3dsheet`. |
-| valuescale | ST\_Number | | _1.0_ | Specifies a numerical scaling for the values obtained from any channel this `image3dsheet`. |
+| valueoffset | ST\_Number | | 0.0 | Specifies a numerical offset for the values obtained from any channel this `image3dsheet`. |
+| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from any channel this `image3dsheet`. |
 
 Each \<image3dsheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
@@ -196,9 +196,9 @@ Element type
 | image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource |
 | channel | ST\_ChannelName | required | | Specifies which channel to reference in the 3d image resource |
 | transform | ST\_Matrix3D | required | | Transformation of the channel coordinate system into the \<image3d> coordinate system |
-| valueoffset | ST\_Number |  | _0.0_ | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D |
-| valuescale | ST\_Number | | _1.0_ | Specifies a numerical scaling for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D. |
-| filter |ST\_Filter | | _linear_ | "linear" or "nearest" neighbor interpolation |
+| valueoffset | ST\_Number |  | 0.0 | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D |
+| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from the `channel` within the `image3d` refered to by this CT_ChannelFromImage3D. |
+| filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation |
 | tilestyleu | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
 | tilestylev | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
 | tilestylew | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
@@ -418,7 +418,7 @@ Element **\<boundary>**
 | --- | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds a channel that encodes boundary as a levelset |
 | channel | ST\_ChannelName | required | | Name of the channel that holds a levelset function which defines the boundary |
-| solidthreshold | ST\_Number | | *0.0* | Determines the values of the levelset function which are considered inside or outside the specified object  |
+| solidthreshold | ST\_Number | | 0.0 | Determines the values of the levelset function which are considered inside or outside the specified object  |
 | transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
