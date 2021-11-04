@@ -114,9 +114,9 @@ Element **\<image3d>**
 | columncount | xs:positiveinteger | required || Number of pixel columns in all child \<image3dsheet>-elements. |
 | sheetcount | xs:positiveinteger | required || Number of \<image3dsheet>-elements within this \<image3d> element. |
 
-Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
+Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a finite voxel grid from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
-All image3dsheets within an image3d MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respectively. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
+All \<image3dsheets> within an image3d MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respectively. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
 Image3D objects, and thus the underlying \<image3dsheet> elements, MUST follow one of the input pixel layouts shown in the table below. All image3dsheets within an image3d MUST have the same input pixel layouts, and each channel MUST have the same bit-depth across all image3dsheets.
 
@@ -160,7 +160,6 @@ This implies that all  \<image3dsheet> parts for an image3d-object SHOULD be loc
 
 _Figure 2-3: OPC package layout_
 ![OPC package layout](images/OPC_overview.png)
-
 
 ## 2.2 3D Image Sheet
 
@@ -247,6 +246,9 @@ The filter attribute defines the interpolation method used when a \<channelfromi
 
 The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
+
+__Note__: Summing up [chapters 2](#chapter-2-3d-image) and [3](#chapter-3-channel-from-3d-image): the \<image3d> and the \<channelfromimage3d>-elements describe a scalar volumetric texture. Other file formats like OpenVDB or OpenEXR offer similar functionality, and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode volumetric textures and benefit from their advanced features.
+The remainder of this specification deals with the mapping of these volumetric textures onto mesh-objects in a 3MF file and giving these textures a meaning for additive manufacturing processes. Replacing \<image3d> and the \<channelfromimage3d> would not effect the remaining parts of this specification.
 
 # Chapter 4. Volumetric Stack
 
@@ -579,7 +581,7 @@ Figure 5-3d) Shows the UVW coordinate space and where the sampling point (+) is 
 
 Figure 5-3e) illustrates where the sampling point (+) ends up in the the voxel coordinate space. The mapping of UVW to voxel coordinates in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 5-2 Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<volumetricstack>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel coordinate space._
+_Figure 5-2: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<volumetricstack>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel coordinate space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
 
