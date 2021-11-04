@@ -432,7 +432,7 @@ with resource id matching the sourceid-attribute and with name matching the "cha
 
 **solidthreshold**:
 
-The value of the leveselt function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
+The value of the levelset function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
  - If `f<=solidthreshold`, then `(x,y,z)` is inside the specified object.
  - If `f>solidthreshold`, then `(x,y,z)` is outside the specified object.
 
@@ -454,9 +454,9 @@ Element **\<color>**
 | transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 The \<color> element is used to define the color of the object.
-The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
+The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the channel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
-This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
+This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
 
 The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
 
@@ -479,12 +479,12 @@ Complex type **\<colorchannel>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| srcchannel | ST\_ChannelName | required | | Source channel for the values of this color channel |
+| channel | ST\_ChannelName | required | | Source channel for the values of this color channel |
 
-Each element instance of CT\_ColorChannel MUST have an attribute "srcchannel" that
-references a destination channel from the \<volumetricstack> with Id matching the volumetricstackid of the parent \<color> element.
+Each element instance of CT\_ColorChannel MUST have an attribute "channel" that
+references a destination channel from the \<volumetricstack> with Id matching the sourceid of the parent \<color> element.
 
-If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
+If the value of the channel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
 
 
 ## 5.2.3 Composite element
@@ -516,7 +516,7 @@ Element **\<materialmapping>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| srcchannel | ST\_ChannelName | required | | Source channel for the values of this material |
+| channel | ST\_ChannelName | required | | Source channel for the values of this material |
 | pindex | ST\_ResourceIndex | required | | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent
@@ -526,14 +526,12 @@ If the sampled value of a channel is `<0` it must be evaluated as "0".
 
 Procuer MUST NOT create files where the sum of all values in it's child \<materialmapping>-elements is smaller than `10^-7`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
-- If there are `N` materials, then the
-ratio of Material `i` at point `X` is given by:
+- If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
    ```
    value of channel i / sum(value of all N channels at point X)
    ```
 
-Each element instance of \<CT\_MaterialMapping> MUST have an attribute "srcchannel" that
-references a destination channel from the \<volumetricstack> with id matching the volumetricstackid of the parent \<composite> element.
+Each element instance of \<CT\_MaterialMapping> MUST have an attribute "channel" that references a destination channel from the \<volumetricstack> with id matching the sourceid of the parent \<composite> element.
 
 ### 5.2.4.1 Property element
 
@@ -558,7 +556,7 @@ If the channel of a \<property>-element is being sampled at position `(x,y,z)` i
 
 This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
 A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called "http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05".
-The specifications of private namespaces (that are not ratified by the 3MF Consortium) need to be negotiated between producer and consumer of a 3MF file.
+The specifications of private namespaces (that are not ratified by the 3MF Consortium) MUST be negotiated between producer and consumer of a 3MF file.
 
 The names of \<property>-elements MUST be unique within a \<volumedata>. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
 The interpretation of the value MUST be defined by the owner of the namespace. 
@@ -568,7 +566,7 @@ If the interpretation of a property might result in a conflict with the standard
 If a physical unit is necessary, the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
 
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
-Producers of 3MF files MUST mark all volumetric \<properties> required to represent the design intent of a model as `required`.
+Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
 
 __Note__:
 
@@ -576,14 +574,14 @@ Equipped with the language elements of this specification, one can recapitulate 
 
 Figure 5-2 illustrates the 3MF elements, the different coordinate systems and transforms between them when a volume data element (in this case \<color>) is sampled in the object coordinate space.
 
-Figure 5-2a) The object is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
+Figure 5-2a) The object is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
 
 Figure 5-2b) Offers a view into the \<volumetricstack> and its corresponding coordinate system. The transformation `T1` from object coordinate space to \<volumetricstack> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does note exist in the \<volumetricstack> context.
 The value sampled from the \<volumetricstack> element might be the result of blending multiple \<volumetriclayer>s in this stack, see Figure 4-1.
 
 Figure 5-2c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<volumetricstack> coordinate system and UVW space is given according to the `transform`-attribute of the \<channelfromimage3d> element in each \<volumetriclayer> of this \<volumetricstack>.
 
-Figure 5-3d) Shows the UVW coordinate space and where the sampling point maps to, and the UVW-locations to which the voxel centers of the \<image3d>-element map.
+Figure 5-3d) Shows the UVW coordinate space and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the \<image3d>-element map.
 
 Figure 5-3e) illustrates where the sampling point (+) ends up in the the voxel coordinate space. The mapping of UVW to voxel coordinates in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
