@@ -57,9 +57,9 @@ This extension MUST be used only with Core specification version 1.3. or higher.
 Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
 Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 a): a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
-The volumetric modeling approach relies on a mathematical, field based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (grey-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
+The volumetric modeling approach relies on a mathematical, field-based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
 
-The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for red stripe at the from left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a a distribution of three different materials, indicated by three different colors, red, blue and green.
+The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for red stripe at the front-left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a a distribution of three different materials, indicated by three different colors, red, blue and green.
 
 This is only a brief illustration of the volumetric modeling approach to geometric design and more information can be found in [references](#references) \[1\] and \[2\].
 
@@ -132,15 +132,15 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same greyscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
 The \<image3d>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1] x {0,1,...,columncount-1] x [0,1,...,sheetcount-1]). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red triples.
-Figure 2-1b) illustrates the voxel coordinates and the UVW-values throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>. A voxelcoordinate triple `(i,j,k)` corresponds to voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
+Figure 2-1b) illustrates the voxel coordinates and the UVW-values throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>. A voxel coordinate triple `(i,j,k)` corresponds to voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
 
 The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attribues [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
 
-_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid: a) shows a voxex grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
+_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
 ![Voxel coordinates and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
-PNG images can provide acceptable compression and bitdepth for the levelset-function, color information, material mixing ratios or arbitrary property information.
+PNG images can provide acceptable compression and bit-depth for the levelset-function, color information, material mixing ratios or arbitrary property information.
 
 The following describes recommendations for the channel bit depth of PNG images used in this specification and is based on the nomenclature in the specification of the Portable Network Graphics (PNG, https://www.w3.org/TR/PNG) format.
 
@@ -343,7 +343,7 @@ Figure 4-1 shows an example of two layers within a volumetric stack and the resu
 A volumetriclayer MUST contain at least one \<channelmapping> element. The dstchannel attribute of the each \<channelmapping> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
 The name of each \<dstchannel> element MUST occur at most once as dstchannel attribute in one of the \<channelmapping>.
 
-Destination channels that are not mentioned as dstchannel attribute in this list are not modifed by this \<volumetriclayer>.
+Destination channels that are not mentioned as dstchannel attribute in this list are not modified by this \<volumetriclayer>.
 
 _Figure 4-1: Example of different blending methods and parameters and src- or dst-alpha values_
 ![Example of different blending methods and parameters and src- or dst-alpha values](images/blending.png)
@@ -380,7 +380,7 @@ Volumedata MUST only be used in a mesh of object type "model" or "solidsupport".
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh.
 
 The volumedata element can contain up to one \<boundary> child element, up to one \<composite> child element,
-up to one \<color> element, and an arbitray number of \<property> elements.
+up to one \<color> element, and an arbitrary number of \<property> elements.
 
 The child elements modify the enclosing \<mesh> in two fundamentally different ways:
 1. the child \<boundary> element (if it exists) determines the geometry of the \<mesh> object.
@@ -392,12 +392,12 @@ We need to define the clipping surface of a mesh with a \<volumedata> element. T
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
-Volumetric content is always clipped to the clipping surface of the mesh that embedds it. If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
+Volumetric content is always clipped to the clipping surface of the mesh that embeds it. If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
 
 The properties at surface regions that are not explicitly specified are instead given by the volumetric properties.
 
 Conflicting properties must be handled as follows:
-1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on phsycal grounds (e.g. non-conducting copper).
+1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on physical grounds (e.g. non-conducting copper).
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
 __Note__: Behavior for overlapping meshes with volumedata elements:
@@ -418,7 +418,7 @@ Element **\<boundary>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds a channel that encodes boundary as a levelset |
+| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds a channel that encodes the boundary as a levelset |
 | channel | ST\_ChannelName | required | | Name of the channel that holds a levelset function which defines the boundary |
 | solidthreshold | ST\_Number | | 0.0 | Determines the values of the levelset function which are considered inside or outside the specified object  |
 | transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
@@ -456,7 +456,7 @@ Element **\<color>**
 The \<color> element is used to define the color of the object.
 The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the srcchannel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
-This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is usefull for defining parts with with nontransparanet, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with nontransparent materials.
+This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
 
 The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
 
@@ -565,7 +565,7 @@ The interpretation of the value MUST be defined by the owner of the namespace.
 
 If the interpretation of a property might result in a conflict with the standard volumedata-elements (boundary, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
 
-If a physical unit is necessary the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
+If a physical unit is necessary, the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
 
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<properties> required to represent the design intent of a model as `required`.
@@ -583,7 +583,7 @@ The value sampled from the \<volumetricstack> element might be the result of ble
 
 Figure 5-2c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<volumetricstack> coordinate system and UVW space is given according to the `transform`-attribute of the \<channelfromimage3d> element in each \<volumetriclayer> of this \<volumetricstack>.
 
-Figure 5-3d) Shows the UVW coordinate space and where the sampling point maps to, and the UVW-loctions to which the voxel centers of the \<image3d>-element map.
+Figure 5-3d) Shows the UVW coordinate space and where the sampling point maps to, and the UVW-locations to which the voxel centers of the \<image3d>-element map.
 
 Figure 5-3e) illustrates where the sampling point (+) ends up in the the voxel coordinate space. The mapping of UVW to voxel coordinates in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
