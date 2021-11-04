@@ -218,19 +218,19 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 1. "wrap" assumes periodic texture sampling. A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
 
-    _Figure 3-1: tilestyle wrap illustrated throughout the first \<image3dsheet>_
+    _Figure 3-1: tilestyle wrap illustrated throughout the second \<image3dsheet>_
     ![Tilestyle wrap](images/tilestyle_wrap_w0.png)
 
 2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture MUST be reflected across a plane perpendicular to the axis in question following this formula:
 </br>s’ = 1 - abs( s - 2 * floor(s/2) - 1 )
 
-    _Figure 3-2: tilestyle mirror illustrated throughout the first \<image3dsheet>_
+    _Figure 3-2: tilestyle mirror illustrated throughout the second \<image3dsheet>_
     ![Tilestyle mirror](images/tilestyle_mirror_w0.png)
 
 3. "clamp" will restrict the texture coordinate value to the [0,1] range. A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-    _Figure 3-3: tilestyle clamp along the u-direction illustrated throughout the first \<image3dsheet>_
+    _Figure 3-3: tilestyle clamp along the u-direction illustrated throughout the second \<image3dsheet>_
     ![Tilestyle mirror](images/tilestyle_clamp_w0.png)
 
 4. "none" will discard the \<CT_ChannelFromImage3D>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<CT_ChannelFromImage3D> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
@@ -240,11 +240,14 @@ Transformation of the channel coordinate system into the \<image3d> coordinate s
 If this channel is being sampled at position `(x,y,z)` (e.g. from within a volumetric stack), the underlying \<image3d> must be sampled at normalized texture coordinates `(u,v,w) = T*(x,y,z)`.
 
 **filter**:
-The filter attribute defines the interpolation method.
+The filter attribute defines the interpolation method used when a \<channelfromimage3d> is being sampled. This is illustrated in Figure 3-3.
 
 - If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource.
 
 - If the interpolation method of an elements of type \<channelfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
+
+    _Figure 3-3: filter attributes "nearest" (a) and "linear" (b). The image3d of Figure 2-1 used is reused in this example. The region showns is clipped at w=0.75, v=1/6 and u=3. The grey box indicaes the UVW unit box. The tilesyle is "wrap" in all directions.
+    ![Tilestyle mirror](images/filter.png)
 
 **`offsetvalue` and `scalevalue`**:
 
