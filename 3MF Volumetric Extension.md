@@ -131,7 +131,7 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 
 For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same greyscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
-The \<image3d>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1] x {0,1,...,columncount-1] x [0,1,...,sheetcount-1]). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red triples.
+The \<image3d>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1} x {0,1,...,columncount-1} x {0,1,...,sheetcount-1}). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red triples.
 Figure 2-1b) illustrates the voxel coordinates and the UVW-values throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>. A voxel coordinate triple `(i,j,k)` corresponds to voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
 
 The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attributes [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
@@ -384,7 +384,7 @@ The child elements modify the enclosing \<mesh> in two fundamentally different w
 
 We need to define the clipping surface of a mesh with a \<volumedata> element. The clipping surface is defined as follows:
 1. If no \<boundary> element exists, the clipping surface is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
-2. If the \<boundary> element exists, the clipping surface is defined by the intersection of the geometrty from 1. and the interior of the levelset-channel used in the \<boundary> element.
+2. If the \<boundary> element exists, the clipping surface is defined by the intersection of the geometry from 1. and the interior of the levelset-channel used in the \<boundary> element.
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
