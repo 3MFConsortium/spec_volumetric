@@ -867,9 +867,79 @@ Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](htt
 
 # Appendix D: Example file
 
-see: [Examples/3dmodel.model](Examples/3dmodel.model)
+3dmodel.model-file corresponding to the structure in Figure-3-3 b:
 ```xml
+<?xml version="1.0" encoding="utf-8"?>
+<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" 
+xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" >
+	<resources>
+		<v:image3d id="1" rowcount="3" columncount="4" sheetcount="2">
+			<image3dsheet path="/3D/volumetric/colors/sheet 0.png" valuescale="0.00392156862"/>
+			<image3dsheet path="/3D/volumetric/colors/sheet 1.png" valuescale="0.00392156862"/>
+		</v:image3d>
+		<v:channelfromimage3d id="2" image3did="1" channelname="R" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:channelfromimage3d id="3" image3did="1" channelname="G" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:channelfromimage3d id="4" image3did="1" channelname="B" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:volumetricstack id="5" >
+			<dstchannel name="red" background="0"/>
+			<dstchannel name="green" background="0"/>
+			<dstchannel name="blue" background="0"/>
+			
+			<volumetriclayer blendmethod="max">
+				<channelmapping sourceid="2" dstchannel="red"/>
+				<channelmapping sourceid="3" dstchannel="green"/>
+				<channelmapping sourceid="4" dstchannel="blue"/>
+			</volumetriclayer>
+		</v:volumetricstack>
+		
+		<object id="6" name="Body1" type="model">
+			<mesh>
+				<vertices>
+					<vertex x="200" y="100" z="75" />
+					<vertex x="-100" y="100" z="75" />
+					<vertex x="-100" y="16.66667" z="75" />
+					<vertex x="200" y="16.66667" z="75" />
+					<vertex x="-100" y="100" z="-100" />
+					<vertex x="200" y="100" z="-100" />
+					<vertex x="200" y="16.66667" z="-100" />
+					<vertex x="-100" y="16.66667" z="-100" />
+				</vertices>
+				<triangles>
+					<triangle v1="1" v2="2" v3="0" />
+					<triangle v1="0" v2="2" v3="3" />
+					<triangle v1="5" v2="6" v3="4" />
+					<triangle v1="4" v2="6" v3="7" />
+					<triangle v1="3" v2="6" v3="0" />
+					<triangle v1="0" v2="6" v3="5" />
+					<triangle v1="2" v2="7" v3="3" />
+					<triangle v1="3" v2="7" v3="6" />
+					<triangle v1="1" v2="4" v3="2" />
+					<triangle v1="2" v2="4" v3="7" />
+					<triangle v1="0" v2="5" v3="1" />
+					<triangle v1="1" v2="5" v3="4" />
+				</triangles>
+				<v:volumedata>
+					<color sourceid="3" transform="0.01 0 0 0 0.0133333333333 0 0 0 0.02 0 0 0">
+						<red channel="red"/>
+						<green channel="green"/>
+						<blue channel="blue"/>
+					</color>
+				</v:volumedata>
+			</mesh>
+		</object>
+	</resources>
+	<build>
+		<item objectid="6"/>
+	</build>
+</model>
+
 ```
+
+_sheet0.png_
+![sheet0.png](images/sheet0.png)
+
+_sheet1.png_
+![sheet1.png](images/sheet1.png)
 
 # References
 
