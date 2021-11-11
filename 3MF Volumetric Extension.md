@@ -29,7 +29,7 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   * [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
 - [Part II. Appendices](#part-ii-appendices)
   * [Appendix A. Glossary](#appendix-a-glossary)
-  * [Appendix B. 3MF XSD Schema](#appendix-b-3mf-xsd-schema)
+  * [Appendix B. 3MF XSD Schema for the Volumetric Extension](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
   * [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
   * [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
