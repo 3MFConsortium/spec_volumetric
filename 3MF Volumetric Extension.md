@@ -139,8 +139,8 @@ Materials and Properties specification https://github.com/3MFConsortium/spec_mat
 
 The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attributes [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
 
-_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
-![Voxel coordinates and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
+_Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
+![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
 PNG images can provide acceptable compression and bit-depth for the levelset-function, color information, material mixing ratios or arbitrary property information.
@@ -579,9 +579,9 @@ Figure 5-2c) Shows the \<volumetricstack> again. The unit box of the UVW coordin
 
 Figure 5-3d) Shows the UVW coordinate space and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the \<image3d>-element map.
 
-Figure 5-3e) illustrates where the sampling point (+) ends up in the voxel coordinate space. The mapping of UVW to voxel coordinates in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
+Figure 5-3e) illustrates where the sampling point (+) ends up in the voxel index space. The mapping of UVW to voxel indices in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 5-2: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<volumetricstack>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel coordinate space._
+_Figure 5-2: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<volumetricstack>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
 
