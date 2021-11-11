@@ -396,13 +396,10 @@ Conflicting properties must be handled as follows:
 1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on physical grounds (e.g. non-conducting copper).
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
-__Note__: Behavior for overlapping meshes with volumedata elements:
-If multiple volumes defined by the interior of clipping surfaces overlap, the volumedata elements in the overlapping volume are defined by the volumedata elements of interior of the last clipping surface.
-If the last overlapping object does not have a volumedata element of an earlier object that is being overlapped, the resulting volume does not have the volumedata elements of the overlapped object.
-This makes sure that volumedata elements of an overlapped object do not determine any volumedata elements of an overlapping object.
-Figure 5-1 illustrates overlapping objects with their volume defined by the mesh surface and the boundary element of their respective volumedata elements. Evaluating volumedata elements X and volumedata elements Y at different positions p1 to p4.
+__Note__: In the case where objects with different volumedata elements, only the volumedata elements from last object can be used.
+This makes sure that volumedata elements of an overlapped object do not determine any volumedata elements of an overlapping object. Figure 5-1 illustrates this behavior.
 
-_Figure 5-1: Sampling volumedata elements at different positions of overlapping meshes with volumedata_
+_Figure 5-1: a) Mesh object A (circle) with volumedata element X. b) Mesh object B (rectangle) with volumedata element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows volumedata element X in object A, and volumedata element Y in object B. The table lays out how these volumedata elements are sampled at positions p1 to p4._
 ![Illustration of overlapping meshes with volumedata elements](images/overlap_properties.png)
 
 
