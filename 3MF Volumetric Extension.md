@@ -29,7 +29,7 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   * [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
 - [Part II. Appendices](#part-ii-appendices)
   * [Appendix A. Glossary](#appendix-a-glossary)
-  * [Appendix B. 3MF XSD Schema](#appendix-b-3mf-xsd-schema)
+  * [Appendix B. 3MF XSD Schema for the Volumetric Extension](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
   * [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
   * [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
@@ -59,7 +59,7 @@ Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, 
 
 The volumetric modeling approach relies on a mathematical, field-based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
 
-The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for red stripe at the front-left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a a distribution of three different materials, indicated by three different colors, red, blue and green.
+The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for a red stripe at the front-left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a distribution of three different materials, indicated by three different colors, red, blue and green.
 
 This is only a brief illustration of the volumetric modeling approach to geometric design and more information can be found in [references](#references) \[1\] and \[2\].
 
@@ -93,7 +93,7 @@ This document describes new elements, each of which is OPTIONAL for producers, b
 
 The central idea of this extension is to enrich the geometry notion of 3MF with volumetric elements that can represent spatially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
 
-This extension is meant to be an exact specification of geometric, appearance, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the data structures for efficient interoperability and post-processing the geometry and properties described in this extension.
+This extension is meant to be an exact specification of geometric, appearance, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
 
 A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as required. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
@@ -114,9 +114,9 @@ Element **\<image3d>**
 | columncount | xs:positiveinteger | required || Number of pixel columns in all child \<image3dsheet>-elements. |
 | sheetcount | xs:positiveinteger | required || Number of \<image3dsheet>-elements within this \<image3d> element. |
 
-Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a unit cube from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
+Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a finite voxel grid from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
 
-All image3dsheets within an image3d MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respectively. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
+All \<image3dsheets> within an image3d MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respectively. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
 
 Image3D objects, and thus the underlying \<image3dsheet> elements, MUST follow one of the input pixel layouts shown in the table below. All image3dsheets within an image3d MUST have the same input pixel layouts, and each channel MUST have the same bit-depth across all image3dsheets.
 
@@ -131,13 +131,16 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 
 For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same greyscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
 
-The \<image3d>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1] x {0,1,...,columncount-1] x [0,1,...,sheetcount-1]). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel coordinates are indicated as bold black triple, the UVW-coordinate values as red triples.
-Figure 2-1b) illustrates the voxel coordinates and the UVW-values throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>. A voxel coordinate triple `(i,j,k)` corresponds to voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
+The \<image3d>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1} x {0,1,...,columncount-1} x {0,1,...,sheetcount-1}). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel indices are shown as bold black triple, the UVW-coordinate values as red triples.
+Figure 2-1b) illustrates the voxel indices and the UVW-values throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>. A voxel index triple `(i,j,k)` corresponds to a voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
 
-The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attribues [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
+__Note__: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
+Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d.
 
-_Figure 2-1: Voxel coordinates and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
-![Voxel coordinates and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
+The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attributes [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
+
+_Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
+![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
 PNG images can provide acceptable compression and bit-depth for the levelset-function, color information, material mixing ratios or arbitrary property information.
@@ -146,21 +149,20 @@ The following describes recommendations for the channel bit depth of PNG images 
 
 - Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary channel depth. It is RECOMMENDED to store color into RGB-channels within a PNG.
 
-- It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A special case to encode this levelset information is to encode the distance of the surface of the object in this channel. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
+- It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A typical approach to encode this levelset information is to encode the signed distance field of the boundary of the object in this channel. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
 
-To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools an standard implementations of the PNG format support channels with 16 bit.
+To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
 
 
 ## 2.1.2 OPC package layout
 It is RECOMMENDED that producers of 3MF Documents use the following part naming convention:
 
-Paths of  \<image3dsheet> SHOULD consist four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this  \<image3dsheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the  \<image3dsheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
+Paths of  \<image3dsheet> SHOULD consist of four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this  \<image3dsheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the  \<image3dsheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
 
-This implies that all  \<image3dsheet> parts for an image3d-object SHOULD be located in same OPC folder.
+This implies that all  \<image3dsheet> parts for an image3d-object SHOULD be located in the same OPC folder.
 
 _Figure 2-3: OPC package layout_
 ![OPC package layout](images/OPC_overview.png)
-
 
 ## 2.2 3D Image Sheet
 
@@ -171,8 +173,8 @@ Element **\<image3dsheet>**
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | path | ST\_UriReference | required | | Specifies the OPC part name (i.e. path) of the image data file |
-| valueoffset | ST\_Number | | 0.0 | Specifies a numerical offset for the values obtained from any channel this `image3dsheet`. |
-| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from any channel this `image3dsheet`. |
+| valueoffset | ST\_Number | | 0.0 | Specifies a numerical offset for the values obtained from any channel on this `image3dsheet`. |
+| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from any channel on this `image3dsheet`. |
 
 Each \<image3dsheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
@@ -247,6 +249,9 @@ The filter attribute defines the interpolation method used when a \<channelfromi
 
 The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
+
+__Note__: Summing up [chapters 2](#chapter-2-3d-image) and [3](#chapter-3-channel-from-3d-image): the \<image3d> and the \<channelfromimage3d>-elements describe a scalar volumetric texture. Other file formats like OpenVDB or OpenEXR offer similar functionality, and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode volumetric textures and benefit from their advanced features.
+The remainder of this specification deals with the mapping of these volumetric textures onto mesh-objects in a 3MF file and giving these textures a meaning for additive manufacturing processes. Replacing \<image3d> and the \<channelfromimage3d> would not affect the remaining parts of this specification.
 
 # Chapter 4. Volumetric Stack
 
@@ -328,13 +333,13 @@ Let "s" denote the value of the source channel, "d" the current value of the des
 
     d' = m * s + (1 - m) * d
     
-    Here, m is the value of the channel provided by the \<channelfromimage3d> refered to by the "maskid" attribute of this volumetriclayer.
+    Here, m is the value of the channel provided by the \<channelfromimage3d> referred to by the "maskid" attribute of this volumetriclayer.
     
     __Note__: The blendmethod "mask" implements the same formula as the blendmethod "mix" for the rgb-values of an \<multiproperties>-element in the [Materials and Properties Extension specification, Chapter 5](https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-5-multiproperties).
 
 
 Figure 4-1 shows an example of two layers within a volumetric stack and the result using various blending functions with different source and destination alpha values.
-A volumetriclayer MUST contain at least one \<channelmapping> element. The dstchannel attribute of the each \<channelmapping> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
+A volumetriclayer MUST contain at least one \<channelmapping> element. The dstchannel attribute of each \<channelmapping> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
 The name of each \<dstchannel> element MUST occur at most once as dstchannel attribute in one of the \<channelmapping>.
 
 Destination channels that are not mentioned as dstchannel attribute in this list are not modified by this \<volumetriclayer>.
@@ -378,11 +383,11 @@ up to one \<color> element, and an arbitrary number of \<property> elements.
 
 The child elements modify the enclosing \<mesh> in two fundamentally different ways:
 1. the child \<boundary> element (if it exists) determines the geometry of the \<mesh> object.
-2. the other child elements modify color, material compostion and other arbitrary properties of the \<mesh> object.
+2. the other child elements modify color, material composition and other arbitrary properties of the \<mesh> object.
 
 We need to define the clipping surface of a mesh with a \<volumedata> element. The clipping surface is defined as follows:
 1. If no \<boundary> element exists, the clipping surface is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
-2. If the \<boundary> element exists, the clipping surface is defined by the intersection of the geometrty from 1. and the interior of the levelset-channel used in the \<boundary> element.
+2. If the \<boundary> element exists, the clipping surface is defined by the intersection of the geometry from 1. and the interior of the levelset-channel used in the \<boundary> element.
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
@@ -394,13 +399,10 @@ Conflicting properties must be handled as follows:
 1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on physical grounds (e.g. non-conducting copper).
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
-__Note__: Behavior for overlapping meshes with volumedata elements:
-If multiple volumes defined by the interior of clipping surfaces overlap, the volumedata elements in the overlapping volume are defined by the volumedata elements of interior of the last clipping surface.
-If the last overlapping object does not have a volumedata element of an earlier object that is being overlapped, the resulting volume does not have the volumedata elements of the overlapped object.
-This makes sure that volumedata elements of an overlapped object do not determine any volumedata elements of an overlapping object.
-Figure 5-1 illustrates overlapping objects with their volume defined by the mesh surface and the boundary element of their respective volumedata elements. Evaluating volumedata elements X and volumedata elements Y at different positions p1 to p4.
+__Note__: In the case where objects with different volumedata elements, only the volumedata elements from last object can be used.
+This makes sure that volumedata elements of an overlapped object do not determine any volumedata elements of an overlapping object. Figure 5-1 illustrates this behavior.
 
-_Figure 5-1: Sampling volumedata elements at different positions of overlapping meshes with volumedata_
+_Figure 5-1: a) Mesh object A (circle) with volumedata element X. b) Mesh object B (rectangle) with volumedata element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows volumedata element X in object A, and volumedata element Y in object B. The table lays out how these volumedata elements are sampled at positions p1 to p4._
 ![Illustration of overlapping meshes with volumedata elements](images/overlap_properties.png)
 
 
@@ -448,7 +450,7 @@ Element **\<color>**
 | transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 The \<color> element is used to define the color of the object.
-The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/master/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the channel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
+The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the channel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
 This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
 
@@ -518,7 +520,7 @@ The \<materialmapping> element defines the relative contribution of a specific m
 
 If the sampled value of a channel is `<0` it must be evaluated as "0".
 
-Procuer MUST NOT create files where the sum of all values in it's child \<materialmapping>-elements is smaller than `10^-7`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
+Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-7`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
 - If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
    ```
@@ -538,7 +540,7 @@ Element **\<property>**
 | sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channel used by this property |
 | transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 | channel | ST\_ChannelName | required | | Name of the channel that serves as source for the scalar value representing this property. |
-| name | xs:QName | required | | Namespace and name of this property property |
+| name | xs:QName | required | | Namespace and name of this property |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
 
 The \<property> element allows to assign any point in space a scalar value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
@@ -570,16 +572,16 @@ Figure 5-2 illustrates the 3MF elements, the different coordinate systems and tr
 
 Figure 5-2a) The object is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
 
-Figure 5-2b) Offers a view into the \<volumetricstack> and its corresponding coordinate system. The transformation `T1` from object coordinate space to \<volumetricstack> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does note exist in the \<volumetricstack> context.
+Figure 5-2b) Offers a view into the \<volumetricstack> and its corresponding coordinate system. The transformation `T1` from object coordinate space to \<volumetricstack> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<volumetricstack> context.
 The value sampled from the \<volumetricstack> element might be the result of blending multiple \<volumetriclayer>s in this stack, see Figure 4-1.
 
 Figure 5-2c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<volumetricstack> coordinate system and UVW space is given according to the `transform`-attribute of the \<channelfromimage3d> element in each \<volumetriclayer> of this \<volumetricstack>.
 
 Figure 5-3d) Shows the UVW coordinate space and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the \<image3d>-element map.
 
-Figure 5-3e) illustrates where the sampling point (+) ends up in the the voxel coordinate space. The mapping of UVW to voxel coordinates in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
+Figure 5-3e) illustrates where the sampling point (+) ends up in the voxel index space. The mapping of UVW to voxel indices in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 5-2 Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<volumetricstack>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel coordinate space._
+_Figure 5-2: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<volumetricstack>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
 
@@ -868,9 +870,79 @@ Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](htt
 
 # Appendix D: Example file
 
-see: [Examples/3dmodel.model](Examples/3dmodel.model)
+3dmodel.model-file corresponding to the structure in Figure-3-3 b:
 ```xml
+<?xml version="1.0" encoding="utf-8"?>
+<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" 
+xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" >
+	<resources>
+		<v:image3d id="1" rowcount="3" columncount="4" sheetcount="2">
+			<image3dsheet path="/3D/volumetric/colors/sheet 0.png" valuescale="0.00392156862"/>
+			<image3dsheet path="/3D/volumetric/colors/sheet 1.png" valuescale="0.00392156862"/>
+		</v:image3d>
+		<v:channelfromimage3d id="2" image3did="1" channelname="R" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:channelfromimage3d id="3" image3did="1" channelname="G" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:channelfromimage3d id="4" image3did="1" channelname="B" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:volumetricstack id="5" >
+			<dstchannel name="red" background="0"/>
+			<dstchannel name="green" background="0"/>
+			<dstchannel name="blue" background="0"/>
+			
+			<volumetriclayer blendmethod="max">
+				<channelmapping sourceid="2" dstchannel="red"/>
+				<channelmapping sourceid="3" dstchannel="green"/>
+				<channelmapping sourceid="4" dstchannel="blue"/>
+			</volumetriclayer>
+		</v:volumetricstack>
+		
+		<object id="6" name="Body1" type="model">
+			<mesh>
+				<vertices>
+					<vertex x="200" y="100" z="75" />
+					<vertex x="-100" y="100" z="75" />
+					<vertex x="-100" y="16.66667" z="75" />
+					<vertex x="200" y="16.66667" z="75" />
+					<vertex x="-100" y="100" z="-100" />
+					<vertex x="200" y="100" z="-100" />
+					<vertex x="200" y="16.66667" z="-100" />
+					<vertex x="-100" y="16.66667" z="-100" />
+				</vertices>
+				<triangles>
+					<triangle v1="1" v2="2" v3="0" />
+					<triangle v1="0" v2="2" v3="3" />
+					<triangle v1="5" v2="6" v3="4" />
+					<triangle v1="4" v2="6" v3="7" />
+					<triangle v1="3" v2="6" v3="0" />
+					<triangle v1="0" v2="6" v3="5" />
+					<triangle v1="2" v2="7" v3="3" />
+					<triangle v1="3" v2="7" v3="6" />
+					<triangle v1="1" v2="4" v3="2" />
+					<triangle v1="2" v2="4" v3="7" />
+					<triangle v1="0" v2="5" v3="1" />
+					<triangle v1="1" v2="5" v3="4" />
+				</triangles>
+				<v:volumedata>
+					<color sourceid="3" transform="0.01 0 0 0 0.0133333333333 0 0 0 0.02 0 0 0">
+						<red channel="red"/>
+						<green channel="green"/>
+						<blue channel="blue"/>
+					</color>
+				</v:volumedata>
+			</mesh>
+		</object>
+	</resources>
+	<build>
+		<item objectid="6"/>
+	</build>
+</model>
+
 ```
+
+_sheet0.png_
+![sheet0.png](images/sheet0.png)
+
+_sheet1.png_
+![sheet1.png](images/sheet1.png)
 
 # References
 
