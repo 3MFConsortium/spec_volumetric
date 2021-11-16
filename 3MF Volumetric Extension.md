@@ -55,7 +55,7 @@ This extension MUST be used only with Core specification version 1.3. or higher.
 
 ## 1.2. Introduction
 Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
-Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 a): a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
+Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 	: a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
 The volumetric modeling approach relies on a mathematical, field-based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
 
@@ -155,11 +155,13 @@ To achieve high accuracy, producers SHOULD store such information in image chann
 
 
 ## 2.1.2 OPC package layout
+__Note__: Introductory information about the Open Packaging Conventions (OPC) can be found in the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#11-package).
+
 It is RECOMMENDED that producers of 3MF Documents use the following part naming convention:
 
 Paths of  \<image3dsheet> SHOULD consist of four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this  \<image3dsheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the  \<image3dsheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
 
-This implies that all  \<image3dsheet> parts for an image3d-object SHOULD be located in the same OPC folder.
+This implies that all \<image3dsheet> parts for an image3d-object SHOULD be located in the same OPC folder.
 
 _Figure 2-3: OPC package layout_
 ![OPC package layout](images/OPC_overview.png)
@@ -197,13 +199,13 @@ Element type
 | id | ST\_ResourceID | required | | The resource id of this ChannelFromImage3D resource |
 | image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource |
 | channel | ST\_ChannelName | required | | Specifies which channel to reference in the 3d image resource |
-| transform | ST\_Matrix3D | required | | Transformation of the channel coordinate system into the \<image3d> coordinate system |
+| transform | ST\_Matrix3D | | | Transformation of the channel coordinate system into the \<image3d> coordinate system |
 | valueoffset | ST\_Number |  | 0.0 | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` referred to by this CT_ChannelFromImage3D |
 | valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from the `channel` within the `image3d` referred to by this CT_ChannelFromImage3D. |
 | filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation |
-| tilestyleu | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
-| tilestylev | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
-| tilestylew | ST\_TileStyle | Required | | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
+| tilestyleu | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
+| tilestylev | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
+| tilestylew | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
 
 Elements of type \<CT_ChannelFromImage3D> define the way in which individual channels from volumetric image resources can be referenced inside the volumetric layer elements. Each channel reference MUST contain a resource id that maps to an actual \<image3d> element.
 
@@ -280,7 +282,7 @@ Element **\<dstchannel>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| name | ST\_ChannelName | required | | Specifies the name of this destination channel |
+| name | xs:string | required | | Specifies the name of this destination channel |
 | background | ST\_Number | required | | Specifies the background value of this channel |
 
 A destination channel specifies a name of a channel that can be sampled from a volumetricstack element.
@@ -355,7 +357,7 @@ Element **\<channelmapping>**
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | | The resource id of a ChannelFromImage3D resource |
-| dstchannel | ST\_ChannelName | required | | Name of the destination channel that should be manipulated by this channelmapping within this volumetric layer |
+| dstchannel | xs:string | required | | Name of the destination channel that should be manipulated by this channelmapping within this volumetric layer |
 
 # Chapter 5. Volumetric Data
 
@@ -378,7 +380,7 @@ The \<volumedata> element references the volumetric data given by \<volumetricst
 Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh.
 
-The volumedata element can contain up to one \<boundary> child element, up to one \<composite> child element,
+The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element,
 up to one \<color> element, and an arbitrary number of \<property> elements.
 
 The child elements modify the enclosing \<mesh> in two fundamentally different ways:
@@ -399,11 +401,11 @@ Conflicting properties must be handled as follows:
 1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on physical grounds (e.g. non-conducting copper).
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
-__Note__: In the case where objects with different volumedata elements, only the volumedata elements from last object can be used.
-This makes sure that volumedata elements of an overlapped object do not determine any volumedata elements of an overlapping object. Figure 5-1 illustrates this behavior.
+__Note__: In the case where objects with different \<volumedata> child elements overlap, only the \<volumedata> child elements from last object can be used.
+This makes sure that \<volumedata> child elements of an overlapped object do not determine any \<volumedata> child elements of an overlapping object. Figure 5-1 illustrates this behavior.
 
-_Figure 5-1: a) Mesh object A (circle) with volumedata element X. b) Mesh object B (rectangle) with volumedata element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows volumedata element X in object A, and volumedata element Y in object B. The table lays out how these volumedata elements are sampled at positions p1 to p4._
-![Illustration of overlapping meshes with volumedata elements](images/overlap_properties.png)
+_Figure 5-1: a) Mesh object A (circle) with \<volumedata> child element X. b) Mesh object B (rectangle) with \<volumedata> child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows \<volumedata> child element X in object A, and \<volumedata> child element Y in object B. The table lays out how these \<volumedata> child elements are sampled at positions p1 to p4._
+![Illustration of overlapping meshes with \<volumedata> child elements](images/overlap_properties.png)
 
 
 ### 5.2.1 Boundary element
@@ -415,9 +417,9 @@ Element **\<boundary>**
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds a channel that encodes the boundary as a levelset |
-| channel | ST\_ChannelName | required | | Name of the channel that holds a levelset function which defines the boundary |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| channel | xs:string | required | | Name of the channel that holds a levelset function which defines the boundary |
 | solidthreshold | ST\_Number | | 0.0 | Determines the values of the levelset function which are considered inside or outside the specified object  |
-| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
@@ -447,7 +449,7 @@ Element **\<color>**
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channels to be used in the child color elements. |
-| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 
 The \<color> element is used to define the color of the object.
 The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the channel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
@@ -475,7 +477,7 @@ Complex type **\<colorchannel>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| channel | ST\_ChannelName | required | | Source channel for the values of this color channel |
+| channel | xs:string | required | | Source channel for the values of this color channel |
 
 Each element instance of CT\_ColorChannel MUST have an attribute "channel" that
 references a destination channel from the \<volumetricstack> with Id matching the sourceid of the parent \<color> element.
@@ -492,7 +494,7 @@ Element **\<composite>**
 | Name   | Type | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channels used in the child \<materialmapping>-elements |
-| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
 | basematerialid | ST\_ResourceID | required | | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
 
 The \<composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
@@ -512,7 +514,7 @@ Element **\<materialmapping>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| channel | ST\_ChannelName | required | | Source channel for the values of this material |
+| channel | xs:string | required | | Source channel for the values of this material |
 | pindex | ST\_ResourceIndex | required | | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent
@@ -538,8 +540,8 @@ Element **\<property>**
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channel used by this property |
-| transform | ST\_Matrix3D | required | | Transformation of the object coordinate system into the volumetricstack coordinate system |
-| channel | ST\_ChannelName | required | | Name of the channel that serves as source for the scalar value representing this property. |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| channel | xs:string | required | | Name of the channel that serves as source for the scalar value representing this property. |
 | name | xs:QName | required | | Namespace and name of this property |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
 
@@ -568,9 +570,9 @@ __Note__:
 
 Equipped with the language elements of this specification, one can recapitulate the core concepts with an overview of the sampling process.
 
-Figure 5-2 illustrates the 3MF elements, the different coordinate systems and transforms between them when a volume data element (in this case \<color>) is sampled in the object coordinate space.
+Figure 5-2 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
 
-Figure 5-2a) The object is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
+Figure 5-2 a) The object is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
 
 Figure 5-2b) Offers a view into the \<volumetricstack> and its corresponding coordinate system. The transformation `T1` from object coordinate space to \<volumetricstack> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<volumetricstack> context.
 The value sampled from the \<volumetricstack> element might be the result of blending multiple \<volumetriclayer>s in this stack, see Figure 4-1.
@@ -627,10 +629,10 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:complexType name="CT_Image3D">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="image3dsheet" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:element ref="image3dsheet" minOccurs="0" maxOccurs="1073741824"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="name" type="xs:string"/>
 		<xs:attribute name="rowcount" type="xs:positiveInteger" use="required"/>
 		<xs:attribute name="columncount" type="xs:positiveInteger" use="required"/>
 		<xs:attribute name="sheetcount" type="xs:positiveInteger" use="required"/>
@@ -642,8 +644,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="path" type="ST_UriReference" use="required"/>
-    <xs:attribute name="valueoffset" type="ST_Number" use="optional" default="0.0"/>
-    <xs:attribute name="valuescale" type="ST_Number" use="optional" default="1.0"/>
+		<xs:attribute name="valueoffset" type="ST_Number" default="0.0"/>
+		<xs:attribute name="valuescale" type="ST_Number" default="1.0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -661,8 +663,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="name" type="ST_ChannelName" use="required"/>
-		<xs:attribute name="background" type="ST_Number" use="optional" default="0"/>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="background" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 	
@@ -672,9 +674,9 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:element ref="channelmapping" minOccurs="1" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="blendmethod" type="ST_BlendMethod" use="required"/>
-		<xs:attribute name="srcalpha" type="ST_Number" use="optional"/>
-		<xs:attribute name="dstalpha" type="ST_Number" use="optional"/>
-		<xs:attribute name="maskid" type="ST_ResourceId" use="optional"/>
+		<xs:attribute name="srcalpha" type="ST_Number"/>
+		<xs:attribute name="dstalpha" type="ST_Number"/>
+		<xs:attribute name="maskid" type="ST_ResourceId"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -685,13 +687,13 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="channel" type="ST_ChannelName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D" use="required"/>
-		<xs:attribute name="filter" type="ST_Filter" use="optional" default="linear"/>
-		<xs:attribute name="valueoffset" type="ST_Number" use="optional" default="0.0"/>
-		<xs:attribute name="valuescale" type="ST_Number" use="optional" default="1.0"/>
-		<xs:attribute name="tilestyleu" type="ST_TileStyle" use="optional" default="wrap"/>
-		<xs:attribute name="tilestylev" type="ST_TileStyle" use="optional" default="wrap"/>
-		<xs:attribute name="tilestylew" type="ST_TileStyle" use="optional" default="wrap"/>
+		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="filter" type="ST_Filter" default="linear"/>
+		<xs:attribute name="valueoffset" type="ST_Number" default="0.0"/>
+		<xs:attribute name="valuescale" type="ST_Number" default="1.0"/>
+		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap"/>
+		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap"/>
+		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -700,7 +702,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="dstchannel" type="ST_ChannelName" use="required"/>
+		<xs:attribute name="dstchannel" type="xs:string" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -726,10 +728,10 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
-		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
-		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
-		<xs:attribute name="solidthreshold" type="ST_Number" use="optional" default="0" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="channel" type="xs:string" use="required"/>
+		<xs:attribute name="solidthreshold" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -740,8 +742,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:element ref="blue"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
-		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -749,7 +751,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
+		<xs:attribute name="channel" type="xs:string" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -758,9 +760,9 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:element ref="materialmapping" minOccurs="1" maxOccurs="2147483647"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
-		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
-		<xs:attribute name="basematerialid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="basematerialid" type="ST_ResourceID" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -768,8 +770,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
-		<xs:attribute name="pindex" type="ST_ResourceIndex" use="required" />
+		<xs:attribute name="channel" type="xs:string" use="required"/>
+		<xs:attribute name="pindex" type="ST_ResourceIndex" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -777,11 +779,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required" />
-		<xs:attribute name="transform" type="ST_Matrix3D" use="required" />
-		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
-		<xs:attribute name="name" type="xs:QName" use="required" />
-		<xs:attribute name="required" type="xs:boolean" use="required" />
+		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="channel" type="xs:string" use="required"/>
+		<xs:attribute name="name" type="xs:QName" use="required"/>
+		<xs:attribute name="required" type="xs:boolean" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -849,7 +851,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="channel" type="CT_Channel"/>
 	<xs:element name="dstchannel" type="CT_Channel"/>
 	<xs:element name="volumetriclayer" type="CT_VolumetricLayer"/>
-  <xs:element name="channelmapping" type="CT_ChannelMapping"/>
+	<xs:element name="channelmapping" type="CT_ChannelMapping"/>
 	<xs:element name="channelfromimage3d" type="CT_ChannelFromImage3D"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
 	<xs:element name="boundary" type="CT_Boundary"/>
@@ -870,24 +872,23 @@ Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](htt
 
 # Appendix D: Example file
 
-3dmodel.model-file corresponding to the structure in Figure-3-3 b:
+3dmodel.model-file corresponding to the structure in Figure 3-3 b):
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" 
 xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" >
 	<resources>
 		<v:image3d id="1" rowcount="3" columncount="4" sheetcount="2">
-			<image3dsheet path="/3D/volumetric/colors/sheet 0.png" valuescale="0.00392156862"/>
-			<image3dsheet path="/3D/volumetric/colors/sheet 1.png" valuescale="0.00392156862"/>
+			<image3dsheet path="/3D/volumetric/colors/sheet0.png" valuescale="0.00392156862"/>
+			<image3dsheet path="/3D/volumetric/colors/sheet1.png" valuescale="0.00392156862"/>
 		</v:image3d>
-		<v:channelfromimage3d id="2" image3did="1" channelname="R" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
-		<v:channelfromimage3d id="3" image3did="1" channelname="G" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
-		<v:channelfromimage3d id="4" image3did="1" channelname="B" tilestyleu="wrap" tilestylev="wrap" tilestylew="wrap"/>
+		<v:channelfromimage3d id="2" image3did="1" channelname="R"/>
+		<v:channelfromimage3d id="3" image3did="1" channelname="G"/>
+		<v:channelfromimage3d id="4" image3did="1" channelname="B"/>
 		<v:volumetricstack id="5" >
 			<dstchannel name="red" background="0"/>
 			<dstchannel name="green" background="0"/>
 			<dstchannel name="blue" background="0"/>
-			
 			<volumetriclayer blendmethod="max">
 				<channelmapping sourceid="2" dstchannel="red"/>
 				<channelmapping sourceid="3" dstchannel="green"/>
@@ -898,28 +899,28 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" >
 		<object id="6" name="Body1" type="model">
 			<mesh>
 				<vertices>
-					<vertex x="200" y="100" z="75" />
-					<vertex x="-100" y="100" z="75" />
-					<vertex x="-100" y="16.66667" z="75" />
-					<vertex x="200" y="16.66667" z="75" />
-					<vertex x="-100" y="100" z="-100" />
-					<vertex x="200" y="100" z="-100" />
-					<vertex x="200" y="16.66667" z="-100" />
-					<vertex x="-100" y="16.66667" z="-100" />
+					<vertex x="200" y="100" z="75"/>
+					<vertex x="-100" y="100" z="75"/>
+					<vertex x="-100" y="16.66667" z="75"/>
+					<vertex x="200" y="16.66667" z="75"/>
+					<vertex x="-100" y="100" z="-100"/>
+					<vertex x="200" y="100" z="-100"/>
+					<vertex x="200" y="16.66667" z="-100"/>
+					<vertex x="-100" y="16.66667" z="-100"/>
 				</vertices>
 				<triangles>
-					<triangle v1="1" v2="2" v3="0" />
-					<triangle v1="0" v2="2" v3="3" />
-					<triangle v1="5" v2="6" v3="4" />
-					<triangle v1="4" v2="6" v3="7" />
-					<triangle v1="3" v2="6" v3="0" />
-					<triangle v1="0" v2="6" v3="5" />
-					<triangle v1="2" v2="7" v3="3" />
-					<triangle v1="3" v2="7" v3="6" />
-					<triangle v1="1" v2="4" v3="2" />
-					<triangle v1="2" v2="4" v3="7" />
-					<triangle v1="0" v2="5" v3="1" />
-					<triangle v1="1" v2="5" v3="4" />
+					<triangle v1="1" v2="2" v3="0"/>
+					<triangle v1="0" v2="2" v3="3"/>
+					<triangle v1="5" v2="6" v3="4"/>
+					<triangle v1="4" v2="6" v3="7"/>
+					<triangle v1="3" v2="6" v3="0"/>
+					<triangle v1="0" v2="6" v3="5"/>
+					<triangle v1="2" v2="7" v3="3"/>
+					<triangle v1="3" v2="7" v3="6"/>
+					<triangle v1="1" v2="4" v3="2"/>
+					<triangle v1="2" v2="4" v3="7"/>
+					<triangle v1="0" v2="5" v3="1"/>
+					<triangle v1="1" v2="5" v3="4"/>
 				</triangles>
 				<v:volumedata>
 					<color sourceid="3" transform="0.01 0 0 0 0.0133333333333 0 0 0 0.02 0 0 0">
