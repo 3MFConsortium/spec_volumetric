@@ -8,14 +8,13 @@ on: [pull_request]
 name: Build
 jobs:
   build-linux:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-18.04
     env:
       SPECNAME: "3MF Volumetric Extension"
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - run: pip install notebook
       - run: pip install wheel
       - run: pip install grip
       - run: ./markdownToPDF/install_wkhtmltopdf.sh
