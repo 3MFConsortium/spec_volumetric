@@ -15,8 +15,8 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: true
-      - run: pip install wheel
-      - run: pip install grip
+      - run: pip3 install wheel
+      - run: pip3 install grip
       - run: ./markdownToPDF/install_wkhtmltopdf.sh
       - run: ./markdownToPDF/mdToPDF.sh "$SPECNAME"
       - name: Upload PDF
