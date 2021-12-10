@@ -269,14 +269,18 @@ MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavi
 	![Tilestyles](images/tilestyle_all.png)
 
 **filter**:
-The filter attribute defines the interpolation method used when a \<scalarfieldfromimage3d> is being sampled. This is illustrated in Figure 3-3.
+The filter attribute defines the interpolation method used when a \<scalarfieldfromimage3d> is being sampled. This is illustrated in Figure 3-4.
 
-- If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by sampling the voxel, whose UVW coordinate is closest to (u,v,w).
-If multiple voxels have the same distance (in UVW-space) to the sampling point (u,v,w), the voxel with the lowest UVW coordinate must be sampled.
+- If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
+
+	_Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
+	
+	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
+
 
 - If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
 
-_Figure 3-3: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
+_Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
 ![Tilestyle mirror](images/filter.png)
 
 **`offsetvalue` and `scalevalue`**:
@@ -1054,7 +1058,7 @@ Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01](htt
 
 # Appendix D: Example file
 
-3dmodel.model-file corresponding to the structure in Figure 3-3 b):
+3dmodel.model-file corresponding to the structure in Figure 3-4 b):
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" 
