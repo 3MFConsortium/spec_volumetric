@@ -28,7 +28,7 @@ package ScalarFields
         id: resourceID
     }
 
-    Class ComposedScalarField extends ScalarField
+    Class ScalarFieldComposed extends ScalarField
     {
         blendmethod : string
         scalarfield1id : resourceID
@@ -38,9 +38,8 @@ package ScalarFields
         factor2 : double
     }
 
-    Class ScalarFieldImage extends ScalarField
+    Class ScalarFieldFromImage3D extends ScalarField
     {
-        id : resourceID
         image3did : resourceID
         channel : string
         transform: matrix
@@ -50,11 +49,10 @@ package ScalarFields
         tilestyleu : string
         tilestylev : string
         tilestylew : string
-        default: double
     }
 
-    ComposedScalarField o-- "1..3" ScalarField
-    ScalarFieldImage o-- "1" Image3D
+    ScalarFieldComposed o-- "1..3" ScalarField
+    ScalarFieldFromImage3D o-- "1" Image3D
 }
 
 package ColorFields
@@ -64,7 +62,7 @@ package ColorFields
         id: resourceID
     }
 
-    Class ComposedColorField extends ColorField
+    Class ColorFieldComposed extends ColorField
     {
         blendmethod : string
         colorfield1id : resourceID
@@ -74,24 +72,19 @@ package ColorFields
         factor2 : double
     }
 
-    Class ColorFieldImage extends ColorField
+    Class ColorFieldFromImage3D extends ColorField
     {
-        id : resourceID
         image3did : resourceID
-        channel[3] : string
         transform: matrix
         filter : string
-        valueoffset: double
-        valuescale: double
         tilestyleu : string
         tilestylev : string
         tilestylew : string
-        default: double
     }
 
-    ComposedColorField o-- "2" ColorField
-    ComposedColorField o-- "0..1 mask" ScalarField
-    ColorFieldImage o-- "1" Image3D
+    ColorFieldComposed o-- "2" ColorField
+    ColorFieldComposed o-- "0..1 mask" ScalarField
+    ColorFieldFromImage3D o-- "1" Image3D
 }
 
 package VolumetricData
@@ -101,21 +94,21 @@ package VolumetricData
     Class Boundary
     {
         transform : matrix
-        solid_threshold : double
-        scalar_field : resourceID
+        solidthreshold : double
+        scalarfield : resourceID
     }
 
     Class Color
     {
         transform : matrix
-        color_field : resourceID
+        colorfield : resourceID
     }
 
     Class Property
     {
         name : string
         transform : matrix
-        scalar_field : resourceID
+        scalarfield : resourceID
     }
 
     Class Composite
@@ -125,12 +118,12 @@ package VolumetricData
 
     Class MaterialMapping
     {
-        scalar_field : resourceID
+        scalarfield : resourceID
     }        
 
     VolumeData *-- "0..1" Boundary
     VolumeData *-- "0..1" Color
-    VolumeData *-- "0..1" Property
+    VolumeData *-- "0..*" Property
     VolumeData *-- "0..1" Composite
     Composite *-- "1..*" MaterialMapping
 
