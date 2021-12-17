@@ -36,13 +36,15 @@ package ScalarFields
         scalarmaskfieldid : resourceID
         factor1 : double
         factor2 : double
+        transform1 : transform
+        transform2 : transform
+        transformmask : transform
     }
 
     Class ScalarFieldFromImage3D extends ScalarField
     {
         image3did : resourceID
         channel : string
-        transform: matrix
         filter : string
         valueoffset: double
         valuescale: double
@@ -70,12 +72,14 @@ package ColorFields
         scalarmaskfieldid : resourceID
         factor1 : double
         factor2 : double
+        transform1 : transform
+        transform2 : transform
+        transformmask : transform
     }
 
     Class ColorFieldFromImage3D extends ColorField
     {
         image3did : resourceID
-        transform: matrix
         filter : string
         tilestyleu : string
         tilestylev : string
@@ -136,3 +140,4 @@ package VolumetricData
 Class Mesh
 Mesh *-- VolumeData
 
+@enduml
