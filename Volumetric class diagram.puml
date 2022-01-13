@@ -117,12 +117,12 @@ package VolumetricData
 
     Class Composite
     {
-        transform : matrix
     }
 
     Class MaterialMapping
     {
         scalarfield : resourceID
+        transform : matrix
     }        
 
     VolumeData *-- "0..1" Boundary
