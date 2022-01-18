@@ -5,14 +5,11 @@
 
 
 
-| **Version** | 0.6.0 |
+| **Version** | 0.7.0 |
 | --- | --- |
-| **Status** | Pre-release |
+| **Status** | Draft |
 
 **Note**
-
-This version of the 3MF Volumetric Extension is a pre-release version. Consumers and producers can implement this version and use it, however, future version of this specification, in particular the "Published" version, might not be backwards compatible to this version.
-
 
 ## Table of Contents
 
@@ -24,8 +21,8 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
 - [Part I: 3MF Documents](#part-i-3mf-documents)
   * [Chapter 1. Overview of Additions](#chapter-1-overview-of-additions)
   * [Chapter 2. 3D Image](#chapter-2-3d-image)
-  * [Chapter 3. Channel from 3D Image](#chapter-3-channel-from-3d-image)
-  * [Chapter 4. Volumetric Stack](#chapter-4-volumetric-stack)
+  * [Chapter 3. Scalar Fields](#chapter-3-scalar-fields)
+  * [Chapter 4. 3D Vector Fields](#chapter-4-3d-vector-fields)
   * [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
 - [Part II. Appendices](#part-ii-appendices)
   * [Appendix A. Glossary](#appendix-a-glossary)
@@ -137,7 +134,7 @@ Figure 2-1b) illustrates the voxel indices and the UVW-values throughout the fir
 __Note__: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
 Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d.
 
-The sampling rules for UVW values are determined by the filter-rule, see the filter attribute and the behaviour for UVW-values outside the unit-cube are determines by the tilestyle attributes [of the Channel from Image3D XML structure](#chapter-3-channel-from-3d-image), respectively.
+The sampling rules for UVW values are determined by the filter-rule, and the behavior for UVW-values outside the unit-cube are determined by the tilestyle attributes [of the \<scalarfieldfromimage3d>](#3-2-scalar-field-from-image3d)- and [\<vector3dfieldfromimage3d>](#4-2-3d-vector-field-from-image3d)-elements.
 
 _Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
 ![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
@@ -149,7 +146,7 @@ The following describes recommendations for the channel bit depth of PNG images 
 
 - Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary channel depth. It is RECOMMENDED to store color into RGB-channels within a PNG.
 
-- It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A typical approach to encode this levelset information is to encode the signed distance field of the boundary of the object in this channel. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
+- It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A typical approach to encode this levelset information is to encode the signed distance field of the boundary of the object in this channel, or to limit the encoding to a narrow region around the boundary of the object. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
 
 To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
 
@@ -175,49 +172,66 @@ Element **\<image3dsheet>**
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | path | ST\_UriReference | required | | Specifies the OPC part name (i.e. path) of the image data file |
-| valueoffset | ST\_Number | | 0.0 | Specifies a numerical offset for the values obtained from any channel on this `image3dsheet`. |
-| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from any channel on this `image3dsheet`. |
 
 Each \<image3dsheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
-The `valueoffset` and `valuescale` determine how the numerical values of any channel within the referenced PNG-file shall be interpreted.
-If a channel in the image-file of this \<image3dsheet> holds a numerical value `V`, it needs to be sampled as `V' = V*valuescale + valueoffset`.
-Specifying different `valueoffset` and `valuescale`-attributes for different \<image3dsheet>s is optional, but allows producers to more efficiently encode values in different regions of an object.
 
-Any interpolation of values of an \<image3dsheet>-element (c.f. the [**filter** attribute on the Channel From Image3D](#chapter-3-channel-from-3d-image)) MUST be performed on the rescaled values `V'` according to the formula above. This is relevant if two subsequent \<image3dsheet>-elements have different values for `valueoffset` or `valuescale`.
-
-
-# Chapter 3. Channel from 3D Image
+# Chapter 3. Scalar Fields
  
-Element type
-**\<channelfromimage3d>**
+This specification relies on the notion of scalar and vectorial fields.
+A scalar field is a mathematical function `f:R^3 -> R` that assigns to every point in 3D space a single numerical (scalar) value. Examples would be the temperature in degrees Celsius in a room at any point in space or the function `f(x,y,z) = x^2 + y^2 + z^2`.
 
-![Channel from Image3D XML structure](images/element_channelfromimage3d.png)
+Similarly, a vectorial field is a mathematical function `f:R^3 -> R^3` that assigns to every point in 3D space a 3D vector value. Examples would be the speed and direction of wind that also differs in space or the function `f(x,y,z) = (sin(x), cos(y), (x+y)/sqrt(1+z^2))`. More about 3d vector valued fields in [Chapter 4. 3D Vector Fields](#chapter-4-3d-vector-fields).
+
+## 3.1 Scalar Field
+
+Mathematical fields naturally lend themselves to represent volumetric structures. Their defining property is indeed that one can attain their value (sample) their value at any point in 3D space. To deal with them in the context of this specification, it introduces a container \<scalarfield> that is a resource in the 3MF model file.
+
+Element type
+**\<scalarfield>**
+
+![scalarfield XML structure](images/element_scalarfield.png)
 
 | Name   | Type   | Use | Default| Annotation |
 | --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | The resource id of this ChannelFromImage3D resource |
-| image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource |
-| channel | ST\_ChannelName | required | | Specifies which channel to reference in the 3d image resource |
-| transform | ST\_Matrix3D | | | Transformation of the channel coordinate system into the \<image3d> coordinate system |
-| valueoffset | ST\_Number |  | 0.0 | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` referred to by this CT_ChannelFromImage3D |
-| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from the `channel` within the `image3d` referred to by this CT_ChannelFromImage3D. |
-| filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation |
-| tilestyleu | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range |
-| tilestylev | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range |
-| tilestylew | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range |
+| id | ST\_ResourceID | required | | The resource id of this scalarfield resource |
+| name | xs:string | | | Field for a human readable name of this field |
 
-Elements of type \<CT_ChannelFromImage3D> define the way in which individual channels from volumetric image resources can be referenced inside the volumetric layer elements. Each channel reference MUST contain a resource id that maps to an actual \<image3d> element.
+This container contains one of multiple specialization. This specification defines the \<scalarfieldfromimage3d> and \<scalarfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<scalarfield> element.
 
-In addition, the elements of type \<CT_ChannelFromImage3D> MUST contain a \<ST\_ChannelName> attribute which determines which channel to pick from the \<image3d> element. This attribute must be any of the reserved channel names (i.e. "R", "G", "B", or "A"). 
+Whenever a language element of this specification refers to a \<scalarfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the referred to element.
+
+## 3.2 Scalar Field From Image3D
+
+Element type
+**\<scalarfieldfromimage3d>**
+
+![scalarfieldfromimage3d XML structure](images/element_scalarfieldfromimage3d.png)
+
+| Name   | Type   | Use | Default| Annotation |
+| --- | --- | --- | --- | --- |
+| image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource. |
+| channel | ST\_ChannelName | required | | Specifies which channel to reference in the 3d image resource. |
+| valueoffset | ST\_Number |  | 0.0 | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` referred to by this `scalarfieldfromimage3d`. |
+| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from the `channel`  within the `image3d` referred to by this `scalarfieldfromimage3d`. |
+| filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation. |
+| tilestyleu | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range. |
+| tilestylev | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range. |
+| tilestylew | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range. |
+
+Elements of type \<scalarfieldfromimage3d> define a scalar field (which can be sampled at any point in space) from values on a voxel grid defined in the \<image3d> element.
+
+To simplify parsing, producers MUST define \<image3d>-elements prior to referencing them via imaged3did in a \<scalarfieldfromimage3d>-element.
 
 **channel**:
 
 The channel-attribute determines which channel to reference in the 3d image resource. Note that attributes of type \<ST\_ChannelName> are case-sensitive.
+Ehe elements of type \<scalarfieldfromimage3d> MUST contain a \<ST\_ChannelName> attribute which determines which channel to pick from the \<image3d> element. This attribute must be any of the reserved channel names (i.e. "R", "G", "B", or "A").
+
 
 **tilestyle-u, -v or -w**:
 
-MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines the behavior of the sampler of this channel for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
+MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines the behavior of the sampler of this \<scalarfieldfromimage3d> for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
 1. "wrap" assumes periodic texture sampling, see Figure 3-1 a). A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
@@ -228,21 +242,17 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 3-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-4. "none" will discard the \<CT_ChannelFromImage3D>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<CT_ChannelFromImage3D> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
+4. "none" will discard the \<scalarfieldfromimage3d>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<scalarfieldfromimage3d> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
 
 	_Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second \<image3dsheet>. b) tilestyle mirror illustrated throughout the second \<image3dsheet>. c) tilestyle clamp along the u-direction illustrated throughout the second \<image3dsheet>_
 	![Tilestyles](images/tilestyle_all.png)
 
-**transform**:
-Transformation of the channel coordinate system into the \<image3d> coordinate system.
-If this channel is being sampled at position `(x,y,z)` (e.g. from within a volumetric stack), the underlying \<image3d> must be sampled at normalized texture coordinates `(u,v,w) = T*(x,y,z)`.
-
 **filter**:
-The filter attribute defines the interpolation method used when a \<channelfromimage3d> is being sampled. This is illustrated in Figure 3-3.
+The filter attribute defines the interpolation method used when a \<scalarfieldfromimage3d> is being sampled. This is illustrated in Figure 3-3.
 
-- If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource.
+- If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource.
 
-- If the interpolation method of an elements of type \<channelfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
+- If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
 
     _Figure 3-3: filter attributes "nearest" (a) and "linear" (b). The image3d of Figure 2-1 used is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions.
     ![Tilestyle mirror](images/filter.png)
@@ -252,112 +262,162 @@ The filter attribute defines the interpolation method used when a \<channelfromi
 The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
 
-__Note__: Summing up [chapters 2](#chapter-2-3d-image) and [3](#chapter-3-channel-from-3d-image): the \<image3d> and the \<channelfromimage3d>-elements describe a scalar volumetric texture. Other file formats like OpenVDB or OpenEXR offer similar functionality, and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode volumetric textures and benefit from their advanced features.
-The remainder of this specification deals with the mapping of these volumetric textures onto mesh-objects in a 3MF file and giving these textures a meaning for additive manufacturing processes. Replacing \<image3d> and the \<channelfromimage3d> would not affect the remaining parts of this specification.
+## 3.3 Composed Scalar Field
 
-# Chapter 4. Volumetric Stack
+Element type
+**\<scalarfieldcomposed>**
 
-Element **\<volumetricstack>**
+![scalarfieldcomposed XML structure](images/element_scalarfieldcomposed.png)
 
-![volumetricstack XML structure](images/element_volumetricstack.png)
-
-| Name   | Type   | Use | Default | Annotation |
+| Name   | Type   | Use | Default| Annotation |
 | --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | Specifies the id of this volumetricstack |
+| method | ST\_Method | required | | Determines how the referenced scalar fields are composed. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
+| scalarfieldid1 | ST\_ResourceId | required | | The resource id of a \<scalarfield> resource that will be used as first field during the composition.  |
+| scalarfieldid2 | ST\_ResourceId | required | | The resource id of a \<scalarfield> resource that will be used as second field during the composition.  |
+| factor1 | ST\_Number | | 1.0 | Numeric scale factor for the first composited field. Only used if method is "weightedsum". |
+| factor2 | ST\_Number | | 1.0 | Numeric scale factor for the second composited field. Only used if method is "weightedsum". |
+| transform1 | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for as first field during the composition. |
+| transform1 | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for as second field during the composition. |
+| scalarfieldmaskid | ST\_ResourceId | | | The resource id of a \<scalarfield> resource which shall be used for masking. Required if method is "mask".  |
+| transformmask | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for masking. |
 
-The volumetric stack is a resource within a 3MF model that defines how volumetric data
-from multiple \<CT_ChannelFromImage3D> is composited to yield multiple custom scalar field in three dimensions (\<dstchannel>). This custom scalar field of a \<volumetricstack> element can then be used to define volumetric properties inside the \<volumedata>-element of an object, see the [volumedata-element](#chapter-5-volumetric-data).
+Each \<scalarfieldcomposed>-element encodes a simple volumetric modeling operation, that is the composition of two (or three, in the case of the method "mask") scalar fields.
 
-1. It defines multiple destination channels, \<dstchannel>-elements. Each destination channel is a scalar field in 3d, whose values can be retrieved by sampling this volumetricstack.
+To simplify parsing, producers MUST define \<scalarfield>-elements prior to referencing them via scalarfieldid1, scalarfieldid1 or scalarfieldmaskid in a \<scalarfieldcomposed>-element.
 
-2. The sampled values of each destination channel are built up by blending multiple layers, the \<volumetriclayer>-elements. This allows e.g. boolean operations on the scalar fields provided by different \<channelfromimage3d> elements.
+**method**: controls according to which formula referred \<scalarfield>s should be composed.
 
-The volumetricstack element MUST contain at least one \<dstchannel> child element and MUST NOT contain more than 2^16-1 \<dstchannel> child-elements. The volumetricstack element MUST NOT contain more than 2^16-1 \<volumetriclayer> child-elements.
+Let's denote the sampled value of this \<scalarfieldcomposed>-element at point `(x,y,z)` as `c`.
+To evaluate `c`, the first \<scalarfield> needs to be evaluated at `T1*(x,y,z)`, yielding `s2`, where `T1` is given by the transform1 attribute.
+The second \<scalarfield> needs to be evaluated at `T2*(x,y,z)`, yielding `s2`, where `T2` is given by the transform2 attribute.
 
-## 4.1 Destination channel element
-
-Element **\<dstchannel>**
-
-![dstchannel XML structure](images/element_dstchannel.png)
-
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| name | xs:string | required | | Specifies the name of this destination channel |
-| background | ST\_Number | required | | Specifies the background value of this channel |
-
-A destination channel specifies a name of a channel that can be sampled from a volumetricstack element.
-The background value is the value that serves as a base for the blending that takes place in the \<volumetriclayer> elements within the \<volumetricstack>-element.
-
-The names of \<dstchannel>-elements must be unique within a \<volumetricstack>-element.
-
-## 4.2 Volumetric Layer element
-
-Element **\<volumetriclayer>**
-
-![volumetriclayer XML structure](images/element_volumetriclayer.png)
-
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| blendmethod | ST\_BlendMethod | required | | Determines how this layer is applied to its sublayers. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
-| srcalpha | ST\_Number | | | Numeric scale factor for the source layer. Required if blendmethod is "weightedsum". |
-| dstalpha | ST\_Number | | | Numeric scale factor for the destination layer. Required if blendmethod is "weightedsum".  |
-| maskid | ST\_ResourceId | | | The resource id of a \<channelfromimage3d> resource which shall be used for masking. Required if blendmethod is "mask".  |
-
-Each \<volumetriclayer>-element modify the accumulated value of the destination channels of a volumetric stack. This modification is defined by the following attributes:
-
-**blendmethod**: controls according to which formula the current layer (known as the source layer) is blended with the layers below it or with the stack’s background value.
-
-Let "s" denote the value of the source channel, "d" the current value of the destination channel, then the modified value of the destination channel "d'" after blending is calculated according to the blendmethod:
+With these definitions at hand the sampled value of this \<scalarfieldcomposed> c is calculated according to the method attribute:
 
 - "weightedsum":
 
-    d' = src_alpha * s + dst_alpha * d
-
-    **srcalpha**: is a scalar value which is multiplied with the sampled values in the source layer during the blending process.
-
-    **dstalpha**: is a scalar value which is multiplied with the sampled values in the destination during the blending process.
+    `c = factor1 * s1 + factor2 * s2`
     
-    The producer of a 3MF file is responsible to choose parameters srcalpha and dstalpha, such that sampling the blended value of a channel, e.g. a physical property, is sensible.
-
 - "multiply":
 
-    d' = s * d
+    `c = s1 * s2`
 
 - "min" or "max":
    
-    d' = min(s,d) or d' = max(s,d)
+    `c = min(s1, s2)`  or  `c = min(s1, s2)`
     
-    Blending methods "min" and "max" are useful to capture boolean operations (union and intersection, respectively) between fields representing levelset functions.
+    Methods "min" and "max" are useful to capture boolean operations (union and intersection, respectively) between fields representing levelset functions.
 
 - "mask":
 
-    The blendmethod "mask" provides a means to use another channel as a volumetric decal that only affects a region of complex shape within the volume.
+    The method "mask" provides a means to use another \<scalarfield> as a volumetric decal that only affects a region of complex shape within the volume.
 
-    d' = m * s + (1 - m) * d
+    `c = m * s1 + (1 - m) * s2`
     
-    Here, m is the value of the channel provided by the \<channelfromimage3d> referred to by the "maskid" attribute of this volumetriclayer.
+    Here, m is the value of the \<scalarfield> referred to by the `scalarfieldmaskid` attribute of this \<scalarfieldcomposed> evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
     
-    __Note__: The blendmethod "mask" implements the same formula as the blendmethod "mix" for the rgb-values of an \<multiproperties>-element in the [Materials and Properties Extension specification, Chapter 5](https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-5-multiproperties).
+    __Note__: The method "mask" implements the same formula as the method "mix" for the rgb-values of an \<multiproperties>-element in the [Materials and Properties Extension specification, Chapter 5](https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-5-multiproperties).
 
 
-Figure 4-1 shows an example of two layers within a volumetric stack and the result using various blending functions with different source and destination alpha values.
-A volumetriclayer MUST contain at least one \<channelmapping> element. The dstchannel attribute of each \<channelmapping> within a volumetriclayer element MUST match a \<dstchannel> element within this \<volumetriclayer>.
-The name of each \<dstchannel> element MUST occur at most once as dstchannel attribute in one of the \<channelmapping>.
+Figure 4-1 shows example of the composition of two scalar fields by a \<scalarfieldcomposed> using the different methods and varying factors.
 
-Destination channels that are not mentioned as dstchannel attribute in this list are not modified by this \<volumetriclayer>.
+_Figure 4-1: Example of composition methods and parameters_
+![Example of composition methods and parameters](images/compositing.png)
 
-_Figure 4-1: Example of different blending methods and parameters and src- or dst-alpha values_
-![Example of different blending methods and parameters and src- or dst-alpha values](images/blending.png)
 
-## 4.3 Channelmapping element
-Element **\<channelmapping>**
+# Chapter 4. 3D Vector Fields
 
-![channelmapping XML structure](images/element_channelmapping.png)
+3D Vector fields work analogously to scalar fields, however, each compositing or sampling operation is being performed for three components of the vector valued function: `f=(f1,f2,f3)`. Each of these vector-components could as well be described as a scalar field. However, when describing color values or vector valued properties, it is more natural to choose a vector-based representation.
 
-| Name   | Type   | Use | Default | Annotation |
+The only differences are in how the 3D Vector Field gets sampled from an image3d, and how the method "mask" during composition work.
+The rigorous specification of the 3D Vector field follows now.
+
+## 4.1 3D Vector Field
+
+Element type **\<vector3dfield>**
+
+![vector3dfield XML structure](images/element_vector3dfield.png)
+
+| Name   | Type   | Use | Default| Annotation |
 | --- | --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | | The resource id of a ChannelFromImage3D resource |
-| dstchannel | xs:string | required | | Name of the destination channel that should be manipulated by this channelmapping within this volumetric layer |
+| id | ST\_ResourceID | required | | The resource id of this vector3dfield resource |
+| name | xs:string | | | Field for a human readable name of this field |
+
+This container contains one of multiple specialization. This speficiation defines the \<vector3dfieldfromimage3d> and \<vector3dfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<vector3dfield> element.
+
+Whenever a language element of this specification refers to a \<vector3dfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the element referred to.
+
+
+## 4.2 3D Vector Field from Image3D
+
+Element type
+**\<vector3dfieldfromimage3d>**
+
+![vector3dfieldfromimage3d XML structure](images/element_vector3dfieldfromimage3d.png)
+
+| Name   | Type   | Use | Default| Annotation |
+| --- | --- | --- | --- | --- |
+| image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource. |
+| filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation. |
+| valueoffset | ST\_Number |  | 0.0 | Specifies a numerical offset for the values obtained from any channel within the `image3d` referred to by this `vector3dfieldfromimage3d`. |
+| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from any channel within the `image3d` referred to by this `vector3dfieldfromimage3d`. |
+| tilestyleu | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range. |
+| tilestylev | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range. |
+| tilestylew | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range. |
+
+Elements of type \<vector3dfieldfromimage3d> define a 3d-vector valued field (which can be sampled at any point in space) from values on a voxel grid defined in the \<image3d> element.
+
+To simplify parsing, producers MUST define \<image3d>-elements prior to referencing them via imaged3did in a \<vector3dfieldfromimage3d>-element.
+
+This element samples the channels RGB from the image3d. Channels `R`, `G` and `B` of the image3d are interpreted as components `f1`, `f2` and `f3` respectively. If the image3d does not provide either of these channels, the image3d provides the values for R,G and B according to the table in [Chapter 2. 3D Image](#chapter-2-3d-image).
+
+The attributes tilestyleu, tilestylev, tilestylew, and filter, valueoffset and valuescale work as they do for the \<scalarfieldfromimage3d> for the individual vector components of this \<vector3dfieldfromimage3d>.
+
+
+## 4.3 Composed 3D Vector Field
+
+Element type
+**\<vector3dfieldcomposed>**
+
+![vector3dfieldcomposed XML structure](images/element_vector3dfieldcomposed.png)
+
+| Name   | Type   | Use | Default| Annotation |
+| --- | --- | --- | --- | --- |
+| method | ST\_Method | required | | Determines how the referenced scalar fields are composed. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
+| vector3dfieldid1 | ST\_ResourceId | required | | The resource id of a \<vector3dfield> resource that will be used as first field during the composition.  |
+| vector3dfieldid2 | ST\_ResourceId | required | | The resource id of a \<vector3dfield> resource that will be used as second field during the composition.  |
+| factor1 | ST\_Number | | 1.0 | Numeric scale factor for the first composited field. Only used if method is "weightedsum". |
+| factor2 | ST\_Number | | 1.0 | Numeric scale factor for the second composited field. Only used if method is "weightedsum". |
+| transform1 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as first field during the composition. |
+| transform1 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as second field during the composition. |
+| scalarfieldmaskid | ST\_ResourceId | | | The resource id of a \<scalarfield> resource which shall be used for masking. Required if method is "mask".  |
+| transformmask | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for masking. |
+
+Each \<vector3dfieldcomposed>-element encodes a simple volumetric modeling operation that acts on a 3D-vector-valued function, that is the composition of two 3D vector fields and optionally a scalar field in the case of the method "mask".
+
+To simplify parsing, producers MUST define \<vector3dfield>- and \<scalarfield>-elements prior to referencing them via scalarfieldid1, scalarfieldid1 or scalarfieldmaskid in a \<vector3dfieldcomposed>-element, respectively.
+
+All attributes work analogously to how they work in the \<scalarfieldcomposed>-element in that they are applied per vector component `f1`, `f2` and `f3`. The only deviation is in the method "mask" which applies the same scalar mask field to all components of the \<vector3dfields> vector3dfieldid1 and vector3dfieldid2.
+
+Let's denote the sampled value of this \<vector3dfieldcomposed>-element at point `(x,y,z)` as **`c`**.
+To evaluate **`c`**, the first \<vector3dfieldcomposed> needs to be evaluated at `T1*(x,y,z)`, yielding **`s2`**, where `T1` is given by the transform1 attribute.
+To evaluate **`c`**, the second \<vector3dfieldcomposed> needs to be evaluated at `T2*(x,y,z)`, yielding **`s2`**, where `T2` is given by the transform2 attribute.
+
+With these definitions at hand the sampled value of this \<vector3dfieldcomposed> **`c`** is calculated according to the method attribute:
+
+- "mask":
+
+    The method "mask" provides a means to use another \<scalarfield> as a volumetric decal that only affects a region of complex shape within the volume.
+
+    `c = m * s1 + (1 - m) * s2`
+    
+    Here, m is the value of the \<scalarfield> referred to by the `scalarfieldmaskid` attribute of this \<vector3dfieldcomposed> evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
+
+
+TODO: this note
+
+__Note__: Summing up [chapters 2](#chapter-2-3d-image) and [3](#chapter-3-channel-from-3d-image): the \<image3d> and the \<scalarfieldfromimage3d>-elements describe a scalar volumetric texture. Other file formats like OpenVDB or OpenEXR offer similar functionality, and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode volumetric textures as different child elements of \<scalarfield> and benefit from their advanced features.
+The remainder of this specification deals with the mapping of these volumetric textures onto mesh-objects in a 3MF file and giving these textures a meaning for additive manufacturing processes. Replacing \<image3d> and the \<scalarfieldfromimage3d> would not affect the remaining parts of this specification.
+
 
 # Chapter 5. Volumetric Data
 
@@ -371,17 +431,18 @@ The volumetric data \<volumedata> element is a new OPTIONAL element which extend
 
 
 ## 5.2. Volumetric Data
- 
+
 Element **\<volumedata>**
 
 ![volumedata XML structure](images/element_volumedata.png)
 
-The \<volumedata> element references the volumetric data given by \<volumetricstack>-elements and defines how their various channels are mapped to specific properties within the interior volume of the enclosing mesh.
+The \<volumedata> defines the volumetric properties in the interior of a \<mesh> element.
+
+The child-element of the \<volumedata> element reference the field-data given by \<scalarfield>- and \<vector3dfiled>-elements and defines how they are mapped to specific properties within the interior volume of the enclosing mesh.
 Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh.
 
-The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element,
-up to one \<color> element, and an arbitrary number of \<property> elements.
+The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element, up to one \<color> element, and an arbitrary number of \<property> elements.
 
 The child elements modify the enclosing \<mesh> in two fundamentally different ways:
 1. the child \<boundary> element (if it exists) determines the geometry of the \<mesh> object.
@@ -402,7 +463,7 @@ Conflicting properties must be handled as follows:
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
 __Note__: In the case where objects with different \<volumedata> child elements overlap, only the \<volumedata> child elements from last object can be used.
-This makes sure that \<volumedata> child elements of an overlapped object do not determine any \<volumedata> child elements of an overlapping object. Figure 5-1 illustrates this behavior.
+This makes sure that \<volumedata> child elements of an overlapped object do not determine the value of any \<volumedata> child elements of an overlapping object. Figure 5-1 illustrates this behavior.
 
 _Figure 5-1: a) Mesh object A (circle) with \<volumedata> child element X. b) Mesh object B (rectangle) with \<volumedata> child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows \<volumedata> child element X in object A, and \<volumedata> child element Y in object B. The table lays out how these \<volumedata> child elements are sampled at positions p1 to p4._
 ![Illustration of overlapping meshes with \<volumedata> child elements](images/overlap_properties.png)
@@ -416,17 +477,17 @@ Element **\<boundary>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds a channel that encodes the boundary as a levelset |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
-| channel | xs:string | required | | Name of the channel that holds a levelset function which defines the boundary |
-| solidthreshold | ST\_Number | | 0.0 | Determines the values of the levelset function which are considered inside or outside the specified object  |
+| scalarfieldid | ST\_ResourceID | required | | ResourceID of the \<scalarfield> that encodes the boundary as a levelset. |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<scalarfield> coordinate system. |
+| solidthreshold | ST\_Number | | 0.0 | Determines the values of the levelset function which are considered inside or outside the specified object. |
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
-**sourceid** and **channel**:
+To simplify parsing, producers MUST define a \<scalarfield>-element prior to referencing it via the scalarfieldid in a \<boundary>-element.
 
-The levelset function is given by the "dstchannel" within the \<volumetricstack>
-with resource id matching the sourceid-attribute and with name matching the "channel"-attribute of the \<boundary>-element.
+**scalarfieldid**:
+
+The levelset function is given by the \<scalarfield> with resource id matching the sourceid-attribute of the \<boundary>-element.
 
 **solidthreshold**:
 
@@ -436,8 +497,8 @@ The value of the levelset function `f` at a position `(x,y,z)` and the solidthre
 
 **transform**:
 
-The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If the boundary-channel of the enclosing \<mesh> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+The transformation of the object coordinate system into the \<scalarfield> coordinate system.
+If the boundary-property of the enclosing \<mesh> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<scalarfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 See Figure 5-2 for an illustration of this transform in the sampling process.
 
 ### 5.2.2 Color element
@@ -448,42 +509,22 @@ Element **\<color>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channels to be used in the child color elements. |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
+| vector3dfieldid | ST\_ResourceID | required | | ResourceID of the \<vector3dfield> that holds color information. |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<vector3dfield> coordinate system. |
+
+To simplify parsing, producers MUST define a \<vector3dfield>-element prior to referencing it via the vector3dfieldid in a \<color>-element.
 
 The \<color> element is used to define the color of the object.
-The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values. If the value of the channel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively.
+The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
+
+The vector components `x`, `y` and `z` of the \<vector3dfield> are interpreted as the `R`, `G` and `B` channels of the color of the enclosing meshobject, respectively. If either channel evaluates to a value \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
 This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
 
-The \<color>-element MUST contain exactly three \<red>-, \<green>- and \<blue>-element.
-
 **transform**:
 
-The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If the \<red>-, \<green>- or \<blue>-channel is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
-
-### 5.2.2.1 Color channel elements
-
-Elements **\<red>, \<green> and \<blue>**
-
-![colorchannel XML structure](images/elements_redgreenblue.png)
-
-of
-
-Complex type **\<colorchannel>**
-
-![colorchannel XML structure](images/ct_colorchannel.png)
-
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| channel | xs:string | required | | Source channel for the values of this color channel |
-
-Each element instance of CT\_ColorChannel MUST have an attribute "channel" that
-references a destination channel from the \<volumetricstack> with Id matching the sourceid of the parent \<color> element.
-
-If the value of the channel of a \<red>-, \<green>- and \<blue>-element is \<0 or \>1 it has to be truncated at 0 or 1, respectively. 
-
+The transformation of the object coordinate system into the \<vector3dfield> coordinate system.
+If this \<color>>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the \<vector3dfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 ## 5.2.3 Composite element
 
@@ -493,18 +534,13 @@ Element **\<composite>**
 
 | Name   | Type | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channels used in the child \<materialmapping>-elements |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
-| basematerialid | ST\_ResourceID | required | | ResourceID of the basematerial that holds the \<base>-elements referenced in the child \<materialmapping>-elements |
+| basematerialid | ST\_ResourceID | required | | ResourceID of the \<basematerials> that holds the \<base>-elements referenced in the child \<materialmapping>-elements. |
 
 The \<composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
 
 This element MUST contain at least one \<materialmapping> element, which will encode the relative contribution of a specific basematerial to the material mix.
 
-**transform**:
-
-The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+The number of \<base>-elements in the \<basematerials> element referenced by a \<composite> element MUST equal the number of \<materialmapping>-elements in the \<composite> element. To simplify parsing, producers MUST define the referenced \<basematerials>-element prior to referencing it via the basematerialid in a \<composite>-element.
 
 ## 5.2.4 Material mapping element
 
@@ -514,22 +550,28 @@ Element **\<materialmapping>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| channel | xs:string | required | | Source channel for the values of this material |
-| pindex | ST\_ResourceIndex | required | | ResourceIndex of the \<base>-element within the parent's associated \<basematerial>-element |
+| scalarfieldid | ST\_ResourceID | required | | ResourceID of the \<scalarfield> providing the mixing contribution value for a material in the \<basematerial>-element. |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<scalarfield> coordinate system |
 
-The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent
-\<composite>-element.
+The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent \<composite>-element.
 
-If the sampled value of a channel is `<0` it must be evaluated as "0".
+To simplify parsing, producers MUST define the referenced \<scalarfield>-element prior to referencing it via the scalarfieldid in a \<materialmapping>-element.
+
+**transform**:
+
+The transformation of the object coordinate system into the \<scalarfield> coordinate system.
+If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<scalarfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+
+If the sampled value of a \<scalarfield> is `<0` it must be evaluated as "0".
 
 Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-7`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
 - If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
    ```
-   value of channel i / sum(value of all N channels at point X)
+   value of channel i / sum(value of all N scalarfields at point X)
    ```
 
-Each element instance of \<CT\_MaterialMapping> MUST have an attribute "channel" that references a destination channel from the \<volumetricstack> with id matching the sourceid of the parent \<composite> element.
+The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
 
 ### 5.2.4.1 Property element
 
@@ -539,18 +581,19 @@ Element **\<property>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| sourceid | ST\_ResourceID | required | | ResourceID of the volumetricstack that holds the channel used by this property |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the volumetricstack coordinate system |
-| channel | xs:string | required | | Name of the channel that serves as source for the scalar value representing this property. |
+| fieldid | ST\_ResourceID | required | | ResourceID of the \<scalarfield> or \<vector3dfield> that holds the value of this property |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<scalarfield> or \<vector3dfield> coordinate system |
 | name | xs:QName | required | | Namespace and name of this property |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
 
-The \<property> element allows to assign any point in space a scalar value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
+The \<property> element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
+
+To simplify parsing, producers MUST define the referenced \<scalarfield>- or \<vector3dfield>-element prior to referencing it via the sourcefieldid in a \<property>-element.
 
 **transform**:
 
-The transformation of the object coordinate system into the \<volumetricstack> coordinate system.
-If the channel of a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced channel in the \<volumetricstack> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+The transformation of the object coordinate system into the \<scalarfield> or \<vector3dfield> coordinate system.
+If a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<scalarfield> or \<vector3dfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
 A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called "http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05".
@@ -558,6 +601,7 @@ The specifications of private namespaces (that are not ratified by the 3MF Conso
 
 The names of \<property>-elements MUST be unique within a \<volumedata>. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
 The interpretation of the value MUST be defined by the owner of the namespace. 
+The producer of a 3MF file is responsible to by the \<scalarfield> elements referred to by a \<property> such that sampling it as e.g. a physical property, is sensible.
 
 If the interpretation of a property might result in a conflict with the standard volumedata-elements (boundary, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
 
@@ -565,6 +609,12 @@ If a physical unit is necessary, the namespace owner MUST define a unique and un
 
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
+
+
+
+TODO: combine all below, update ! images/fig_coordinatesystems.png
+__Note__: This specification forms a acyclic directed graph when evaluation the value of any volumedata-subelement. This graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dcomposed>) to an \<image3d>-element.
+In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dcomposed>)-elements encode volumetric modeling operations, as described in TODO.
 
 __Note__:
 
@@ -597,8 +647,8 @@ See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/
 ## Appendix B. 3MF XSD Schema for the Volumetric Extension
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11"
+<xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
 	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
 	<xs:annotation>
 		<xs:documentation>
@@ -620,8 +670,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="channelfromimage3d" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="volumetricstack" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:element ref="scalarfield" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:element ref="vector3dfield" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
@@ -644,50 +694,28 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="path" type="ST_UriReference" use="required"/>
-		<xs:attribute name="valueoffset" type="ST_Number" default="0.0"/>
-		<xs:attribute name="valuescale" type="ST_Number" default="1.0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_VolumetricStack">
+	<xs:complexType name="CT_ScalarField">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="dstchannel" minOccurs="1" maxOccurs="65535"/>
-			<xs:element ref="volumetriclayer" minOccurs="1" maxOccurs="65535"/>
+			<xs:choice>
+				<xs:element ref="scalarfieldfromimage3d"/>
+				<xs:element ref="scalarfieldcomposed"/>
+				<xs:any namespace="##other" processContents="lax"/>
+			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="name" type="xs:string"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_Channel">
+	<xs:complexType name="CT_ScalarFieldFromImage3D">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="name" type="xs:string" use="required"/>
-		<xs:attribute name="background" type="ST_Number" default="0"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-	
-	<xs:complexType name="CT_VolumetricLayer">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="channelmapping" minOccurs="1" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="blendmethod" type="ST_BlendMethod" use="required"/>
-		<xs:attribute name="srcalpha" type="ST_Number"/>
-		<xs:attribute name="dstalpha" type="ST_Number"/>
-		<xs:attribute name="maskid" type="ST_ResourceId"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
-	<xs:complexType name="CT_ChannelFromImage3D">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="channel" type="ST_ChannelName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:attribute name="filter" type="ST_Filter" default="linear"/>
 		<xs:attribute name="valueoffset" type="ST_Number" default="0.0"/>
 		<xs:attribute name="valuescale" type="ST_Number" default="1.0"/>
@@ -697,12 +725,62 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_ChannelMapping">
+	<xs:complexType name="CT_ScalarFieldComposed">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="dstchannel" type="xs:string" use="required"/>
+		<xs:attribute name="method" type="ST_Method" use="required"/>
+		<xs:attribute name="scalarfieldid1" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="scalarfieldid2" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="scalarmaksfieldid" type="ST_ResourceID"/>
+		<xs:attribute name="factor1" type="ST_Number" default="1.0"/>
+		<xs:attribute name="factor2" type="ST_Number" default="1.0"/>
+		<xs:attribute name="transform1" type="ST_Matrix3D"/>
+		<xs:attribute name="transform2" type="ST_Matrix3D"/>
+		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="CT_Vector3DField">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element ref="vector3dfieldfromimage3d"/>
+				<xs:element ref="vector3dfieldcomposed"/>
+				<xs:any namespace="##other" processContents="lax"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="name" type="xs:string"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+	
+	<xs:complexType name="CT_Vector3DFieldFromImage3D">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="filter" type="ST_Filter" default="linear"/>
+		<xs:attribute name="valueoffset" type="ST_Number" default="0.0"/>
+		<xs:attribute name="valuescale" type="ST_Number" default="1.0"/>
+		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap"/>
+		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap"/>
+		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="CT_Vector3DFieldComposed">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="method" type="ST_Method" use="required"/>
+		<xs:attribute name="vector3dfieldid1" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="vector3dfieldid2" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="scalarmaksfieldid" type="ST_ResourceID"/>
+		<xs:attribute name="factor1" type="ST_Number" default="1.0"/>
+		<xs:attribute name="factor2" type="ST_Number" default="1.0"/>
+		<xs:attribute name="transform1" type="ST_Matrix3D"/>
+		<xs:attribute name="transform2" type="ST_Matrix3D"/>
+		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -728,30 +806,18 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="scalarfieldid" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="channel" type="xs:string" use="required"/>
 		<xs:attribute name="solidthreshold" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Color">
 		<xs:sequence>
-			<xs:element ref="red"/>
-			<xs:element ref="green"/>
-			<xs:element ref="blue"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="vector3dfieldid" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
-	<xs:complexType name="CT_ColorChannel">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="channel" type="xs:string" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -760,8 +826,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:element ref="materialmapping" minOccurs="1" maxOccurs="2147483647"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:attribute name="basematerialid" type="ST_ResourceID" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
@@ -770,8 +834,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="channel" type="xs:string" use="required"/>
-		<xs:attribute name="pindex" type="ST_ResourceIndex" use="required"/>
+		<xs:attribute name="scalarfieldid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -779,9 +843,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="sourceid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="fieldid" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="channel" type="xs:string" use="required"/>
 		<xs:attribute name="name" type="xs:QName" use="required"/>
 		<xs:attribute name="required" type="xs:boolean" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
@@ -807,11 +870,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:maxExclusive value="2147483648"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="ST_ResourceIndex">
-		<xs:restriction base="xs:nonNegativeInteger">
-			<xs:maxExclusive value="2147483648"/>
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="ST_UriReference">
 		<xs:restriction base="xs:anyURI">
 			<xs:pattern value="/.*"/>
@@ -831,10 +889,13 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:pattern value="((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="ST_BlendMethod">
+	<xs:simpleType name="ST_Method">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="mix"/>
+			<xs:enumeration value="min"/>
+			<xs:enumeration value="max"/>
 			<xs:enumeration value="multiply"/>
+			<xs:enumeration value="weightedsum"/>
+			<xs:enumeration value="mask"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ST_Matrix3D">
@@ -847,20 +908,17 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<!-- Elements -->
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="image3dsheet" type="CT_Image3DSheet"/>
-	<xs:element name="volumetricstack" type="CT_VolumetricStack"/>
-	<xs:element name="channel" type="CT_Channel"/>
-	<xs:element name="dstchannel" type="CT_Channel"/>
-	<xs:element name="volumetriclayer" type="CT_VolumetricLayer"/>
-	<xs:element name="channelmapping" type="CT_ChannelMapping"/>
-	<xs:element name="channelfromimage3d" type="CT_ChannelFromImage3D"/>
+	<xs:element name="scalarfield" type="CT_ScalarField"/>
+	<xs:element name="scalarfieldfromimage3d" type="CT_ScalarFieldFromImage3D"/>
+	<xs:element name="scalarfieldcomposed" type="CT_ScalarFieldComposed"/>
+	<xs:element name="vector3dfield" type="CT_Vector3DField"/>
+	<xs:element name="vector3dfieldfromimage3d" type="CT_Vector3DFieldFromImage3D"/>
+	<xs:element name="vector3dfieldcomposed" type="CT_Vector3DFieldComposed"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
 	<xs:element name="boundary" type="CT_Boundary"/>
 	<xs:element name="composite" type="CT_Composite"/>
 	<xs:element name="materialmapping" type="CT_MaterialMapping"/>
 	<xs:element name="color" type="CT_Color"/>
-	<xs:element name="red" type="CT_ColorChannel"/>
-	<xs:element name="green" type="CT_ColorChannel"/>
-	<xs:element name="blue" type="CT_ColorChannel"/>
 	<xs:element name="property" type="CT_Property"/>
 	<xs:element name="mesh" type="CT_Mesh"/>
 </xs:schema>
@@ -868,7 +926,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 # Appendix C. Standard Namespace
 
-Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11)
+Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01](http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01)
 
 # Appendix D: Example file
 
@@ -876,27 +934,16 @@ Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11](htt
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" 
-xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" >
+xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" >
 	<resources>
 		<v:image3d id="1" rowcount="3" columncount="4" sheetcount="2">
-			<image3dsheet path="/3D/volumetric/colors/sheet0.png" valuescale="0.00392156862"/>
-			<image3dsheet path="/3D/volumetric/colors/sheet1.png" valuescale="0.00392156862"/>
+			<image3dsheet path="/3D/volumetric/colors/sheet0.png"/>
+			<image3dsheet path="/3D/volumetric/colors/sheet1.png"/>
 		</v:image3d>
-		<v:channelfromimage3d id="2" image3did="1" channelname="R"/>
-		<v:channelfromimage3d id="3" image3did="1" channelname="G"/>
-		<v:channelfromimage3d id="4" image3did="1" channelname="B"/>
-		<v:volumetricstack id="5" >
-			<dstchannel name="red" background="0"/>
-			<dstchannel name="green" background="0"/>
-			<dstchannel name="blue" background="0"/>
-			<volumetriclayer blendmethod="max">
-				<channelmapping sourceid="2" dstchannel="red"/>
-				<channelmapping sourceid="3" dstchannel="green"/>
-				<channelmapping sourceid="4" dstchannel="blue"/>
-			</volumetriclayer>
-		</v:volumetricstack>
-		
-		<object id="6" name="Body1" type="model">
+		<v:vector3dfield id="2">
+			<v:vector3dfieldfromimage3d image3did="1" valuescale="0.00392156862"/>
+		</v:vector3dfield>
+		<object id="3" name="Body1" type="model">
 			<mesh>
 				<vertices>
 					<vertex x="200" y="100" z="75"/>
@@ -923,11 +970,7 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11" >
 					<triangle v1="1" v2="5" v3="4"/>
 				</triangles>
 				<v:volumedata>
-					<color sourceid="3" transform="0.01 0 0 0 0.0133333333333 0 0 0 0.02 0 0 0">
-						<red channel="red"/>
-						<green channel="green"/>
-						<blue channel="blue"/>
-					</color>
+					<color vector3dfieldid="2" transform="0.01 0 0 0 0.0133333333333 0 0 0 0.02 0 0 0"/>
 				</v:volumedata>
 			</mesh>
 		</object>
