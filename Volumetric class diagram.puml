@@ -1,6 +1,6 @@
 @startuml
 
-title 3MF Volumetric Color & Scalar Fields
+title 3MF Volumetric 3D-Vector & Scalar Fields
 
 package Image
 {
@@ -26,11 +26,12 @@ package ScalarFields
     Class ScalarField
     {
         id: resourceID
+        name: string
     }
 
     Class ScalarFieldComposed extends ScalarField
     {
-        blendmethod : string
+        method : string
         scalarfield1id : resourceID
         scalarfield2id : resourceID
         scalarmaskfieldid : resourceID
@@ -57,18 +58,19 @@ package ScalarFields
     ScalarFieldFromImage3D o-- "1" Image3D
 }
 
-package ColorFields
+package Vector3DFields
 {
-    Class ColorField
+    Class Vector3DField
     {
         id: resourceID
+        name: string
     }
 
-    Class ColorFieldComposed extends ColorField
+    Class Vector3DFieldComposed extends Vector3DField
     {
-        blendmethod : string
-        colorfield1id : resourceID
-        colorfield2id : resourceID
+        method : string
+        vector3dfield1id : resourceID
+        vector3dfield1id : resourceID
         scalarmaskfieldid : resourceID
         factor1 : double
         factor2 : double
@@ -77,18 +79,20 @@ package ColorFields
         transformmask : transform
     }
 
-    Class ColorFieldFromImage3D extends ColorField
+    Class Vector3DFieldFromImage3D extends Vector3DField
     {
         image3did : resourceID
+        valueoffset: double
+        valuescale: double
         filter : string
         tilestyleu : string
         tilestylev : string
         tilestylew : string
     }
 
-    ColorFieldComposed o-- "2" ColorField
-    ColorFieldComposed o-- "0..1 mask" ScalarField
-    ColorFieldFromImage3D o-- "1" Image3D
+    Vector3DFieldComposed o-- "2" Vector3DField
+    Vector3DFieldComposed o-- "0..1 mask" ScalarField
+    Vector3DFieldFromImage3D o-- "1" Image3D
 }
 
 package VolumetricData
@@ -99,29 +103,30 @@ package VolumetricData
     {
         transform : matrix
         solidthreshold : double
-        scalarfield : resourceID
+        scalarfieldid : resourceID
     }
 
     Class Color
     {
+        vector3dfieldid : resourceID
         transform : matrix
-        colorfield : resourceID
     }
 
     Class Property
     {
         name : string
         transform : matrix
-        scalarfield : resourceID
+        fieldid : resourceID
     }
 
     Class Composite
     {
+        basematerialid : resourceID
     }
 
     Class MaterialMapping
     {
-        scalarfield : resourceID
+        scalarfieldid : resourceID
         transform : matrix
     }        
 
@@ -132,7 +137,7 @@ package VolumetricData
     Composite *-- "1..*" MaterialMapping
 
     Boundary o-- "1" ScalarField
-    Color o-- "1" ColorField
+    Color o-- "1" Vector3DField
     Property o-- "1" ScalarField
     MaterialMapping o-- "1" ScalarField
 }
