@@ -52,11 +52,11 @@ This extension MUST be used only with Core specification version 1.3. or higher.
 
 ## 1.2. Introduction
 Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
-Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1 	: a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
+Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1. a) a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
-The volumetric modeling approach relies on a mathematical, field-based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (gray-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
+The volumetric modeling approach relies on a mathematical, field-based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (grey-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
 
-The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for a red stripe at the front-left surface. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a distribution of three different materials, indicated by three different colors, red, blue and green.
+The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for a red stripe at the front-left surface that gradually turns into turquoise. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a distribution of three different materials, indicated by three different colors, red, blue and green.
 
 This is only a brief illustration of the volumetric modeling approach to geometric design and more information can be found in [references](#references) \[1\] and \[2\].
 
@@ -83,14 +83,14 @@ See [the standard 3MF Software Conformance documentation](https://github.com/3MF
 
 ## Chapter 1. Overview of Additions
 
-_Figure 1-1 Overview of model XML structure of 3MF with volumetric additions_
+_Figure 1-1: Overview of model XML structure of 3MF with volumetric additions_
 ![Overview of model XML structure of 3MF with volumetric additions](images/overview-of-additions.png)
 
 This document describes new elements, each of which is OPTIONAL for producers, but MUST be supported by consumers that specify support for this volumetric extension of 3MF.
 
 The central idea of this extension is to enrich the geometry notion of 3MF with volumetric elements that can represent spatially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
 
-This extension is meant to be an exact specification of geometric, appearance, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
+This extension is meant to be an exact specification of geometric, appearance-related, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
 
 A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as required. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
@@ -107,29 +107,43 @@ Element **\<image3d>**
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this image3d resource. |
 | name | xs:string | | | 3d image resource name used for annotations purposes. |
-| rowcount | xs:positiveinteger | required || Number of pixel rows in all child \<image3dsheet>-elements. |
-| columncount | xs:positiveinteger | required || Number of pixel columns in all child \<image3dsheet>-elements. |
-| sheetcount | xs:positiveinteger | required || Number of \<image3dsheet>-elements within this \<image3d> element. |
 
-Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a finite voxel grid from which data can be sampled at any point. Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
+Volumetric data can be encoded as 3d images that consist of voxels. Each \<image3d> element is assumed to represent a finite voxel grid from which data can be sampled.
 
-All \<image3dsheets> within an image3d MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respectively. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<image3dsheet>-elements under \<image3d> that are implicitly ordered starting with index 0.
+\<image3d> is a container for different representations of voxeldata. This specification defines only the \<imagestack>-elements. Later versions of this specification might provide alternative child elements for the \<image3d> element.
 
-Image3D objects, and thus the underlying \<image3dsheet> elements, MUST follow one of the input pixel layouts shown in the table below. All image3dsheets within an image3d MUST have the same input pixel layouts, and each channel MUST have the same bit-depth across all image3dsheets.
+## 2.2 ImageStack
+
+Element **\<imagestack>**
+
+![ImageStack XML structure](images/element_imagestack.png)
+
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| rowcount | xs:positiveinteger | required || Number of pixel rows in all child \<imagesheet>-elements. |
+| columncount | xs:positiveinteger | required || Number of pixel columns in all child \<imagesheet>-elements. |
+| sheetcount | xs:positiveinteger | required || Number of \<imagesheet>-elements within this \<imagestack> element. |
+
+Volumetric images can be embedded inside a 3MF file using groups of PNG images that represent a stack of images.
+
+All \<imagesheet>-elements within an imagestack MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respectively. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount \<imagesheet>-elements under \<imagestack> that are implicitly ordered starting with index 0.
+
+Imagestack objects, and thus all underlying \<imagesheet> elements, MUST follow one of the input pixel layouts shown in the table below. All imagesheets within an imagestack MUST have the same input pixel layouts, and each channel MUST have the same bit-depth across all imagesheets. Pixel values sampled from a PNG file with a bitdepth of `N` bits will be interpreted as 
+`pixelvalue / (2^N-1)`, i.e. a fully separated channel is sampled as 1, the minimum sampled value is interpreted as 0.
 
 The following table shows the logical interpretation of sampling the "R", "G", "B" or "A"-channel depending on the input pixel layouts. The meaning of symbols is as follows: R – red, G – green, B – blue, A – alpha, Y – greyscale.
 
 | Input pixel layout | | | | | |
 | --- | --- | --- | --- | --- | --- |
 | RGBA | R | G | B | A |
-| RGB | R | G | B | 2^bitdepth-1 |
+| RGB | R | G | B | 1 |
 | YA | Y | Y | Y | A |
-| Y | Y | Y | Y | 2^bitdepth-1 |
+| Y | Y | Y | Y | 1 |
 
-For example, if the specification says that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all R, G, B color channels shared the same greyscale value. If there is no alpha channel present in the image, the highest possible value `2^bitdepth-1` MUST be used.
+For example, if a field (see [\<scalarfieldfromimage3d>](#3-2-scalar-field-from-image3d)- and [\<vector3dfieldfromimage3d>](#4-2-3d-vector-field-from-image3d)) in a 3MF-file specifies that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all "R", "G", "B" color channels share the same greyscale value. If there is no alpha channel present in the image, the highest possible value `1` MUST be used.
 
-The \<image3d>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1} x {0,1,...,columncount-1} x {0,1,...,sheetcount-1}). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<image3dsheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel indices are shown as bold black triple, the UVW-coordinate values as red triples.
-Figure 2-1b) illustrates the voxel indices and the UVW-values throughout the first \<image3dsheet>, Figure 2-1 c) illustrates these quantities throughout the second \<image3dsheet>. A voxel index triple `(i,j,k)` corresponds to a voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
+The \<imagestack>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1} x {0,1,...,columncount-1} x {0,1,...,sheetcount-1}). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<imagesheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel indices are shown as bold black triple, the UVW-coordinate values as red triples.
+Figure 2-1 b) illustrates the voxel indices and the UVW-values throughout the first \<imagesheet>, Figure 2-1 c) illustrates these quantities throughout the second \<imagesheet>. A voxel index triple `(i,j,k)` corresponds to a voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
 
 __Note__: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
 Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d.
@@ -140,41 +154,43 @@ _Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) show
 ![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 2.1.1 File Formats
-PNG images can provide acceptable compression and bit-depth for the levelset-function, color information, material mixing ratios or arbitrary property information.
+PNG images can provide acceptable compression and bit-depth for the boundary-function, color information, material mixing ratios or arbitrary property information.
 
 The following describes recommendations for the channel bit depth of PNG images used in this specification and is based on the nomenclature in the specification of the Portable Network Graphics (PNG, https://www.w3.org/TR/PNG) format.
 
 - Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary channel depth. It is RECOMMENDED to store color into RGB-channels within a PNG.
 
-- It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A typical approach to encode this levelset information is to encode the signed distance field of the boundary of the object in this channel, or to limit the encoding to a narrow region around the boundary of the object. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1.
+- It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A typical approach to store this levelset information is to encode the signed distance field of the boundary of the object in this channel, or to limit the encoding to a narrow region around the boundary of the object. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1, but with a very high spatial resolution.
 
-To achieve high accuracy, producers SHOULD store such information in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
+- Producers SHOULD store information for which they require high resolution in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
 
 
-## 2.1.2 OPC package layout
+## 2.2.2 OPC package layout
 __Note__: Introductory information about the Open Packaging Conventions (OPC) can be found in the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#11-package).
 
-It is RECOMMENDED that producers of 3MF Documents use the following part naming convention:
+It is RECOMMENDED that producers of 3MF Documents with the Volumetric Extension specification use the following part naming convention:
 
-Paths of  \<image3dsheet> SHOULD consist of four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this  \<image3dsheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the image3dsheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the  \<image3dsheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
+Paths of \<imagesheet> SHOULD consist of four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this \<imagesheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the imagesheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the \<imagesheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
 
-This implies that all \<image3dsheet> parts for an image3d-object SHOULD be located in the same OPC folder.
+This implies that all parts for \<imagesheet> in an imagestack SHOULD be located in the same OPC folder.
 
 _Figure 2-3: OPC package layout_
 ![OPC package layout](images/OPC_overview.png)
 
-## 2.2 3D Image Sheet
+## 2.2.3 3D Image Sheet
 
-Element **\<image3dsheet>**
+Element **\<imagesheet>**
 
-![image3dsheet XML structure](images/element_image3dsheet.png)
+![imagesheet XML structure](images/element_imagesheet.png)
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | path | ST\_UriReference | required | | Specifies the OPC part name (i.e. path) of the image data file |
 
-Each \<image3dsheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
+Each \<imagesheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
+__Note__:
+Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of \<image3d> and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different physical implementation of a voxel grid as child under \<image3d> would not affect the remaining parts of this specification.
 
 # Chapter 3. Scalar Fields
  
@@ -185,7 +201,7 @@ Similarly, a vectorial field is a mathematical function `f:R^3 -> R^3` that assi
 
 ## 3.1 Scalar Field
 
-Mathematical fields naturally lend themselves to represent volumetric structures. Their defining property is indeed that one can attain their value (sample) their value at any point in 3D space. To deal with them in the context of this specification, it introduces a container \<scalarfield> that is a resource in the 3MF model file.
+Mathematical fields naturally lend themselves to represent volumetric structures. Their defining property is that one can attain (or sample) their value at any point in 3D space. To deal with them in the context of this specification, it introduces a container \<scalarfield> that is a resource in the 3MF model file.
 
 Element type
 **\<scalarfield>**
@@ -197,7 +213,7 @@ Element type
 | id | ST\_ResourceID | required | | The resource id of this scalarfield resource |
 | name | xs:string | | | Field for a human readable name of this field |
 
-This container contains one of multiple specialization. This specification defines the \<scalarfieldfromimage3d> and \<scalarfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<scalarfield> element.
+This container contains one of multiple specialization. This specification defines the \<scalarfieldfromimage3d> and \<scalarfieldcomposed>-elements. Later versions of this specification or third parties may provide alternative child elements for the \<scalarfield> element in different XML namespaces.
 
 Whenever a language element of this specification refers to a \<scalarfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the referred to element.
 
@@ -226,7 +242,7 @@ To simplify parsing, producers MUST define \<image3d>-elements prior to referenc
 **channel**:
 
 The channel-attribute determines which channel to reference in the 3d image resource. Note that attributes of type \<ST\_ChannelName> are case-sensitive.
-Ehe elements of type \<scalarfieldfromimage3d> MUST contain a \<ST\_ChannelName> attribute which determines which channel to pick from the \<image3d> element. This attribute must be any of the reserved channel names (i.e. "R", "G", "B", or "A").
+The elements of type \<scalarfieldfromimage3d> MUST contain a \<ST\_ChannelName> attribute which determines which channel to pick from the \<image3d> element. This attribute must be any of the reserved channel names (i.e. "R", "G", "B", or "A").
 
 
 **tilestyle-u, -v or -w**:
@@ -244,18 +260,19 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 
 4. "none" will discard the \<scalarfieldfromimage3d>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<scalarfieldfromimage3d> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
 
-	_Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second \<image3dsheet>. b) tilestyle mirror illustrated throughout the second \<image3dsheet>. c) tilestyle clamp along the u-direction illustrated throughout the second \<image3dsheet>_
+	_Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second \<imagesheet>. b) tilestyle mirror illustrated throughout the second \<imagesheet>. c) tilestyle clamp along the u-direction illustrated throughout the second \<imagesheet>_
 	![Tilestyles](images/tilestyle_all.png)
 
 **filter**:
 The filter attribute defines the interpolation method used when a \<scalarfieldfromimage3d> is being sampled. This is illustrated in Figure 3-3.
 
-- If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource.
+- If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by sampling the voxel, whose UVW coordinate is closest to (u,v,w).
+If multiple voxels have the same distance (in UVW-space) to the sampling point (u,v,w), the voxel with the lowest UVW coordinate must be sampled.
 
 - If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
 
-    _Figure 3-3: filter attributes "nearest" (a) and "linear" (b). The image3d of Figure 2-1 used is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions.
-    ![Tilestyle mirror](images/filter.png)
+_Figure 3-3: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
+![Tilestyle mirror](images/filter.png)
 
 **`offsetvalue` and `scalevalue`**:
 
@@ -277,7 +294,7 @@ Element type
 | factor1 | ST\_Number | | 1.0 | Numeric scale factor for the first composited field. Only used if method is "weightedsum". |
 | factor2 | ST\_Number | | 1.0 | Numeric scale factor for the second composited field. Only used if method is "weightedsum". |
 | transform1 | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for as first field during the composition. |
-| transform1 | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for as second field during the composition. |
+| transform2 | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for as second field during the composition. |
 | scalarfieldmaskid | ST\_ResourceId | | | The resource id of a \<scalarfield> resource which shall be used for masking. Required if method is "mask".  |
 | transformmask | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for masking. |
 
@@ -285,13 +302,13 @@ Each \<scalarfieldcomposed>-element encodes a simple volumetric modeling operati
 
 To simplify parsing, producers MUST define \<scalarfield>-elements prior to referencing them via scalarfieldid1, scalarfieldid1 or scalarfieldmaskid in a \<scalarfieldcomposed>-element.
 
-**method**: controls according to which formula referred \<scalarfield>s should be composed.
+**method**: controls according to which formula referred scalar fields should be composed.
 
 Let's denote the sampled value of this \<scalarfieldcomposed>-element at point `(x,y,z)` as `c`.
-To evaluate `c`, the first \<scalarfield> needs to be evaluated at `T1*(x,y,z)`, yielding `s2`, where `T1` is given by the transform1 attribute.
-The second \<scalarfield> needs to be evaluated at `T2*(x,y,z)`, yielding `s2`, where `T2` is given by the transform2 attribute.
+To evaluate `c`, the first scalar field needs to be evaluated at `T1*(x,y,z)`, yielding `s2`, where `T1` is given by the transform1 attribute.
+The second scalar field needs to be evaluated at `T2*(x,y,z)`, yielding `s2`, where `T2` is given by the transform2 attribute.
 
-With these definitions at hand the sampled value of this \<scalarfieldcomposed> c is calculated according to the method attribute:
+With these definitions at hand the sampled value of this composed scalar field `c` is calculated according to the method attribute:
 
 - "weightedsum":
 
@@ -309,11 +326,11 @@ With these definitions at hand the sampled value of this \<scalarfieldcomposed> 
 
 - "mask":
 
-    The method "mask" provides a means to use another \<scalarfield> as a volumetric decal that only affects a region of complex shape within the volume.
+    The method "mask" provides a means to use another scalarfield as a volumetric decal that only affects a region of complex shape within the volume.
 
     `c = m * s1 + (1 - m) * s2`
     
-    Here, m is the value of the \<scalarfield> referred to by the `scalarfieldmaskid` attribute of this \<scalarfieldcomposed> evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
+    Here, `m` is the value of the scalar field referred to by the `scalarfieldmaskid` attribute of this \<scalarfieldcomposed>-element evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
     
     __Note__: The method "mask" implements the same formula as the method "mix" for the rgb-values of an \<multiproperties>-element in the [Materials and Properties Extension specification, Chapter 5](https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-5-multiproperties).
 
@@ -321,12 +338,12 @@ With these definitions at hand the sampled value of this \<scalarfieldcomposed> 
 Figure 4-1 shows example of the composition of two scalar fields by a \<scalarfieldcomposed> using the different methods and varying factors.
 
 _Figure 4-1: Example of composition methods and parameters_
-![Example of composition methods and parameters](images/compositing.png)
+![Example of composition methods and parameters](images/composition.png)
 
 
 # Chapter 4. 3D Vector Fields
 
-3D Vector fields work analogously to scalar fields, however, each compositing or sampling operation is being performed for three components of the vector valued function: `f=(f1,f2,f3)`. Each of these vector-components could as well be described as a scalar field. However, when describing color values or vector valued properties, it is more natural to choose a vector-based representation.
+3D Vector fields work analogously to scalar fields, however, each composition or sampling operation is being performed for the three components of the vector valued function: `f=(f1,f2,f3)`. Each of these vector-components could as well be described as a scalar field. However, when describing color values or vector valued properties, it is more natural to choose a vector-based representation.
 
 The only differences are in how the 3D Vector Field gets sampled from an image3d, and how the method "mask" during composition work.
 The rigorous specification of the 3D Vector field follows now.
@@ -342,7 +359,7 @@ Element type **\<vector3dfield>**
 | id | ST\_ResourceID | required | | The resource id of this vector3dfield resource |
 | name | xs:string | | | Field for a human readable name of this field |
 
-This container contains one of multiple specialization. This speficiation defines the \<vector3dfieldfromimage3d> and \<vector3dfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<vector3dfield> element.
+This container contains one of multiple specialization. This speficiation defines the \<vector3dfieldfromimage3d>- and \<vector3dfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<vector3dfield> element.
 
 Whenever a language element of this specification refers to a \<vector3dfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the element referred to.
 
@@ -368,9 +385,9 @@ Elements of type \<vector3dfieldfromimage3d> define a 3d-vector valued field (wh
 
 To simplify parsing, producers MUST define \<image3d>-elements prior to referencing them via imaged3did in a \<vector3dfieldfromimage3d>-element.
 
-This element samples the channels RGB from the image3d. Channels `R`, `G` and `B` of the image3d are interpreted as components `f1`, `f2` and `f3` respectively. If the image3d does not provide either of these channels, the image3d provides the values for R,G and B according to the table in [Chapter 2. 3D Image](#chapter-2-3d-image).
+This element samples the channels "R", "G" and "B" from the image3d. Channels "R", "G" and "B" of the image3d are interpreted as components `f1`, `f2` and `f3` respectively. If the image3d does not provide either of these channels, the image3d provides the values for "R", "G" and "B" according to the table in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-The attributes tilestyleu, tilestylev, tilestylew, and filter, valueoffset and valuescale work as they do for the \<scalarfieldfromimage3d> for the individual vector components of this \<vector3dfieldfromimage3d>.
+The attributes tilestyleu, tilestylev, tilestylew, and filter, valueoffset and valuescale work as they do for the scalar field from image3d for the individual vector components of this 3d vector field from image3d.
 
 
 ## 4.3 Composed 3D Vector Field
@@ -388,7 +405,7 @@ Element type
 | factor1 | ST\_Number | | 1.0 | Numeric scale factor for the first composited field. Only used if method is "weightedsum". |
 | factor2 | ST\_Number | | 1.0 | Numeric scale factor for the second composited field. Only used if method is "weightedsum". |
 | transform1 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as first field during the composition. |
-| transform1 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as second field during the composition. |
+| transform2 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as second field during the composition. |
 | scalarfieldmaskid | ST\_ResourceId | | | The resource id of a \<scalarfield> resource which shall be used for masking. Required if method is "mask".  |
 | transformmask | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for masking. |
 
@@ -399,25 +416,18 @@ To simplify parsing, producers MUST define \<vector3dfield>- and \<scalarfield>-
 All attributes work analogously to how they work in the \<scalarfieldcomposed>-element in that they are applied per vector component `f1`, `f2` and `f3`. The only deviation is in the method "mask" which applies the same scalar mask field to all components of the \<vector3dfields> vector3dfieldid1 and vector3dfieldid2.
 
 Let's denote the sampled value of this \<vector3dfieldcomposed>-element at point `(x,y,z)` as **`c`**.
-To evaluate **`c`**, the first \<vector3dfieldcomposed> needs to be evaluated at `T1*(x,y,z)`, yielding **`s2`**, where `T1` is given by the transform1 attribute.
-To evaluate **`c`**, the second \<vector3dfieldcomposed> needs to be evaluated at `T2*(x,y,z)`, yielding **`s2`**, where `T2` is given by the transform2 attribute.
+To evaluate **`c`**, the first 3D vector field is evaluated at `T1*(x,y,z)`, yielding **`s2`**, where `T1` is given by the transform1 attribute.
+To evaluate **`c`**, the second 3D vector field is evaluated at `T2*(x,y,z)`, yielding **`s2`**, where `T2` is given by the transform2 attribute.
 
-With these definitions at hand the sampled value of this \<vector3dfieldcomposed> **`c`** is calculated according to the method attribute:
+With these definitions at hand the sampled value of this composed 3D vector field **`c`** is calculated according to the method attribute:
 
 - "mask":
 
-    The method "mask" provides a means to use another \<scalarfield> as a volumetric decal that only affects a region of complex shape within the volume.
+    The method "mask" provides a means to use another 3D vector field as a volumetric decal that only affects a region of complex shape within the volume.
 
     `c = m * s1 + (1 - m) * s2`
     
-    Here, m is the value of the \<scalarfield> referred to by the `scalarfieldmaskid` attribute of this \<vector3dfieldcomposed> evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
-
-
-TODO: this note
-
-__Note__: Summing up [chapters 2](#chapter-2-3d-image) and [3](#chapter-3-channel-from-3d-image): the \<image3d> and the \<scalarfieldfromimage3d>-elements describe a scalar volumetric texture. Other file formats like OpenVDB or OpenEXR offer similar functionality, and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode volumetric textures as different child elements of \<scalarfield> and benefit from their advanced features.
-The remainder of this specification deals with the mapping of these volumetric textures onto mesh-objects in a 3MF file and giving these textures a meaning for additive manufacturing processes. Replacing \<image3d> and the \<scalarfieldfromimage3d> would not affect the remaining parts of this specification.
-
+    Here, m is the value of the scalar field referred to by the `scalarfieldmaskid` attribute of this composed 3D vector field evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
 
 # Chapter 5. Volumetric Data
 
@@ -427,7 +437,7 @@ Element **\<mesh>**
 
 ![mesh XML structure](images/element_mesh.png)
 
-The volumetric data \<volumedata> element is a new OPTIONAL element which extends the root triangular mesh representation (i.e. \<mesh> element).
+The volumetric data \<volumedata> element is a new OPTIONAL element which extends the root triangular mesh representation (i.e. the \<mesh> element).
 
 
 ## 5.2. Volumetric Data
@@ -442,7 +452,7 @@ The child-element of the \<volumedata> element reference the field-data given by
 Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh.
 
-The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element, up to one \<color> element, and an arbitrary number of \<property> elements.
+The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
 
 The child elements modify the enclosing \<mesh> in two fundamentally different ways:
 1. the child \<boundary> element (if it exists) determines the geometry of the \<mesh> object.
@@ -483,11 +493,11 @@ Element **\<boundary>**
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
-To simplify parsing, producers MUST define a \<scalarfield>-element prior to referencing it via the scalarfieldid in a \<boundary>-element.
+To simplify parsing, producers MUST define a \<scalarfield>-element prior to referencing it via the scalarfieldid-attribute in a \<boundary>-element.
 
 **scalarfieldid**:
 
-The levelset function is given by the \<scalarfield> with resource id matching the sourceid-attribute of the \<boundary>-element.
+The levelset function is given by the scalar field with resource id matching the sourceid-attribute of the \<boundary>-element.
 
 **solidthreshold**:
 
@@ -497,8 +507,8 @@ The value of the levelset function `f` at a position `(x,y,z)` and the solidthre
 
 **transform**:
 
-The transformation of the object coordinate system into the \<scalarfield> coordinate system.
-If the boundary-property of the enclosing \<mesh> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<scalarfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+The transformation of the object coordinate system into the scalar field coordinate system.
+If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 See Figure 5-2 for an illustration of this transform in the sampling process.
 
 ### 5.2.2 Color element
@@ -517,14 +527,14 @@ To simplify parsing, producers MUST define a \<vector3dfield>-element prior to r
 The \<color> element is used to define the color of the object.
 The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
 
-The vector components `x`, `y` and `z` of the \<vector3dfield> are interpreted as the `R`, `G` and `B` channels of the color of the enclosing meshobject, respectively. If either channel evaluates to a value \<0 or \>1 it has to be truncated at 0 or 1, respectively.
+The vector components `x`, `y` and `z` of the 3D vector field are interpreted as the "R", "G" and "B" channels of the color of the enclosing meshobject, respectively. If either channel evaluates to a value \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
 This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
 
 **transform**:
 
-The transformation of the object coordinate system into the \<vector3dfield> coordinate system.
-If this \<color>>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the \<vector3dfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+The transformation of the object coordinate system into the 3D vector field coordinate system.
+If this \<color>>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the 3D vector field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 ## 5.2.3 Composite element
 
@@ -534,7 +544,7 @@ Element **\<composite>**
 
 | Name   | Type | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| basematerialid | ST\_ResourceID | required | | ResourceID of the \<basematerials> that holds the \<base>-elements referenced in the child \<materialmapping>-elements. |
+| basematerialid | ST\_ResourceID | required | | ResourceID of the \<basematerials> element that holds the \<base>-elements referenced in the child \<materialmapping>-elements. |
 
 The \<composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
 
@@ -559,8 +569,8 @@ To simplify parsing, producers MUST define the referenced \<scalarfield>-element
 
 **transform**:
 
-The transformation of the object coordinate system into the \<scalarfield> coordinate system.
-If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<scalarfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+The transformation of the object coordinate system into the scalar field coordinate system.
+If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 If the sampled value of a \<scalarfield> is `<0` it must be evaluated as "0".
 
@@ -612,9 +622,8 @@ Producers of 3MF files MUST mark all volumetric \<property>-elements required to
 
 
 
-TODO: combine all below, update ! images/fig_coordinatesystems.png
-__Note__: This specification forms a acyclic directed graph when evaluation the value of any volumedata-subelement. This graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dcomposed>) to an \<image3d>-element.
-In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dcomposed>)-elements encode volumetric modeling operations, as described in TODO.
+__Note__: This specification forms a acyclic directed graph when evaluation the value of any volumedata-subelement. The evaluation of this graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dcomposed>) to a \<image3d>-elements.
+In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dcomposed>)-elements encode volumetric modeling operations, as described in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) and [4.3 Composed 3D Vector Field](##4.3-composed-3d-vector-field).
 
 __Note__:
 
@@ -622,18 +631,18 @@ Equipped with the language elements of this specification, one can recapitulate 
 
 Figure 5-2 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
 
-Figure 5-2 a) The object is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
+Figure 5-2 a) The object's color is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
 
-Figure 5-2b) Offers a view into the \<volumetricstack> and its corresponding coordinate system. The transformation `T1` from object coordinate space to \<volumetricstack> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<volumetricstack> context.
-The value sampled from the \<volumetricstack> element might be the result of blending multiple \<volumetriclayer>s in this stack, see Figure 4-1.
+Figure 5-2 b) shows the \<vector3dfieldfromimage3d> underlying the color of the object. The sampling point is represented in the coordinate system of the \<vector3dfieldfromimage3d>. The transformation `T1` from object coordinate space to \<vector3dfieldfromimage3d> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<vector3dfieldfromimage3d> context.
+The color value sampled in this illustration directly originates from a \<vector3dfieldfromimage3d> element. However, as mentioned in the note above, it could as well be the result of one or multiple compositions via \<vector3dfieldcomposed>, see Figure 4-1.
 
-Figure 5-2c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<volumetricstack> coordinate system and UVW space is given according to the `transform`-attribute of the \<channelfromimage3d> element in each \<volumetriclayer> of this \<volumetricstack>.
+Figure 5-2 c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<vector3dfieldfromimage3d> coordinate system and UVW space is given according to the `transform`-attribute of the \<vector3dfieldfromimage3d> element.
 
-Figure 5-3d) Shows the UVW coordinate space and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the \<image3d>-element map.
+Figure 5-3 d) Shows the UVW coordinate space of the \<image3d>-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying \<imagestack>-element map.
 
-Figure 5-3e) illustrates where the sampling point (+) ends up in the voxel index space. The mapping of UVW to voxel indices in the \<image3d>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
+Figure 5-3 e) illustrates where the sampling point (+) ends up in the voxel index space of the \<imagestack>. The mapping of UVW to voxel indices in the \<imagestack>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 5-2: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<volumetricstack>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<volumetricstack> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
+_Figure 5-2: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<vector3dfieldfromimage3d>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
 
@@ -648,7 +657,7 @@ See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
+xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11"
 	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
 	<xs:annotation>
 		<xs:documentation>
@@ -678,18 +687,27 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Image3D">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="image3dsheet" minOccurs="0" maxOccurs="1073741824"/>
+			<xs:choice>
+				<xs:element ref="imagestack"/>
+				<xs:any namespace="##other" processContents="lax"/>
+			</xs:choice>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="name" type="xs:string"/>
+	</xs:complexType>
+
+	<xs:complexType name="CT_ImageStack">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:element ref="imagesheet" minOccurs="1" maxOccurs="1073741824"/>
+		</xs:sequence>
 		<xs:attribute name="rowcount" type="xs:positiveInteger" use="required"/>
 		<xs:attribute name="columncount" type="xs:positiveInteger" use="required"/>
 		<xs:attribute name="sheetcount" type="xs:positiveInteger" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_Image3DSheet">
+	<xs:complexType name="CT_ImageSheet">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
@@ -907,7 +925,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<!-- Elements -->
 	<xs:element name="image3d" type="CT_Image3D"/>
-	<xs:element name="image3dsheet" type="CT_Image3DSheet"/>
+	<xs:element name="imagestack" type="CT_ImageStack"/>
+	<xs:element name="imagesheet" type="CT_ImageSheet"/>
 	<xs:element name="scalarfield" type="CT_ScalarField"/>
 	<xs:element name="scalarfieldfromimage3d" type="CT_ScalarFieldFromImage3D"/>
 	<xs:element name="scalarfieldcomposed" type="CT_ScalarFieldComposed"/>
@@ -936,12 +955,14 @@ Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01](htt
 <model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" 
 xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" >
 	<resources>
-		<v:image3d id="1" rowcount="3" columncount="4" sheetcount="2">
-			<image3dsheet path="/3D/volumetric/colors/sheet0.png"/>
-			<image3dsheet path="/3D/volumetric/colors/sheet1.png"/>
+		<v:image3d id="1">
+			<v:imagestack rowcount="3" columncount="4" sheetcount="2">
+				<v:imagesheet path="/3D/volumetric/colors/sheet0.png"/>
+				<v:imagesheet path="/3D/volumetric/colors/sheet1.png"/>
+			</v:imagestack>
 		</v:image3d>
 		<v:vector3dfield id="2">
-			<v:vector3dfieldfromimage3d image3did="1" valuescale="0.00392156862"/>
+			<v:vector3dfieldfromimage3d image3did="1"/>
 		</v:vector3dfield>
 		<object id="3" name="Body1" type="model">
 			<mesh>
@@ -976,7 +997,7 @@ xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" >
 		</object>
 	</resources>
 	<build>
-		<item objectid="6"/>
+		<item objectid="3"/>
 	</build>
 </model>
 

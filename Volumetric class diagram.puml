@@ -2,23 +2,27 @@
 
 title 3MF Volumetric 3D-Vector & Scalar Fields
 
-package Image
+package Image3D
 {
-    Class Image3D
+    class Image3D
     {
         id : resourceID
         name : string
+    }
+    
+    Class ImageStack extends Image3D
+    {
         rowcount : int
         colcount : int
         sheetcount : int
     }
 
-    Class Image3DSheet
+    Class ImageSheet
     {
         path : string (PNG)
     }
 
-    Image3D *-- "1..*" Image3DSheet
+    ImageStack *-- "1..*" ImageSheet
 }
 
 package ScalarFields
@@ -70,7 +74,7 @@ package Vector3DFields
     {
         method : string
         vector3dfield1id : resourceID
-        vector3dfield1id : resourceID
+        vector3dfield2id : resourceID
         scalarmaskfieldid : resourceID
         factor1 : double
         factor2 : double
