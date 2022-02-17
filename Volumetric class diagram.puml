@@ -81,6 +81,7 @@ package Vector3DFields
         transform1 : transform
         transform2 : transform
         transformmask : transform
+        compositionspace : string
     }
 
     Class Vector3DFieldFromImage3D extends Vector3DField
