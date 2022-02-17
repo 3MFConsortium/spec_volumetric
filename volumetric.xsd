@@ -217,7 +217,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:enumeration value="wrap"/>
 			<xs:enumeration value="mirror"/>
 			<xs:enumeration value="clamp"/>
-			<xs:enumeration value="none"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ST_Filter">
