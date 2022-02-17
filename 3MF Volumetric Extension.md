@@ -429,6 +429,9 @@ With these definitions at hand the sampled value of this composed 3D vector fiel
     
     Here, m is the value of the scalar field referred to by the `scalarfieldmaskid` attribute of this composed 3D vector field evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
 
+_Figure 4-2: Example of the composition method "mask" for the composed 3D vector field_
+![Example of the composition method "mask" for the composed 3D vector field](images/compositing_mask.png)
+
 # Chapter 5. Volumetric Data
 
 ## 5.1. Volumetric Data extension to Mesh
