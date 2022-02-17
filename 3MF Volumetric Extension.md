@@ -14,10 +14,11 @@
 ## Table of Contents
 
 - [Preface](#preface)
-  * [About this Specification](#11-about-this-specification)
-  * [Document Conventions](#12-document-conventions)
-  * [Language Notes](#13-language-notes)
-  * [Software Conformance](#14-software-conformance)
+  * [Introduction](#introduction)
+  * [About this Specification](#about-this-specification)
+  * [Document Conventions](#document-conventions)
+  * [Language Notes](#language-notes)
+  * [Software Conformance](#software-conformance)
 - [Part I: 3MF Documents](#part-i-3mf-documents)
   * [Chapter 1. Overview of Additions](#chapter-1-overview-of-additions)
   * [Chapter 2. 3D Image](#chapter-2-3d-image)
@@ -35,22 +36,7 @@
 
 # Preface
 
-## 1.1. About this Specification
-
-![Volumetric image](images/volumetric_image1.png)
-
-This 3MF volumetric specification is an extension to the core 3MF specification. This document cannot stand alone and only applies as an addendum to the core 3MF specification. Usage of this and any other 3MF extensions follow an a la carte model, defined in the core 3MF specification.
-
-Part I, "3MF Documents," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
-
-Part II, "Appendices," contains additional technical details and schemas too extensive to include in the main body of the text as well as convenient reference information.
-
-The information contained in this specification is subject to change. Every effort has been made to ensure its accuracy at the time of publication.
-
-This extension MUST be used only with Core specification version 1.3. or higher.
-
-
-## 1.2. Introduction
+## Introduction
 Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
 Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1. a) a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
@@ -65,6 +51,26 @@ _Figure 1-1. Explicit (a) and (b) vs. implicit (c) representation_
 
 _Figure 1-2. Spatially varying properties_
 ![Volumetric properties](images/spatially_varying_property.png)
+
+## About this Specification
+
+![Volumetric image](images/volumetric_image1.png)
+
+This 3MF volumetric specification is an extension to the core 3MF specification. This document cannot stand alone and only applies as an addendum to the core 3MF specification. Usage of this and any other 3MF extensions follow an a la carte model, defined in the core 3MF specification.
+
+Part I, "3MF Documents," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
+
+Part II, "Appendices," contains additional technical details and schemas too extensive to include in the main body of the text as well as convenient reference information.
+
+The information contained in this specification is subject to change. Every effort has been made to ensure its accuracy at the time of publication.
+
+This extension MUST be used only with Core specification version 1.3. or higher.
+
+## Document Conventions
+
+See [the 3MF Core Specification conventions](https://github.com/3MFConsortium/spec_core/blob/1.2.3/3MF%20Core%20Specification.md#document-conventions).
+
+In this extension specification, as an example, the prefix "m" maps to the xml-namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02". See Appendix [E.3 Namespaces](#e3-namespaces).
 
 ## Document Conventions
 
@@ -92,7 +98,7 @@ The central idea of this extension is to enrich the geometry notion of 3MF with 
 
 This extension is meant to be an exact specification of geometric, appearance-related, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
 
-A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as required. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
+A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
 
 # Chapter 2. 3D Image
@@ -190,7 +196,7 @@ Element **\<imagesheet>**
 Each \<imagesheet> element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
 __Note__:
-Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of \<image3d> and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different physical implementation of a voxel grid as child under \<image3d> would not affect the remaining parts of this specification.
+Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of \<image3d> and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different data format for a voxel grid as child under \<image3d> would not affect the remaining parts of this specification.
 
 # Chapter 3. Scalar Fields
  
