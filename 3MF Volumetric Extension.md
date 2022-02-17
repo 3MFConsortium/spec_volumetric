@@ -458,7 +458,7 @@ The \<volumedata> defines the volumetric properties in the interior of a \<mesh>
 
 The child-element of the \<volumedata> element reference the field-data given by \<scalarfield>- and \<vector3dfiled>-elements and defines how they are mapped to specific properties within the interior volume of the enclosing mesh.
 Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
-Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. 
+Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
 
 The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
 
