@@ -463,11 +463,15 @@ The child elements modify the enclosing \<mesh> in two fundamentally different w
 1. the child \<boundary> element (if it exists) determines the geometry of the \<mesh> object.
 2. the other child elements modify color, material composition and other arbitrary properties of the \<mesh> object.
 
-We need to define the clipping surface of a mesh with a \<volumedata> element. The clipping surface is defined as follows:
+To rationalize how this specification modifies the definition of geometry within a 3MF model, the concept of a "clipping surface" of a mesh with a \<volumedata> element is introduced.
+The clipping surface is defined as follows:
 1. If no \<boundary> element exists, the clipping surface is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
 2. If the \<boundary> element exists, the clipping surface is defined by the intersection of the geometry from 1. and the interior of the levelset-channel used in the \<boundary> element.
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
+
+__Note__
+At least some closed mesh is required to enclose any volumedata element, for example a simple box that represents the bounding box of the geometry encoded in the \<boundary>-element. An empty mesh would not represent infinite space.
 
 Volumetric content is always clipped to the clipping surface of the mesh that embeds it. If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
 
