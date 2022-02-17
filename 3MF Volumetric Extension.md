@@ -25,6 +25,7 @@
   * [Chapter 3. Scalar Fields](#chapter-3-scalar-fields)
   * [Chapter 4. 3D Vector Fields](#chapter-4-3d-vector-fields)
   * [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
+  * [Chapter 6. Notes](#chapter-6-notes)
 - [Part II. Appendices](#part-ii-appendices)
   * [Appendix A. Glossary](#appendix-a-glossary)
   * [Appendix B. 3MF XSD Schema for the Volumetric Extension](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
@@ -518,7 +519,7 @@ The value of the levelset function `f` at a position `(x,y,z)` and the solidthre
 
 The transformation of the object coordinate system into the scalar field coordinate system.
 If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
-See Figure 5-2 for an illustration of this transform in the sampling process.
+See Figure 6-1 for an illustration of this transform in the sampling process.
 
 ### 5.2.2 Color element
 
@@ -630,29 +631,42 @@ If a \<property> is marked as `required`, and a consumer does not support it, it
 Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
 
 
+# Chapter 6. Notes
 
-__Note__: This specification forms a acyclic directed graph when evaluation the value of any volumedata-subelement. The evaluation of this graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dcomposed>) to a \<image3d>-elements.
+## 6.1. Evaluation Graph
+
+This specification forms a acyclic directed graph when evaluation the value of any volumedata-subelement. The evaluation of this graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dcomposed>) to a \<image3d>-elements.
 In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dcomposed>)-elements encode volumetric modeling operations, as described in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) and [4.3 Composed 3D Vector Field](##4.3-composed-3d-vector-field).
 
-__Note__:
+## 6.2. Evaluation Process
 
 Equipped with the language elements of this specification, one can recapitulate the core concepts with an overview of the sampling process.
 
-Figure 5-2 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
+Figure 6-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
 
-Figure 5-2 a) The object's color is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
+Figure 6-1 a) The object's color is sampled at position (+) in the object coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the world coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
 
-Figure 5-2 b) shows the \<vector3dfieldfromimage3d> underlying the color of the object. The sampling point is represented in the coordinate system of the \<vector3dfieldfromimage3d>. The transformation `T1` from object coordinate space to \<vector3dfieldfromimage3d> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<vector3dfieldfromimage3d> context.
+Figure 6-1 b) shows the \<vector3dfieldfromimage3d> underlying the color of the object. The sampling point is represented in the coordinate system of the \<vector3dfieldfromimage3d>. The transformation `T1` from object coordinate space to \<vector3dfieldfromimage3d> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<vector3dfieldfromimage3d> context.
 The color value sampled in this illustration directly originates from a \<vector3dfieldfromimage3d> element. However, as mentioned in the note above, it could as well be the result of one or multiple compositions via \<vector3dfieldcomposed>, see Figure 4-1.
 
-Figure 5-2 c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<vector3dfieldfromimage3d> coordinate system and UVW space is given according to the `transform`-attribute of the \<vector3dfieldfromimage3d> element.
+Figure 6-1 c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<vector3dfieldfromimage3d> coordinate system and UVW space is given according to the `transform`-attribute of the \<vector3dfieldfromimage3d> element.
 
-Figure 5-3 d) Shows the UVW coordinate space of the \<image3d>-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying \<imagestack>-element map.
+Figure 6-1 d) Shows the UVW coordinate space of the \<image3d>-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying \<imagestack>-element map.
 
-Figure 5-3 e) illustrates where the sampling point (+) ends up in the voxel index space of the \<imagestack>. The mapping of UVW to voxel indices in the \<imagestack>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
+Figure 6-1 e) illustrates where the sampling point (+) ends up in the voxel index space of the \<imagestack>. The mapping of UVW to voxel indices in the \<imagestack>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 5-2: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<vector3dfieldfromimage3d>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
+_Figure 6-1: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<vector3dfieldfromimage3d>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
+
+## 6.3. Limitations
+
+This speciication is limited in scope. Three notoworthy limitations are
+
+1. One cannot overlay a scalar or vector field over a meshless (composite) object, one has to duplicate the scalar fields at the object leaves.
+
+2. The fields in this definition are limited to be scalar- (or 1D-vector-) valued and 3D-vector valued. Vectors of other dimensionality must be assembled by the producer / consumer using multiple scalar / 3D-vector fields.
+
+3. It is not possible to assemble a field object that represents the RGB and alpha-channels from images. However one may assamble and blend data from RGBA-images explicitely by extracting the alpha channel into a scalar field and by using the alpha scalar field as a composition mask of two RGB 3d vector fields.
 
 
 
