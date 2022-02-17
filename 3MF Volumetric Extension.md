@@ -177,7 +177,7 @@ __Note__: Introductory information about the Open Packaging Conventions (OPC) ca
 
 It is RECOMMENDED that producers of 3MF Documents with the Volumetric Extension specification use the following part naming convention:
 
-Paths of \<imagesheet> SHOULD consist of four segments. "/3D/volumetric/" as the first two segments, the name of a image3d-element that references this \<imagesheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the imagesheet as last segment (for example "sheet0001.png"). The 3D Texture part that is the \<imagesheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
+Paths of \<imagesheet> SHOULD consist of four segments. "/3D/volumetric/" as the first two segments, the name of a \<image3d>-element that references this \<imagesheet> as third segment (for example "/3D/volumetric/mixingratios/", and the name of the imagesheet as last segment (for example "sheet0001.png"). Each part in the 3MF package that is referred to by the path of an \<imagesheet> MUST be associated with the 3D Model part via the 3D Texture relationship.
 
 This implies that all parts for \<imagesheet> in an imagestack SHOULD be located in the same OPC folder.
 
