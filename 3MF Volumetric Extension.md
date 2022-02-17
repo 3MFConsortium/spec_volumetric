@@ -254,7 +254,7 @@ The elements of type \<scalarfieldfromimage3d> MUST contain a \<ST\_ChannelName>
 
 **tilestyle-u, -v or -w**:
 
-MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines the behavior of the sampler of this \<scalarfieldfromimage3d> for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
+MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavior of the sampler of this \<scalarfieldfromimage3d> for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
 1. "wrap" assumes periodic texture sampling, see Figure 3-1 a). A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
@@ -264,8 +264,6 @@ MUST be one of "wrap", "mirror",  "clamp" and "none". This property determines t
 
 3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 3-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
-
-4. "none" will discard the \<scalarfieldfromimage3d>'s value if the 3d texture coordinate s falls outside the [0,1] range. This means, when blending volumetric layers, no blending of values takes place if this \<scalarfieldfromimage3d> is sampled outside the [0,1]-range. This is useful if a 3d texture is used as masking channel for a volumetric decal of sorts that affects only a limited region in the volume.
 
 	_Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second \<imagesheet>. b) tilestyle mirror illustrated throughout the second \<imagesheet>. c) tilestyle clamp along the u-direction illustrated throughout the second \<imagesheet>_
 	![Tilestyles](images/tilestyle_all.png)
@@ -457,7 +455,7 @@ The \<volumedata> defines the volumetric properties in the interior of a \<mesh>
 
 The child-element of the \<volumedata> element reference the field-data given by \<scalarfield>- and \<vector3dfiled>-elements and defines how they are mapped to specific properties within the interior volume of the enclosing mesh.
 Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
-Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh.
+Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. 
 
 The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
 
@@ -894,7 +892,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:enumeration value="wrap"/>
 			<xs:enumeration value="mirror"/>
 			<xs:enumeration value="clamp"/>
-			<xs:enumeration value="none"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ST_Filter">
