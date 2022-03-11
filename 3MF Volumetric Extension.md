@@ -441,13 +441,13 @@ The "linear" option SHOULD be used when the results of a \<vector3dfieldcomposed
 If the option is "linear" the following modification to the formulae of the composition methods above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) MUST be made:
 1. values sampled from any of the input 3D vector fields MUST be transformed into "linear-space" values according to this formula:
 
-value_linear = { value_raw / 12.92 if value_raw <= 0.04045; ((value_raw+0.055)/1.055))^2.4 if value_raw > 0.04045
+	![value linear](images/formula_value_linear.png)
 
 2. these transformed values values_linear are composited using the formulae above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field).
 
 3. The values from step 2 must be transformed back into raw-values according to this formula:
 
-value_raw = { value_linear * 12.92 if value_raw <= 0.0031308; 1.055*value_linear^(1/2.4) if value_raw > 0.0031308.
+	![value raw](images/formula_value_raw.png)
 
 __Note:__
 The values sampled from the masking scalar field MUST not be linearized.
@@ -656,7 +656,7 @@ Producers of 3MF files MUST mark all volumetric \<property>-elements required to
 
 ## 6.1. Evaluation Graph
 
-__Note__: This elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
+__Note__: ThE elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
 The evaluation of this graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dfieldcomposed>) to an \<image3d>-elements.
 In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to define \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements encode volumetric modeling operations, as described in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) and [4.3 Composed 3D Vector Field](##4.3-composed-3d-vector-field).
 
