@@ -411,6 +411,7 @@ Element type
 | factor2 | ST\_Number | | 1.0 | Numeric scale factor for the second composited field. Only used if method is "weightedsum". |
 | transform1 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as first field during the composition. |
 | transform2 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as second field during the composition. |
+| compositionspace | ST\_CompositionSpace | | "raw" | Determines whether composition should take place with raw numerircal values, or in linearized space. |
 | scalarfieldmaskid | ST\_ResourceId | | | The resource id of a \<scalarfield> resource which shall be used for masking. Required if method is "mask".  |
 | transformmask | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for masking. |
 
@@ -433,6 +434,23 @@ With these definitions at hand the sampled value of this composed 3D vector fiel
     `c = m * s1 + (1 - m) * s2`
     
     Here, m is the value of the scalar field referred to by the `scalarfieldmaskid` attribute of this composed 3D vector field evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
+
+The compositionspace-attribute determines whether values of the input 3D vector fields are composited as they are being sampled ("raw") or whether the composition takes place in linearized space ("linear").
+The "linear" option SHOULD be used when the results of a \<vector3dfieldcomposed> are used (directly or indirectly) as \<color>-element (see [\<volumedata>](#5-2-volumetric-data)). This is to be consistent with the blending in the Materials and Properties extension specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
+
+If the option is "linear" the following modification to the formulae of the composition methods above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) MUST be made:
+1. Values sampled from any of the input 3D vector fields MUST be transformed into "linear-space" values according to this formula:
+
+	![value linear](images/formula_value_linear.png)
+
+2. These transformed values values_linear are composited using the formulae above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field).
+
+3. The values from step 2 must be transformed back into raw-values according to this formula:
+
+	![value raw](images/formula_value_raw.png)
+
+__Note:__
+The values sampled from the masking scalar field MUST NOT be linearized.
 
 _Figure 4-2: Example of the composition method "mask" for the composed 3D vector field_
 ![Example of the composition method "mask" for the composed 3D vector field](images/compositing_mask.png)
@@ -638,8 +656,9 @@ Producers of 3MF files MUST mark all volumetric \<property>-elements required to
 
 ## 6.1. Evaluation Graph
 
-This specification forms a acyclic directed graph when evaluation the value of any volumedata-subelement. The evaluation of this graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dcomposed>) to a \<image3d>-elements.
-In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dcomposed>)-elements encode volumetric modeling operations, as described in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) and [4.3 Composed 3D Vector Field](##4.3-composed-3d-vector-field).
+__Note__: The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
+The evaluation of this graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dfieldcomposed>) to an \<image3d>-elements.
+In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to define \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements encode volumetric modeling operations, as described in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) and [4.3 Composed 3D Vector Field](##4.3-composed-3d-vector-field).
 
 ## 6.2. Evaluation Process
 
@@ -809,6 +828,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap"/>
 		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap"/>
 		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap"/>
+		<xs:attribute name="compositionspace" type="ST_CompositionSpace" default="raw"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -905,6 +925,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:simpleType name="ST_Filter">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="nearest"/>
+			<xs:enumeration value="linear"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ST_CompositionSpace">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="raw"/>
 			<xs:enumeration value="linear"/>
 		</xs:restriction>
 	</xs:simpleType>

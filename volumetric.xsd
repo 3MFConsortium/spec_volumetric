@@ -142,6 +142,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="transform1" type="ST_Matrix3D"/>
 		<xs:attribute name="transform2" type="ST_Matrix3D"/>
 		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
+		<xs:attribute name="compositionspace" type="ST_CompositionSpace" default="raw"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -222,6 +223,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:simpleType name="ST_Filter">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="nearest"/>
+			<xs:enumeration value="linear"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ST_CompositionSpace">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="raw"/>
 			<xs:enumeration value="linear"/>
 		</xs:restriction>
 	</xs:simpleType>
