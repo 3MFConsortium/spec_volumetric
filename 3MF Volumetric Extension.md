@@ -494,9 +494,14 @@ This clipping surface trims any volumetric data defined therein. Any data outsid
 __Note__
 At least some closed mesh is required to enclose any volumedata element, for example a simple box that represents the bounding box of the geometry encoded in the \<boundary>-element. An empty mesh would not represent infinite space.
 
-Volumetric content is always clipped to the clipping surface of the mesh that embeds it. If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, a surface layer should be defined with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
+Volumetric content is always clipped to the clipping surface of the mesh that embeds it. If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, the surface property has precedence in the following sense:
+The consumer MUST define a surface layer with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property should be applied everywhere within the object.
+
+__Note__
+The thickness of this surface layer can vary between consumers depending on the manufacturing technology they employ.
 
 The properties at surface regions that are not explicitly specified are instead given by the volumetric properties.
+
 
 Conflicting properties must be handled as follows:
 1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on physical grounds (e.g. non-conducting copper).
