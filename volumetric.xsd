@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
-	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
+	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all" xmlns:core="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">
+	<xs:import namespace="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"/>
+
 	<xs:annotation>
 		<xs:documentation>
 			<![CDATA[
@@ -192,7 +194,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-		<xs:complexType name="CT_MaterialMapping">
+	<xs:complexType name="CT_MaterialMapping">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
@@ -203,6 +205,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Property">
 		<xs:sequence>
+			<xs:element ref="core:metadatagroup" minOccurs="0" maxOccurs="1"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="fieldid" type="ST_ResourceID" use="required"/>
