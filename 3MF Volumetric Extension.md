@@ -623,7 +623,7 @@ Element **\<property>**
 | --- | --- | --- | --- | --- |
 | fieldid | ST\_ResourceID | required | | ResourceID of the \<scalarfield> or \<vector3dfield> that holds the value of this property |
 | transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<scalarfield> or \<vector3dfield> coordinate system |
-| name | xs:QName | required | | Namespace and name of this property |
+| name | xs:QName | required | | Contains either the name of the property, defined in a 3MF extension specification, or the name of a vendor-defined property. Either MUST be prefixed with a valid XML namespace name declared on the \<model> element. |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
 
 The \<property> element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
@@ -651,6 +651,7 @@ If a physical unit is necessary, the namespace owner MUST define a unique and un
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
 
+The property element CAN have an optional group of CT\_Metadata elements (\<metadatagroup>) as specified in the Metadata section of the 3MF core specification, see https://github.com/3MFConsortium/spec_core/blob/develop_1.3.0/3MF%20Core%20Specification.md#341-metadata.
 
 # Chapter 6. Notes
 
@@ -702,8 +703,10 @@ See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2018/11"
-	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
+xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
+	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all" xmlns:core="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">
+	<xs:import namespace="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"/>
+
 	<xs:annotation>
 		<xs:documentation>
 			<![CDATA[
@@ -828,7 +831,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap"/>
 		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap"/>
 		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap"/>
-		<xs:attribute name="compositionspace" type="ST_CompositionSpace" default="raw"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -845,6 +847,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="transform1" type="ST_Matrix3D"/>
 		<xs:attribute name="transform2" type="ST_Matrix3D"/>
 		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
+		<xs:attribute name="compositionspace" type="ST_CompositionSpace" default="raw"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -894,7 +897,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-		<xs:complexType name="CT_MaterialMapping">
+	<xs:complexType name="CT_MaterialMapping">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
@@ -905,6 +908,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Property">
 		<xs:sequence>
+			<xs:element ref="core:metadatagroup" minOccurs="0" maxOccurs="1"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="fieldid" type="ST_ResourceID" use="required"/>
