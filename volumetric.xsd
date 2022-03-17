@@ -64,6 +64,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:choice>
 				<xs:element ref="scalarfieldfromimage3d"/>
+				<xs:element ref="scalarfieldconstant"/>
 				<xs:element ref="scalarfieldcomposed"/>
 				<xs:any namespace="##other" processContents="lax"/>
 			</xs:choice>
@@ -104,10 +105,19 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
+	<xs:complexType name="CT_ScalarFieldConstant">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="value" type="ST_Number" use="required"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
 	<xs:complexType name="CT_Vector3DField">
 		<xs:sequence>
 			<xs:choice>
 				<xs:element ref="vector3dfieldfromimage3d"/>
+				<xs:element ref="vector3dfieldconstant"/>
 				<xs:element ref="vector3dfieldcomposed"/>
 				<xs:any namespace="##other" processContents="lax"/>
 			</xs:choice>
@@ -145,6 +155,16 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="transform2" type="ST_Matrix3D"/>
 		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
 		<xs:attribute name="compositionspace" type="ST_CompositionSpace" default="raw"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="CT_Vector3DFieldConstant">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="valuex" type="ST_Number" use="required"/>
+		<xs:attribute name="valuey" type="ST_Number" use="required"/>
+		<xs:attribute name="valuez" type="ST_Number" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -282,9 +302,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="scalarfield" type="CT_ScalarField"/>
 	<xs:element name="scalarfieldfromimage3d" type="CT_ScalarFieldFromImage3D"/>
 	<xs:element name="scalarfieldcomposed" type="CT_ScalarFieldComposed"/>
+	<xs:element name="scalarfieldconstant" type="CT_ScalarFieldConstant"/>
 	<xs:element name="vector3dfield" type="CT_Vector3DField"/>
 	<xs:element name="vector3dfieldfromimage3d" type="CT_Vector3DFieldFromImage3D"/>
 	<xs:element name="vector3dfieldcomposed" type="CT_Vector3DFieldComposed"/>
+	<xs:element name="vector3dfieldconstant" type="CT_Vector3DFieldConstant"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
 	<xs:element name="boundary" type="CT_Boundary"/>
 	<xs:element name="composite" type="CT_Composite"/>
