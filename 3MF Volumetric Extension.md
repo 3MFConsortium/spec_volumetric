@@ -274,7 +274,7 @@ The filter attribute defines the interpolation method used when a \<scalarfieldf
 - If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
 
 	_Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
-	
+
 	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
 
 
@@ -687,11 +687,13 @@ The property element CAN have an optional group of CT\_Metadata elements (\<meta
 
 ## 6.1. Evaluation Graph
 
-__Note__: The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
+The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
 The evaluation order of this graph can end with an \<scalarfieldconstant> (or \<vector3dfieldconstant>), or with a \<scalarfieldfromimage3d> (or \<vector3dfieldfromimage3d>), which inturn evaluated an \<image3d>-element.
 Optionally, the evaluation graph can contain potentially multiple \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements.
 
 In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfieldfromimage3d>) and \<scalarfieldconstant> (or \<vector3dfieldconstant>) elements form standalone, atomic ways to define \<scalarfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements encode volumetric modeling operations, as described in [3.4 Composed Scalar Field](##3.4-composed-scalar-field) and [4.4 Composed 3D Vector Field](##4.4-composed-3d-vector-field).
+
+Calculations during evaluation of the graph SHOULD be performed in single- or double-precision floating-point arithmethic, according to IEEE 754.
 
 ## 6.2. Evaluation Process
 
