@@ -220,7 +220,7 @@ Element type
 | id | ST\_ResourceID | required | | The resource id of this scalarfield resource |
 | name | xs:string | | | Field for a human readable name of this field |
 
-This container contains one of multiple specialization. This specification defines the \<scalarfieldfromimage3d> and \<scalarfieldcomposed>-elements. Later versions of this specification or third parties may provide alternative child elements for the \<scalarfield> element in different XML namespaces.
+This container contains one of multiple specialization. This specification defines the \<scalarfieldfromimage3d>,  \<scalarfieldconstant> and \<scalarfieldcomposed>-elements. Later versions of this specification or third parties may provide alternative child elements for the \<scalarfield> element in different XML namespaces.
 
 Whenever a language element of this specification refers to a \<scalarfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the referred to element.
 
@@ -284,7 +284,20 @@ _Figure 3-3: filter attributes "nearest" (a) and "linear" (b). The consider that
 The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
 
-## 3.3 Composed Scalar Field
+## 3.3 Constant Scalar Field
+
+Element type
+**\<scalarfieldconstant>**
+
+![scalarfieldconstant XML structure](images/element_scalarfieldconstant.png)
+
+| Name   | Type   | Use | Default| Annotation |
+| --- | --- | --- | --- | --- |
+| value | ST\_Number | required | | The constant value this scalar field evaluates to. |
+
+A \<scalarfieldconstant>-element encodes a constant function, i.e. when the \<scalarfieldconstant>-element is being sampled, it evaluates to the constant value given by its attribute `value`.
+
+## 3.4 Composed Scalar Field
 
 Element type
 **\<scalarfieldcomposed>**
@@ -345,7 +358,6 @@ Figure 4-1 shows example of the composition of two scalar fields by a \<scalarfi
 _Figure 4-1: Example of composition methods and parameters_
 ![Example of composition methods and parameters](images/composition.png)
 
-
 # Chapter 4. 3D Vector Fields
 
 3D Vector fields work analogously to scalar fields, however, each composition or sampling operation is being performed for the three components of the vector valued function: `f=(f1,f2,f3)`. Each of these vector-components could as well be described as a scalar field. However, when describing color values or vector valued properties, it is more natural to choose a vector-based representation.
@@ -364,7 +376,7 @@ Element type **\<vector3dfield>**
 | id | ST\_ResourceID | required | | The resource id of this vector3dfield resource |
 | name | xs:string | | | Field for a human readable name of this field |
 
-This container contains one of multiple specialization. This speficiation defines the \<vector3dfieldfromimage3d>- and \<vector3dfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<vector3dfield> element.
+This container contains one of multiple specialization. This speficiation defines the \<vector3dfieldfromimage3d>-, \<vector3dfieldconstant>- and \<vector3dfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<vector3dfield> element.
 
 Whenever a language element of this specification refers to a \<vector3dfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the element referred to.
 
@@ -394,8 +406,22 @@ This element samples the channels "R", "G" and "B" from the image3d. Channels "R
 
 The attributes tilestyleu, tilestylev, tilestylew, and filter, valueoffset and valuescale work as they do for the scalar field from image3d for the individual vector components of this 3d vector field from image3d.
 
+## 4.3 Constant 3D Vector Field
 
-## 4.3 Composed 3D Vector Field
+Element type
+**\<vector3dfieldconstant>**
+
+![vector3dfieldconstant XML structure](images/element_vector3dfieldconstant.png)
+
+| Name   | Type   | Use | Default| Annotation |
+| --- | --- | --- | --- | --- |
+| valuex | ST\_Number | required | | The constant x-component that this 3d vector field evaluates to. |
+| valuey | ST\_Number | required | | The constant y-component that this 3d vector field evaluates to. |
+| valuez | ST\_Number | required | | The constant z-component that this 3d vector field evaluates to. |
+
+A \<vector3dfieldconstant>-element encodes a constant 3d vector valued function, i.e. when the \<vector3dfieldconstant>-element is being sampled, it evaluates to the constant vector `(valuex, valuey, valuez)`.
+
+## 4.4 Composed 3D Vector Field
 
 Element type
 **\<vector3dfieldcomposed>**
@@ -658,8 +684,10 @@ The property element CAN have an optional group of CT\_Metadata elements (\<meta
 ## 6.1. Evaluation Graph
 
 __Note__: The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
-The evaluation of this graph can go directly via a \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) to an \<image3d>-element, or make a detour via (potentially) multiple \<scalarfieldcomposed> (or \<vector3dfieldcomposed>) to an \<image3d>-elements.
-In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfromimage3d>) elements form standalone, atomic ways to define \<scalarlfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements encode volumetric modeling operations, as described in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) and [4.3 Composed 3D Vector Field](##4.3-composed-3d-vector-field).
+The evaluation order of this graph can end with an \<scalarfieldconstant> (or \<vector3dfieldconstant>), or with a \<scalarfieldfromimage3d> (or \<vector3dfieldfromimage3d>), which inturn evaluated an \<image3d>-element.
+Optionally, the evaluation graph can contain potentially multiple \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements.
+
+In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfieldfromimage3d>) and \<scalarfieldconstant> (or \<vector3dfieldconstant>) elements form standalone, atomic ways to define \<scalarfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements encode volumetric modeling operations, as described in [3.4 Composed Scalar Field](##3.4-composed-scalar-field) and [4.4 Composed 3D Vector Field](##4.4-composed-3d-vector-field).
 
 ## 6.2. Evaluation Process
 
@@ -767,6 +795,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:choice>
 				<xs:element ref="scalarfieldfromimage3d"/>
+				<xs:element ref="scalarfieldconstant"/>
 				<xs:element ref="scalarfieldcomposed"/>
 				<xs:any namespace="##other" processContents="lax"/>
 			</xs:choice>
@@ -807,10 +836,19 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
+	<xs:complexType name="CT_ScalarFieldConstant">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="value" type="ST_Number" use="required"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
 	<xs:complexType name="CT_Vector3DField">
 		<xs:sequence>
 			<xs:choice>
 				<xs:element ref="vector3dfieldfromimage3d"/>
+				<xs:element ref="vector3dfieldconstant"/>
 				<xs:element ref="vector3dfieldcomposed"/>
 				<xs:any namespace="##other" processContents="lax"/>
 			</xs:choice>
@@ -848,6 +886,16 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="transform2" type="ST_Matrix3D"/>
 		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
 		<xs:attribute name="compositionspace" type="ST_CompositionSpace" default="raw"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="CT_Vector3DFieldConstant">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="valuex" type="ST_Number" use="required"/>
+		<xs:attribute name="valuey" type="ST_Number" use="required"/>
+		<xs:attribute name="valuez" type="ST_Number" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -985,9 +1033,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="scalarfield" type="CT_ScalarField"/>
 	<xs:element name="scalarfieldfromimage3d" type="CT_ScalarFieldFromImage3D"/>
 	<xs:element name="scalarfieldcomposed" type="CT_ScalarFieldComposed"/>
+	<xs:element name="scalarfieldconstant" type="CT_ScalarFieldConstant"/>
 	<xs:element name="vector3dfield" type="CT_Vector3DField"/>
 	<xs:element name="vector3dfieldfromimage3d" type="CT_Vector3DFieldFromImage3D"/>
 	<xs:element name="vector3dfieldcomposed" type="CT_Vector3DFieldComposed"/>
+	<xs:element name="vector3dfieldconstant" type="CT_Vector3DFieldConstant"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
 	<xs:element name="boundary" type="CT_Boundary"/>
 	<xs:element name="composite" type="CT_Composite"/>
