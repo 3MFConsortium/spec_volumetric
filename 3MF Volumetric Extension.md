@@ -685,8 +685,6 @@ If a physical unit is necessary, the namespace owner MUST define a unique and un
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
 
-The property element CAN have an optional group of CT\_Metadata elements (\<metadatagroup>) as specified in the Metadata section of the 3MF core specification, see https://github.com/3MFConsortium/spec_core/blob/develop_1.3.0/3MF%20Core%20Specification.md#341-metadata.
-
 # Chapter 6. Notes
 
 ## 6.1. Evaluation Graph
@@ -742,8 +740,7 @@ See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
-	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all" xmlns:core="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">
-	<xs:import namespace="http://schemas.microsoft.com/3dmanufacturing/core/2015/02"/>
+	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
 
 	<xs:annotation>
 		<xs:documentation>
@@ -911,8 +908,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Mesh">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:element ref="volumedata" minOccurs="0" maxOccurs="1"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 	</xs:complexType>
 
@@ -966,7 +963,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Property">
 		<xs:sequence>
-			<xs:element ref="core:metadatagroup" minOccurs="0" maxOccurs="1"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
 		<xs:attribute name="fieldid" type="ST_ResourceID" use="required"/>
