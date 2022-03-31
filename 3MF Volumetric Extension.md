@@ -643,7 +643,7 @@ If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in
 
 If the sampled value of a \<scalarfield> is `<0` it must be evaluated as "0".
 
-Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-7`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
+Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
 - If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
    ```
@@ -700,7 +700,7 @@ Optionally, the evaluation graph can contain potentially multiple \<scalarfieldc
 
 In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfieldfromimage3d>) and \<scalarfieldconstant> (or \<vector3dfieldconstant>) elements form standalone, atomic ways to define \<scalarfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements encode volumetric modeling operations, as described in [3.4 Composed Scalar Field](##3.4-composed-scalar-field) and [4.4 Composed 3D Vector Field](##4.4-composed-3d-vector-field).
 
-Calculations during evaluation of the graph SHOULD be performed in single- or double-precision floating-point arithmethic, according to IEEE 754.
+It is RECOMMENDED that calculations during evaluation of the graph are performed in at least single-precision floating-point arithmethic, according to IEEE 754.
 
 ## 6.2. Evaluation Process
 
