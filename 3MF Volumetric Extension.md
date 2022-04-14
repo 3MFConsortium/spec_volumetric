@@ -469,10 +469,10 @@ With these definitions at hand the sampled value of this composed 3D vector fiel
     
     Here, m is the value of the scalar field referred to by the `scalarfieldmaskid` attribute of this composed 3D vector field evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
 
-The compositionspace-attribute determines whether values of the input 3D vector fields are composited as they are being sampled ("raw") or whether the composition takes place in linearized space ("linear").
-The "linear" option SHOULD be used when the results of a \<vector3dfieldcomposed> are used (directly or indirectly) as \<color>-element (see [\<volumedata>](#5-2-volumetric-data)). This is to be consistent with the blending in the Materials and Properties extension specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
+The compositionspace-attribute determines whether values of the input 3D vector fields are composited as they are being sampled ("raw") or whether the composition takes place in linearized space ("linearcolor").
+The "linearcolor" option SHOULD be used when the results of a \<vector3dfieldcomposed> are used (directly or indirectly) as \<color>-element (see [\<volumedata>](#5-2-volumetric-data)). This is to be consistent with the blending in the Materials and Properties extension specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
 
-If the option is "linear" the following modification to the formulae of the composition methods above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) MUST be made:
+If the option is "linearcolor" the following modification to the formulae of the composition methods above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) MUST be made:
 1. Values sampled from any of the input 3D vector fields MUST be transformed into "linear-space" values according to this formula:
 
 	![value linear](images/formula_value_linear.png)
@@ -994,7 +994,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:simpleType name="ST_CompositionSpace">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="raw"/>
-			<xs:enumeration value="linear"/>
+			<xs:enumeration value="linearcolor"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ST_ResourceID">

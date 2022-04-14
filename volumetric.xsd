@@ -250,7 +250,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:simpleType name="ST_CompositionSpace">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="raw"/>
-			<xs:enumeration value="linear"/>
+			<xs:enumeration value="linearcolor"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="ST_ResourceID">
