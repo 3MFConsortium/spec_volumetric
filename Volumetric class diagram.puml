@@ -1,0 +1,165 @@
+@startuml
+
+title 3MF Volumetric 3D-Vector & Scalar Fields
+
+package Image3D
+{
+    class Image3D
+    {
+        id : resourceID
+        name : string
+    }
+    
+    Class ImageStack extends Image3D
+    {
+        rowcount : int
+        colcount : int
+        sheetcount : int
+    }
+
+    Class ImageSheet
+    {
+        path : string (PNG)
+    }
+
+    ImageStack *-- "1..*" ImageSheet
+}
+
+package ScalarFields
+{
+    Class ScalarField
+    {
+        id: resourceID
+        name: string
+    }
+
+    Class ScalarFieldComposed extends ScalarField
+    {
+        method : string
+        scalarfield1id : resourceID
+        scalarfield2id : resourceID
+        scalarmaskfieldid : resourceID
+        factor1 : double
+        factor2 : double
+        transform1 : transform
+        transform2 : transform
+        transformmask : transform
+    }
+
+    Class ScalarFieldFromImage3D extends ScalarField
+    {
+        image3did : resourceID
+        channel : string
+        filter : string
+        valueoffset: double
+        valuescale: double
+        tilestyleu : string
+        tilestylev : string
+        tilestylew : string
+    }
+
+    Class ScalarFieldConstant extends ScalarField
+    {
+        value: double
+    }
+
+    ScalarFieldComposed o-- "1..3" ScalarField
+    ScalarFieldFromImage3D o-- "1" Image3D
+}
+
+package Vector3DFields
+{
+    Class Vector3DField
+    {
+        id: resourceID
+        name: string
+    }
+
+    Class Vector3DFieldComposed extends Vector3DField
+    {
+        method : string
+        vector3dfield1id : resourceID
+        vector3dfield2id : resourceID
+        scalarmaskfieldid : resourceID
+        factor1 : double
+        factor2 : double
+        transform1 : transform
+        transform2 : transform
+        transformmask : transform
+        compositionspace : string
+    }
+
+    Class Vector3DFieldFromImage3D extends Vector3DField
+    {
+        image3did : resourceID
+        valueoffset: double
+        valuescale: double
+        filter : string
+        tilestyleu : string
+        tilestylev : string
+        tilestylew : string
+    }
+
+    Class Vector3DFieldConstant extends Vector3DField
+    {
+        valuex: double
+        valuey: double
+        valuez: double
+    }
+
+    Vector3DFieldComposed o-- "2" Vector3DField
+    Vector3DFieldComposed o-- "0..1 mask" ScalarField
+    Vector3DFieldFromImage3D o-- "1" Image3D
+}
+
+package VolumetricData
+{
+    Class VolumeData
+
+    Class Boundary
+    {
+        transform : matrix
+        solidthreshold : double
+        scalarfieldid : resourceID
+    }
+
+    Class Color
+    {
+        vector3dfieldid : resourceID
+        transform : matrix
+    }
+
+    Class Property
+    {
+        name : string
+        transform : matrix
+        fieldid : resourceID
+    }
+
+    Class Composite
+    {
+        basematerialid : resourceID
+    }
+
+    Class MaterialMapping
+    {
+        scalarfieldid : resourceID
+        transform : matrix
+    }        
+
+    VolumeData *-- "0..1" Boundary
+    VolumeData *-- "0..1" Color
+    VolumeData *-- "0..*" Property
+    VolumeData *-- "0..1" Composite
+    Composite *-- "1..*" MaterialMapping
+
+    Boundary o-- "1" ScalarField
+    Color o-- "1" Vector3DField
+    Property o-- "1" ScalarField
+    MaterialMapping o-- "1" ScalarField
+}
+
+Class Mesh
+Mesh *-- VolumeData
+
+@enduml
