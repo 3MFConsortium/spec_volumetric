@@ -7,7 +7,7 @@
 
 | **Version** | 0.7.0 |
 | --- | --- |
-| **Status** | Draft |
+| **Status** | Pre-release |
 
 **Note**
 
