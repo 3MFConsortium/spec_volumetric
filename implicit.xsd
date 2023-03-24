@@ -30,6 +30,12 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="ST_ResourceID">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxExclusive value="2147483648"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="ST_NodeOutputIdentifier">
 		<xs:annotation>
 			<xs:documentation>
@@ -1593,6 +1599,66 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- distance to mesh -->
+	<xs:complexType name="CT_SignedDistanceToMesh">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node for evaluating the signed distance to a mesh. The input must have the identifier "point" and must be a vector. The output is a scalar and must have the identifier "distance".
+			The mesh is defined by a resource identifier. The mesh is assumed to be closed and watertight. 
+			The distance is positive if the point is outside the mesh and negative if the point is inside the mesh.
+									
+			Example:
+			<distanceToMesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
+				<in>
+								<vectorref identifier="point" ref="inputs.position"/>
+				</in>
+				<out>
+					<scalar identifier="distance"/>
+				</out>
+			/distanceToMesh>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the distance to mesh function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="vectorref" type="CT_VectorRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							distance to mesh of the inputs
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalar" type="CT_Scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="objectid" type="ST_ResourceID" use="required"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	
+
 
 	<xs:complexType name="CT_Function">
 		<xs:annotation>
@@ -1657,7 +1723,7 @@
 					<!-- nodes -->	
 					<!-- CT_Addition, CT_ConstantScalar, CT_ConstantVector, CT_ConstantMatrix, CT_ComposeVector, CT_ComposeMatrix, CT_ComposeMatrixFromColumnVectors,
 						 CT_Multiplication, CT_Subtraction, CT_Division, CT_DotProduct, CT_CrossProduct, CT_MatrixVectorMultiplication, CT_Transpose, CT_Sinus,
-						 CT_Cosinus,CT_Tan, CT_Arcsin, CT_Arccos, CT_Arctan, CT_Min, CT_Max, CT_Abs, CT_Fmod, CT_Pow, CT_Sqrt, CT_Function, CT_FunctionCall, -->	
+						 CT_Cosinus,CT_Tan, CT_Arcsin, CT_Arccos, CT_Arctan, CT_Min, CT_Max, CT_Abs, CT_Fmod, CT_Pow, CT_Sqrt, CT_Function, CT_FunctionCall, CT_SignedDistanceToMesh -->	
 						<xs:element name="addition" type="CT_Addition" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="subtraction" type="CT_Subtraction" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="multiplication" type="CT_Multiplication" minOccurs="0" maxOccurs="unbounded" />
@@ -1688,6 +1754,7 @@
 						<xs:element name="functioncall" type="CT_FunctionCall" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="dot" type="CT_DotProduct" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="cross" type="CT_CrossProduct" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="mesh" type="CT_SignedDistanceToMesh" minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>
 
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
