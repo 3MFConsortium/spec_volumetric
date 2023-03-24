@@ -1014,7 +1014,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a tan function with a scalarref or vectorref as output and a scalar or vector input. The input must have the identifier "A",
+			Dervied node for a tan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "tan". Input and output must have the same dimension.
 						
 			Example:
@@ -1654,15 +1654,40 @@
 					</xs:element>
 
 					<xs:sequence>
-						<!-- nodes (incomplete)-->
+					<!-- nodes -->	
+					<!-- CT_Addition, CT_ConstantScalar, CT_ConstantVector, CT_ConstantMatrix, CT_ComposeVector, CT_ComposeMatrix, CT_ComposeMatrixFromColumnVectors,
+						 CT_Multiplication, CT_Subtraction, CT_Division, CT_DotProduct, CT_CrossProduct, CT_MatrixVectorMultiplication, CT_Transpose, CT_Sinus,
+						 CT_Cosinus,CT_Tan, CT_Arcsin, CT_Arccos, CT_Arctan, CT_Min, CT_Max, CT_Abs, CT_Fmod, CT_Pow, CT_Sqrt, CT_Function, CT_FunctionCall, -->	
 						<xs:element name="addition" type="CT_Addition" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="subtraction" type="CT_Subtraction" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="multiplication" type="CT_Multiplication" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="division" type="CT_Division" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="constant" type="CT_ConstantScalar" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="constvec" type="CT_ConstantVector" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="constmat" type="CT_ConstantMatrix" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="composevector" type="CT_ComposeVector" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="composematrix" type="CT_ComposeMatrix" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="composematrixfromcolumnvectors" type="CT_ComposeMatrixFromColumnVectors" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="dotproduct" type="CT_DotProduct" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="crossproduct" type="CT_CrossProduct" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="constant" type="CT_ConstantScalar" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="vector" type="CT_ConstantVector" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="transpose" type="CT_Transpose" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="sinus" type="CT_Sinus" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="cosinus" type="CT_Cosinus" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="tan" type="CT_Tan" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="arcsin" type="CT_Arcsin" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="arccos" type="CT_Arccos" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="arctan" type="CT_Arctan" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="min" type="CT_Min" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="max" type="CT_Max" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="abs" type="CT_Abs" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="fmod" type="CT_Fmod" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="pow" type="CT_Pow" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="sqrt" type="CT_Sqrt" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="function" type="CT_Function" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="functioncall" type="CT_FunctionCall" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="dot" type="CT_DotProduct" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="cross" type="CT_CrossProduct" minOccurs="0" maxOccurs="unbounded" />
 					</xs:sequence>
 
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
