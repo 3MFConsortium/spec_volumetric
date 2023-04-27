@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://schemas.microsoft.com/3dmanufacturing/implicit/2023/02" elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all"
+<xs:schema targetNamespace="http://schemas.microsoft.com/3dmanufacturing/implicit/2023/02"
+	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all"
 	xmlns="http://schemas.microsoft.com/3dmanufacturing/implicit/2023/02"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:annotation>
@@ -30,9 +31,22 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="ST_Matrix4x4">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			String containing 16 space seperated floating numbers.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<xs:pattern value="^(-?\d+(\.\d+)?((e|E)[+-]?\d+)?)((\s+-?\d+(\.\d+)?((e|E)[+-]?\d+)?) {15})$" />
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="ST_ResourceID">
 		<xs:restriction base="xs:positiveInteger">
-			<xs:maxExclusive value="2147483648"/>
+			<xs:maxExclusive value="2147483648" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -194,7 +208,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for an addition with a scalar as output and two scalar inputs or a
+			Derived node for an addition with a scalar as output and two scalar inputs or a
 			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "sum".
 						
@@ -207,7 +221,7 @@
 				<out>
 					<scalar identifier="sum"/>
 				</out>
-			/addition>
+			</addition>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -321,22 +335,7 @@
 						</xs:complexType>
 					</xs:element>
 				</xs:sequence>
-				<xs:attribute name="m11" type="xs:double" use="required" />
-				<xs:attribute name="m12" type="xs:double" use="required" />
-				<xs:attribute name="m13" type="xs:double" use="required" />
-				<xs:attribute name="m14" type="xs:double" use="required" />
-				<xs:attribute name="m21" type="xs:double" use="required" />
-				<xs:attribute name="m22" type="xs:double" use="required" />
-				<xs:attribute name="m23" type="xs:double" use="required" />
-				<xs:attribute name="m24" type="xs:double" use="required" />
-				<xs:attribute name="m31" type="xs:double" use="required" />
-				<xs:attribute name="m32" type="xs:double" use="required" />
-				<xs:attribute name="m33" type="xs:double" use="required" />
-				<xs:attribute name="m34" type="xs:double" use="required" />
-				<xs:attribute name="m41" type="xs:double" use="required" />
-				<xs:attribute name="m42" type="xs:double" use="required" />
-				<xs:attribute name="m43" type="xs:double" use="required" />
-				<xs:attribute name="m44" type="xs:double" use="required" />
+				<xs:attribute name="matrix" type="ST_Matrix4x4" use="required"/>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -489,8 +488,6 @@
 	</xs:complexType>
 
 
-
-
 	<!-- Nodes for arithmetic operations -->
 	<xs:complexType name="CT_Multiplication">
 		<xs:annotation>
@@ -508,7 +505,7 @@
 				<out>
 					<scalar identifier="product"/>
 				</out>
-			/multiplication>
+			</multiplication>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -557,7 +554,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a subtraction with a scalar as output and two scalar inputs or a
+			Derived node for a subtraction with a scalar as output and two scalar inputs or a
 			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "difference".
 						
@@ -570,7 +567,7 @@
 				<out>
 					<scalar identifier="difference"/>
 				</out>
-			/subtraction>
+			</subtraction>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -617,7 +614,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a division with a scalar as output and two scalar inputs or a
+			Derived node for a division with a scalar as output and two scalar inputs or a
 			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "quotient". For vector inputs the division is componentwise.
 						
@@ -630,7 +627,7 @@
 				<out>
 					<scalar identifier="quotient"/>
 				</out>
-			/division>
+			</division>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -677,7 +674,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a dot product with a scalar as output and two vector inputs. The inputs must have the identifier "A" and "B",
+			Derived node for a dot product with a scalar as output and two vector inputs. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "product". 
 						
 			Example:
@@ -689,7 +686,7 @@
 				<out>
 					<scalar identifier="product"/>
 				</out>
-			/dotproduct>
+			</dotproduct>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -734,7 +731,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a cross product with a vector as output and two vector inputs. The inputs must have the identifier "A" and "B",
+			Derived node for a cross product with a vector as output and two vector inputs. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "crossproduct". Input and output must have the same dimension.
 						
 			Example:
@@ -746,7 +743,7 @@
 				<out>
 					<vector identifier="crossproduct"/>
 				</out>
-			/crossproduct>
+			</crossproduct>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -802,7 +799,7 @@
 				<out>
 					<vector identifier="product"/>
 				</out>
-			/matrixvectormultiplication>
+			</matrixvectormultiplication>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -858,7 +855,7 @@
 				<out>
 					<matrix identifier="transposed"/>
 				</out>
-			/transpose>
+			</transpose>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -897,14 +894,14 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 
 	<!-- sinus function for scalars or componentwise for vectors -->
 	<xs:complexType name="CT_Sinus">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a sinus function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for a sinus function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "sinus". 
 						
 			Example:
@@ -915,7 +912,7 @@
 				<out>
 					<vector identifier="sinus"/>
 				</out>
-			/sinus>
+			</sinus>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -962,7 +959,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a cosinus function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for a cosinus function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "cosinus". Input and output must have the same dimension.
 						
 			Example:
@@ -973,7 +970,7 @@
 				<out>
 					<vector identifier="cosinus"/>
 				</out>
-			/cosinus>
+			</cosinus>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1020,7 +1017,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a tan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for a tan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "tan". Input and output must have the same dimension.
 						
 			Example:
@@ -1031,7 +1028,7 @@
 				<out>
 					<vector identifier="tan"/>
 				</out>
-			/tan>
+			</tan>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1078,7 +1075,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for a arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "arcsin". Input and output must have the same dimension.
 						
 			Example:
@@ -1089,7 +1086,7 @@
 				<out>
 					<vector identifier="arcsin"/>
 				</out>
-			/arcsin>
+			</arcsin>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1136,7 +1133,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a arccos function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for a arccos function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "arccos". Input and output must have the same dimension.
 						
 			Example:
@@ -1147,7 +1144,7 @@
 				<out>
 					<vector identifier="arccos"/>
 				</out>
-			/arccos>
+			</arccos>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1194,7 +1191,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a arctan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for a arctan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "arctan". Input and output must have the same dimension.
 						
 			Example:
@@ -1205,7 +1202,7 @@
 				<out>
 					<vector identifier="arctan"/>
 				</out>
-			/arctan>
+			</arctan>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1252,7 +1249,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a min function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
+			Derived node for a min function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "min". Inputs and output must have the same dimension.
 						
 			Example:
@@ -1264,7 +1261,7 @@
 				<out>
 					<vector identifier="min"/>
 				</out>
-			/min>
+			</min>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1311,7 +1308,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a max function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
+			Derived node for a max function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "max". Inputs and output must have the same dimension.
 						
 			Example:
@@ -1323,7 +1320,7 @@
 				<out>
 					<vector identifier="max"/>
 				</out>
-			/max>
+			</max>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1370,7 +1367,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for an absolute value function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
+			Derived node for an absolute value function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
 			the output must have the identifier "abs". Inputs and output must have the same dimension.
 						
 			Example:
@@ -1381,7 +1378,7 @@
 				<out>
 					<vector identifier="abs"/>
 				</out>
-			/abs>
+			</abs>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1428,7 +1425,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a fmod function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "A" and "B",
+			Derived node for a fmod function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "A" and "B",
 			the output must have the identifier "fmod". Inputs and output must have the same dimension.
 						
 			Example:
@@ -1440,7 +1437,7 @@
 				<out>
 					<vector identifier="fmod"/>
 				</out>
-			/fmod>
+			</fmod>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1487,7 +1484,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a pow function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "base" and "exponent",
+			Derived node for a pow function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "base" and "exponent",
 			the output must have the identifier "pow". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
 						
 			Example:
@@ -1499,7 +1496,7 @@
 				<out>
 					<vector identifier="pow"/>
 				</out>
-			/pow>
+			</pow>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1546,7 +1543,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a sqrt function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
+			Derived node for a sqrt function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
 			the output must have the identifier "sqrt". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
 						
 			Example:
@@ -1557,7 +1554,7 @@
 				<out>
 					<vector identifier="sqrt"/>
 				</out>
-			/sqrt>
+			</sqrt>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1616,7 +1613,7 @@
 				<out>
 					<scalar identifier="distance"/>
 				</out>
-			/distanceToMesh>
+			</distanceToMesh>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1652,19 +1649,17 @@
 						</xs:complexType>
 					</xs:element>
 				</xs:sequence>
-				<xs:attribute name="objectid" type="ST_ResourceID" use="required"/>
+				<xs:attribute name="objectid" type="ST_ResourceID" use="required" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-
-	
 
 
 	<xs:complexType name="CT_Function">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Dervied node for a function with an arbitrary number of inputs and outputs. The inputs and outputs are defined by the user.
+			Derived node for a function with an arbitrary number of inputs and outputs. The inputs and outputs are defined by the user.
 			
 			Example:
 			<function identifier="sphere" displayname="Sphere">
@@ -1715,46 +1710,74 @@
 							<xs:sequence>
 								<xs:element name="scalar" type="CT_Scalar" />
 								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 
 					<xs:sequence>
-					<!-- nodes -->	
-					<!-- CT_Addition, CT_ConstantScalar, CT_ConstantVector, CT_ConstantMatrix, CT_ComposeVector, CT_ComposeMatrix, CT_ComposeMatrixFromColumnVectors,
-						 CT_Multiplication, CT_Subtraction, CT_Division, CT_DotProduct, CT_CrossProduct, CT_MatrixVectorMultiplication, CT_Transpose, CT_Sinus,
-						 CT_Cosinus,CT_Tan, CT_Arcsin, CT_Arccos, CT_Arctan, CT_Min, CT_Max, CT_Abs, CT_Fmod, CT_Pow, CT_Sqrt, CT_Function, CT_FunctionCall, CT_SignedDistanceToMesh -->	
-						<xs:element name="addition" type="CT_Addition" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="subtraction" type="CT_Subtraction" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="multiplication" type="CT_Multiplication" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="division" type="CT_Division" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="constant" type="CT_ConstantScalar" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="constvec" type="CT_ConstantVector" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="constmat" type="CT_ConstantMatrix" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="composevector" type="CT_ComposeVector" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="composematrix" type="CT_ComposeMatrix" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="composematrixfromcolumnvectors" type="CT_ComposeMatrixFromColumnVectors" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="dotproduct" type="CT_DotProduct" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="crossproduct" type="CT_CrossProduct" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="transpose" type="CT_Transpose" minOccurs="0" maxOccurs="unbounded" />
+						<!-- nodes -->
+						<!-- CT_Addition, CT_ConstantScalar, CT_ConstantVector, CT_ConstantMatrix,
+						CT_ComposeVector, CT_ComposeMatrix, CT_ComposeMatrixFromColumnVectors,
+						 CT_Multiplication, CT_Subtraction, CT_Division, CT_DotProduct, CT_CrossProduct,
+						CT_MatrixVectorMultiplication, CT_Transpose, CT_Sinus,
+						 CT_Cosinus,CT_Tan, CT_Arcsin, CT_Arccos, CT_Arctan, CT_Min, CT_Max, CT_Abs, CT_Fmod, CT_Pow,
+						CT_Sqrt, CT_Function, CT_FunctionCall, CT_SignedDistanceToMesh -->
+						<xs:element name="addition" type="CT_Addition" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="subtraction" type="CT_Subtraction" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="multiplication" type="CT_Multiplication" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="division" type="CT_Division" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="constant" type="CT_ConstantScalar" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="constvec" type="CT_ConstantVector" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="constmat" type="CT_ConstantMatrix" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="composevector" type="CT_ComposeVector" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="composematrix" type="CT_ComposeMatrix" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="composematrixfromcolumnvectors"
+							type="CT_ComposeMatrixFromColumnVectors" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="dotproduct" type="CT_DotProduct" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="crossproduct" type="CT_CrossProduct" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication"
+							minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="transpose" type="CT_Transpose" minOccurs="0"
+							maxOccurs="unbounded" />
 						<xs:element name="sinus" type="CT_Sinus" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="cosinus" type="CT_Cosinus" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="cosinus" type="CT_Cosinus" minOccurs="0"
+							maxOccurs="unbounded" />
 						<xs:element name="tan" type="CT_Tan" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="arcsin" type="CT_Arcsin" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="arccos" type="CT_Arccos" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="arctan" type="CT_Arctan" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="arcsin" type="CT_Arcsin" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="arccos" type="CT_Arccos" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="arctan" type="CT_Arctan" minOccurs="0"
+							maxOccurs="unbounded" />
 						<xs:element name="min" type="CT_Min" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="max" type="CT_Max" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="abs" type="CT_Abs" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="fmod" type="CT_Fmod" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="pow" type="CT_Pow" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="sqrt" type="CT_Sqrt" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="function" type="CT_Function" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="functioncall" type="CT_FunctionCall" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="dot" type="CT_DotProduct" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="cross" type="CT_CrossProduct" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="mesh" type="CT_SignedDistanceToMesh" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="function" type="CT_Function" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="functioncall" type="CT_FunctionCall" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="dot" type="CT_DotProduct" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="cross" type="CT_CrossProduct" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="mesh" type="CT_SignedDistanceToMesh" minOccurs="0"
+							maxOccurs="unbounded" />
 					</xs:sequence>
 
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1767,32 +1790,20 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0" maxOccurs="unbounded" />
-								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0" maxOccurs="unbounded" />
+								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
+									maxOccurs="unbounded" />
+								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
+									maxOccurs="unbounded" />
+								<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0"
+									maxOccurs="unbounded" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 				</xs:sequence>
+				<xs:attribute name="id" type="ST_ResourceID" use="required" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-
-	<!-- complex type for referencing a function -->
-	<xs:complexType name="CT_FunctionRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a function.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="CT_Ref">
-				<xs:attribute name="ref" type="ST_Identifier" use="required" />
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
 
 	<!-- node for calling a function -->
 	<xs:complexType name="CT_FunctionCall">
@@ -1806,7 +1817,7 @@
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
 				<xs:sequence>
-					<xs:element name="functionref" type="CT_FunctionRef" />
+					<xs:element name="functionref" type="ST_ResourceID" />
 					<xs:element name="in" minOccurs="1" maxOccurs="unbounded">
 						<xs:complexType>
 							<xs:annotation>
@@ -1817,8 +1828,10 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0" maxOccurs="unbounded" />
-								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0" maxOccurs="unbounded" />
+								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
+									maxOccurs="unbounded" />
+								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
+									maxOccurs="unbounded" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1832,8 +1845,10 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0" maxOccurs="unbounded" />
-								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0" maxOccurs="unbounded" />
+								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
+									maxOccurs="unbounded" />
+								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
+									maxOccurs="unbounded" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
