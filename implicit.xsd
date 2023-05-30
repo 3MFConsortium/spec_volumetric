@@ -210,7 +210,7 @@
 				<![CDATA[
 			Derived node for an addition with a scalar as output and two scalar inputs or a
 			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "sum".
+			the output must have the identifier "result".
 						
 			Example:
 			<addition identifier="addition1" displayname="Addition 1">
@@ -219,7 +219,7 @@
 								<scalarref identifier="B" ref="inputs.radius"/>
 				</in>
 				<out>
-					<scalar identifier="sum"/>
+					<scalar identifier="result"/>
 				</out>
 			</addition>
 			]]>
@@ -268,7 +268,13 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for a constant scalar value
+			Node for a constant scalar value. The output must have the identifier "value".
+			Example:
+			<constant identifier="constant1" displayname="Constant 1" value="1.0">
+				<out>
+					<scalar identifier="value"/>
+				</out>
+			</constant>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -293,7 +299,12 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for a constant vector value
+			Node for a constant vector value. The output must have the identifier "vector".
+			Example:
+			<constvec identifier="constant1" displayname="Constant 1" x="1.0" y="2.0" z="3.0">
+				<out>
+					<vector identifier="vector"/>
+				</out>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -320,7 +331,17 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for a constant 4x4 matrix value
+			Node for a constant 4x4 matrix value. The output must have the identifier "matrix".
+			Example:
+			<constmat identifier="constant1" displayname="identity" 
+				matrix="1.0 0.0 0.0 0.0
+						0.0 1.0 0.0 0.0
+						0.0 0.0 1.0 0.0 
+						0.0 0.0 0.0 1.0">
+				<out>
+					<matrix identifier="matrix"/>
+				</out>
+			</constmat>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -345,7 +366,18 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for composing a vector from 3 scalar values
+			Node for composing a vector from 3 scalar values. The inputs must have the identifiers x, y and z.
+			Example:
+			<composevector>
+				<in>
+					<scalarref identifier="x" ref="inputs.x"/>
+					<scalarref identifier="y" ref="inputs.y"/>
+					<scalarref identifier="z" ref="inputs.z"/>
+				</in>
+				<out>
+					<vector identifier="vector"/>
+				</out>
+			</composevector>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -378,8 +410,34 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for composing a matrix from 16 scalar values
+			Node for composing a matrix from 16 scalar values. The inputs must have the following identifiers:
+			m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33
+			Example:
+			<composematrix identifier="composeMatrix_0" displayname="composed matrix">
+				<in>
+					<scalarref identifier="m00" ref="constantM00.value"/>
+					<scalarref identifier="m01" ref="constantM01.value"/>
+					<scalarref identifier="m02" ref="constantM02.value"/>
+					<scalarref identifier="m03" ref="constantM03.value"/>
+					<scalarref identifier="m10" ref="constantM10.value"/>
+					<scalarref identifier="m11" ref="constantM11.value"/>
+					<scalarref identifier="m12" ref="constantM12.value"/>
+					<scalarref identifier="m13" ref="constantM13.value"/>
+					<scalarref identifier="m20" ref="constantM20.value"/>
+					<scalarref identifier="m21" ref="constantM21.value"/>
+					<scalarref identifier="m22" ref="constantM22.value"/>
+					<scalarref identifier="m23" ref="constantM23.value"/>
+					<scalarref identifier="m30" ref="constantM30.value"/>
+					<scalarref identifier="m31" ref="constantM31.value"/>
+					<scalarref identifier="m32" ref="constantM32.value"/>
+					<scalarref identifier="m33" ref="constantM33.value"/>
+				</in>
+				<out>
+					<matrix identifier="matrix"/>
+				</out>
+			</composematrix>
 			]]>
+			
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
@@ -388,22 +446,22 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="m00" type="CT_ScalarRef" />
-								<xs:element name="m01" type="CT_ScalarRef" />
-								<xs:element name="m02" type="CT_ScalarRef" />
-								<xs:element name="m03" type="CT_ScalarRef" />
-								<xs:element name="m10" type="CT_ScalarRef" />
-								<xs:element name="m11" type="CT_ScalarRef" />
-								<xs:element name="m12" type="CT_ScalarRef" />
-								<xs:element name="m13" type="CT_ScalarRef" />
-								<xs:element name="m20" type="CT_ScalarRef" />
-								<xs:element name="m21" type="CT_ScalarRef" />
-								<xs:element name="m22" type="CT_ScalarRef" />
-								<xs:element name="m23" type="CT_ScalarRef" />
-								<xs:element name="m30" type="CT_ScalarRef" />
-								<xs:element name="m31" type="CT_ScalarRef" />
-								<xs:element name="m32" type="CT_ScalarRef" />
-								<xs:element name="m33" type="CT_ScalarRef" />								
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />								
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -424,7 +482,20 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for composing a Matrix from column vectors. The 4th row is set [0,0,0,1]
+			Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1]. The inputs must have the following identifiers:
+			col0, col1, col2, col3.
+			Example:
+			<composevector identifier="composeMatrixFromColumnVectors" displayname="composed matrix">
+				<in>
+					<vectorref identifier="col0" ref="vector0.vector"/>
+					<vectorref identifier="col1" ref="vector1.vector"/>
+					<vectorref identifier="col2" ref="vector2.vector"/>
+					<vectorref identifier="col3" ref="vector3.vector"/>
+				</in>
+				<out>
+					<matrix identifier="matrix"/>
+				</out>
+			</composevector>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -434,10 +505,10 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="col1" type="CT_VectorRef" />
-								<xs:element name="col2" type="CT_VectorRef" />
-								<xs:element name="col3" type="CT_VectorRef" />
-								<xs:element name="col4" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -458,7 +529,20 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1)
+			Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1). The inputs must have the following identifiers:
+			row0, row1, row2, row3.
+			Example:
+			<composematrixfromcolumnvectors identifier="composeMatrixFromRowVectors" displayname="composed vector">
+				<in>
+					<vectorref identifier="row0" ref="vector0.vector"/>
+					<vectorref identifier="row1" ref="vector1.vector"/>
+					<vectorref identifier="row2" ref="vector2.vector"/>
+					<vectorref identifier="row3" ref="vector3.vector"/>
+				</in>
+				<out>
+					<matrix identifier="matrix"/>
+				</out>
+			</composematrixfromcolumnvectors>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -468,10 +552,10 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="row1" type="CT_VectorRef" />
-								<xs:element name="row2" type="CT_VectorRef" />
-								<xs:element name="row3" type="CT_VectorRef" />
-								<xs:element name="row4" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -493,8 +577,8 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Performs the multiplication A x B = product. The inputs and output can be either scalar, vector or matrix, but must all have the same dimension.
-			The inputs must have the identifier "A" and "B", the output must have the identifier "product". If A and B are vectors, the multiplication is done per component.
+			Performs the multiplication A x B = result. The inputs and output can be either scalar, vector or matrix, but must all have the same dimension.
+			The inputs must have the identifier "A" and "B", the output must have the identifier "result". If A and B are vectors, the multiplication is done per component.
 						
 			Example:
 			<multiplication identifier="multiplication1" displayname="Multiplication 1">
@@ -503,7 +587,7 @@
 								<scalarref identifier="B" ref="inputs.radius"/>
 				</in>
 				<out>
-					<scalar identifier="product"/>
+					<scalar identifier="result"/>
 				</out>
 			</multiplication>
 			]]>
@@ -556,7 +640,7 @@
 				<![CDATA[
 			Derived node for a subtraction with a scalar as output and two scalar inputs or a
 			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "difference".
+			the output must have the identifier "result".
 						
 			Example:
 			<subtraction identifier="subtraction1" displayname="Subtraction 1">
@@ -565,7 +649,7 @@
 								<scalarref identifier="B" ref="inputs.radius"/>
 				</in>
 				<out>
-					<scalar identifier="difference"/>
+					<scalar identifier="result"/>
 				</out>
 			</subtraction>
 			]]>
@@ -616,7 +700,7 @@
 				<![CDATA[
 			Derived node for a division with a scalar as output and two scalar inputs or a
 			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "quotient". For vector inputs the division is componentwise.
+			the output must have the identifier "result". For vector inputs the division is componentwise.
 						
 			Example:
 			<division identifier="division1" displayname="Division 1">
@@ -625,7 +709,7 @@
 								<scalarref identifier="B" ref="inputs.radius"/>
 				</in>
 				<out>
-					<scalar identifier="quotient"/>
+					<scalar identifier="result"/>
 				</out>
 			</division>
 			]]>
@@ -675,16 +759,16 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a dot product with a scalar as output and two vector inputs. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "product". 
+			the output must have the identifier "result". 
 						
 			Example:
-			<dotproduct identifier="dotproduct1" displayname="Dot Product 1">
+			<dot identifier="dotproduct1" displayname="Dot Product 1">
 				<in>
 								<vectorref identifier="A" ref="inputs.vector1"/>
 								<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
-					<scalar identifier="product"/>
+					<scalar identifier="result"/>
 				</out>
 			</dotproduct>
 			]]>
@@ -732,16 +816,16 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a cross product with a vector as output and two vector inputs. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "crossproduct". Input and output must have the same dimension.
+			the output must have the identifier "result".
 						
 			Example:
-			<crossproduct identifier="crossproduct1" displayname="Cross Product 1">
+			<cross identifier="crossproduct1" displayname="Cross Product 1">
 				<in>
 								<vectorref identifier="A" ref="inputs.vector1"/>
 								<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
-					<vector identifier="crossproduct"/>
+					<vector identifier="result"/>
 				</out>
 			</crossproduct>
 			]]>
@@ -788,7 +872,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Performs the matrix vector multiplication A x B = product. The input A must be a matrix and the input B a vector. The output must be a vector with the name "product".
+			Performs the matrix vector multiplication A x B = result. The input A must be a matrix and the input B a vector. The output must be a vector with the name "result".
 						
 			Example:
 			<matrixvectormultiplication identifier="matVec1" displayname="Matrix Vector Multiplication 1">
@@ -797,7 +881,7 @@
 								<vectorref identifier="B" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="product"/>
+					<vector identifier="result"/>
 				</out>
 			</matrixvectormultiplication>
 			]]>
@@ -845,7 +929,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Performs the transpose of a matrix. The input 'A' must be a matrix and the output must be a matrix with the identifier "transposed".
+			Performs the transpose of a matrix. The input 'A' must be a matrix and the output must be a matrix with the identifier "result".
 						
 			Example:
 			<transpose identifier="transpose1" displayname="Transpose 1">
@@ -853,7 +937,7 @@
 								<matrixref identifier="A" ref="inputs.matrix1"/>
 				</in>
 				<out>
-					<matrix identifier="transposed"/>
+					<matrix identifier="result"/>
 				</out>
 			</transpose>
 			]]>
@@ -1606,14 +1690,14 @@
 			The distance is positive if the point is outside the mesh and negative if the point is inside the mesh.
 									
 			Example:
-			<distanceToMesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
+			<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
 				<in>
 								<vectorref identifier="point" ref="inputs.position"/>
 				</in>
 				<out>
 					<scalar identifier="distance"/>
 				</out>
-			</distanceToMesh>
+			</mesh>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1744,9 +1828,9 @@
 						<xs:element name="composematrixfromcolumnvectors"
 							type="CT_ComposeMatrixFromColumnVectors" minOccurs="0"
 							maxOccurs="unbounded" />
-						<xs:element name="dotproduct" type="CT_DotProduct" minOccurs="0"
+						<xs:element name="dot" type="CT_DotProduct" minOccurs="0"
 							maxOccurs="unbounded" />
-						<xs:element name="crossproduct" type="CT_CrossProduct" minOccurs="0"
+						<xs:element name="cross" type="CT_CrossProduct" minOccurs="0"
 							maxOccurs="unbounded" />
 						<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication"
 							minOccurs="0" maxOccurs="unbounded" />
@@ -1811,6 +1895,16 @@
 			<xs:documentation>
 				<![CDATA[
 			Calls a function.
+			Example:
+			<functioncall functionref="mySphereFunction">
+				<in>
+					<scalarref identifier="pos" ref="othernode_0.result" />
+					<scalarref identifier="radius" ref="othernode_1.result" />
+				</in>
+				<out>
+					<scalarref identifer="result" ref="mySphereFunction.distance"/>
+				</out>
+			</functioncall>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1856,5 +1950,4 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-
 </xs:schema>
