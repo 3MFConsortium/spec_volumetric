@@ -388,22 +388,22 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
-								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="m00" type="CT_ScalarRef" />
+								<xs:element name="m01" type="CT_ScalarRef" />
+								<xs:element name="m02" type="CT_ScalarRef" />
+								<xs:element name="m03" type="CT_ScalarRef" />
+								<xs:element name="m10" type="CT_ScalarRef" />
+								<xs:element name="m11" type="CT_ScalarRef" />
+								<xs:element name="m12" type="CT_ScalarRef" />
+								<xs:element name="m13" type="CT_ScalarRef" />
+								<xs:element name="m20" type="CT_ScalarRef" />
+								<xs:element name="m21" type="CT_ScalarRef" />
+								<xs:element name="m22" type="CT_ScalarRef" />
+								<xs:element name="m23" type="CT_ScalarRef" />
+								<xs:element name="m30" type="CT_ScalarRef" />
+								<xs:element name="m31" type="CT_ScalarRef" />
+								<xs:element name="m32" type="CT_ScalarRef" />
+								<xs:element name="m33" type="CT_ScalarRef" />								
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -434,10 +434,10 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vectorref" type="CT_VectorRef" />
-								<xs:element name="vectorref" type="CT_VectorRef" />
-								<xs:element name="vectorref" type="CT_VectorRef" />
-								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="col1" type="CT_VectorRef" />
+								<xs:element name="col2" type="CT_VectorRef" />
+								<xs:element name="col3" type="CT_VectorRef" />
+								<xs:element name="col4" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -468,10 +468,10 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vectorref" type="CT_VectorRef" />
-								<xs:element name="vectorref" type="CT_VectorRef" />
-								<xs:element name="vectorref" type="CT_VectorRef" />
-								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="row1" type="CT_VectorRef" />
+								<xs:element name="row2" type="CT_VectorRef" />
+								<xs:element name="row3" type="CT_VectorRef" />
+								<xs:element name="row4" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -901,18 +901,18 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a sinus function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "sinus". 
+			Derived node for a sine function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			the output must have the identifier "result". 
 						
 			Example:
-			<sinus identifier="sinus1" displayname="Sinus 1">
+			<sin identifier="sinus1" displayname="Sinus 1">
 				<in>
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="sinus"/>
+					<vector identifier="result"/>
 				</out>
-			</sinus>
+			</sin>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -960,17 +960,17 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a cosinus function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "cosinus". Input and output must have the same dimension.
+			the output must have the identifier "result". Input and output must have the same dimension.
 						
 			Example:
-			<cosinus identifier="cosinus1" displayname="Cosinus 1">
+			<cos identifier="cosinus1" displayname="Cosinus 1">
 				<in>
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="cosinus"/>
+					<vector identifier="result"/>
 				</out>
-			</cosinus>
+			</cos>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -982,7 +982,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the cosinus function.
+							Inputs to the cosine function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -997,7 +997,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							cosinus of the input
+							cosine of the input
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1018,7 +1018,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a tan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "tan". Input and output must have the same dimension.
+			the output must have the identifier "result". Input and output must have the same dimension.
 						
 			Example:
 			<tan identifier="tan1" displayname="Tan 1">
@@ -1026,7 +1026,7 @@
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="tan"/>
+					<vector identifier="result"/>
 				</out>
 			</tan>
 			]]>
@@ -1076,7 +1076,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "arcsin". Input and output must have the same dimension.
+			the output must have the identifier "result". Input and output must have the same dimension.
 						
 			Example:
 			<arcsin identifier="arcsin1" displayname="Arcsin 1">
@@ -1084,7 +1084,7 @@
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="arcsin"/>
+					<vector identifier="result"/>
 				</out>
 			</arcsin>
 			]]>
@@ -1134,7 +1134,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a arccos function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "arccos". Input and output must have the same dimension.
+			the output must have the identifier "result". Input and output must have the same dimension.
 						
 			Example:
 			<arccos identifier="arccos1" displayname="Arccos 1">
@@ -1142,7 +1142,7 @@
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="arccos"/>
+					<vector identifier="result"/>
 				</out>
 			</arccos>
 			]]>
@@ -1192,7 +1192,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a arctan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "arctan". Input and output must have the same dimension.
+			the output must have the identifier "result". Input and output must have the same dimension.
 						
 			Example:
 			<arctan identifier="arctan1" displayname="Arctan 1">
@@ -1200,7 +1200,7 @@
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="arctan"/>
+					<vector identifier="result"/>
 				</out>
 			</arctan>
 			]]>
@@ -1250,7 +1250,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a min function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "min". Inputs and output must have the same dimension.
+			the output must have the identifier "result". Inputs and output must have the same dimension.
 						
 			Example:
 			<min identifier="min1" displayname="Min 1">
@@ -1259,7 +1259,7 @@
 								<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
-					<vector identifier="min"/>
+					<vector identifier="result"/>
 				</out>
 			</min>
 			]]>
@@ -1309,7 +1309,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a max function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "max". Inputs and output must have the same dimension.
+			the output must have the identifier "result". Inputs and output must have the same dimension.
 						
 			Example:
 			<max identifier="max1" displayname="Max 1">
@@ -1318,7 +1318,7 @@
 								<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
-					<vector identifier="max"/>
+					<vector identifier="result"/>
 				</out>
 			</max>
 			]]>
@@ -1368,7 +1368,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for an absolute value function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
-			the output must have the identifier "abs". Inputs and output must have the same dimension.
+			the output must have the identifier "result". Inputs and output must have the same dimension.
 						
 			Example:
 			<abs identifier="abs1" displayname="Abs 1">
@@ -1376,7 +1376,7 @@
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="abs"/>
+					<vector identifier="result"/>
 				</out>
 			</abs>
 			]]>
@@ -1426,7 +1426,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a fmod function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "A" and "B",
-			the output must have the identifier "fmod". Inputs and output must have the same dimension.
+			the output must have the identifier "result". Inputs and output must have the same dimension.
 						
 			Example:
 			<fmod identifier="fmod1" displayname="Fmod 1">
@@ -1435,7 +1435,7 @@
 								<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
-					<vector identifier="fmod"/>
+					<vector identifier="result"/>
 				</out>
 			</fmod>
 			]]>
@@ -1485,7 +1485,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a pow function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "base" and "exponent",
-			the output must have the identifier "pow". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
+			the output must have the identifier "result". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
 						
 			Example:
 			<pow identifier="pow1" displayname="Pow 1">
@@ -1494,7 +1494,7 @@
 								<vectorref identifier="exponent" ref="inputs.vector2"/>
 				</in>
 				<out>
-					<vector identifier="pow"/>
+					<vector identifier="result"/>
 				</out>
 			</pow>
 			]]>
@@ -1544,7 +1544,7 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a sqrt function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
-			the output must have the identifier "sqrt". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
+			the output must have the identifier "result". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
 						
 			Example:
 			<sqrt identifier="sqrt1" displayname="Sqrt 1">
@@ -1552,7 +1552,7 @@
 								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
-					<vector identifier="sqrt"/>
+					<vector identifier="result"/>
 				</out>
 			</sqrt>
 			]]>
@@ -1752,8 +1752,8 @@
 							minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="transpose" type="CT_Transpose" minOccurs="0"
 							maxOccurs="unbounded" />
-						<xs:element name="sinus" type="CT_Sinus" minOccurs="0" maxOccurs="unbounded" />
-						<xs:element name="cosinus" type="CT_Cosinus" minOccurs="0"
+						<xs:element name="sin" type="CT_Sinus" minOccurs="0" maxOccurs="unbounded" />
+						<xs:element name="cos" type="CT_Cosinus" minOccurs="0"
 							maxOccurs="unbounded" />
 						<xs:element name="tan" type="CT_Tan" minOccurs="0" maxOccurs="unbounded" />
 						<xs:element name="arcsin" type="CT_Arcsin" minOccurs="0"
