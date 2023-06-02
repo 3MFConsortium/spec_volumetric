@@ -1750,7 +1750,7 @@
 			Example:
 			<length identifier="length1" displayname="Length 1">
 				<in>
-								<vectorref identifier="X" ref="inputs.vector1"/>
+								<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<scalar identifier="result"/>
@@ -2009,4 +2009,5 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+
 </xs:schema>
