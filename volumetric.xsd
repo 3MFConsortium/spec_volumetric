@@ -65,6 +65,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 				<xs:element ref="scalarfieldfromimage3d"/>
 				<xs:element ref="scalarfieldconstant"/>
 				<xs:element ref="scalarfieldcomposed"/>
+				<xs:element ref="scalarfieldfunction"/>
 				<xs:any namespace="##other" processContents="lax"/>
 			</xs:choice>
 		</xs:sequence>
@@ -112,12 +113,22 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
+	<xs:complexType name="CT_ScalarFieldFunction">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+		</xs:sequence>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="out" type="xs:string" use="required"/>
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
 	<xs:complexType name="CT_Vector3DField">
 		<xs:sequence>
 			<xs:choice>
 				<xs:element ref="vector3dfieldfromimage3d"/>
 				<xs:element ref="vector3dfieldconstant"/>
 				<xs:element ref="vector3dfieldcomposed"/>
+				<xs:element ref="vector3dfieldfunction"/>
 				<xs:any namespace="##other" processContents="lax"/>
 			</xs:choice>
 		</xs:sequence>
@@ -165,6 +176,15 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="valuey" type="ST_Number" use="required"/>
 		<xs:attribute name="valuez" type="ST_Number" use="required"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
+	<xs:complexType name="CT_Vector3DFieldFunction">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
+		</xs:sequence>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="out" type="xs:string" use="required" />
+		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
 	<xs:complexType name="CT_Mesh">
@@ -301,10 +321,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="scalarfieldfromimage3d" type="CT_ScalarFieldFromImage3D"/>
 	<xs:element name="scalarfieldcomposed" type="CT_ScalarFieldComposed"/>
 	<xs:element name="scalarfieldconstant" type="CT_ScalarFieldConstant"/>
+	<xs:element name="scalarfieldfunction" type="CT_ScalarFieldFunction"/>
 	<xs:element name="vector3dfield" type="CT_Vector3DField"/>
 	<xs:element name="vector3dfieldfromimage3d" type="CT_Vector3DFieldFromImage3D"/>
 	<xs:element name="vector3dfieldcomposed" type="CT_Vector3DFieldComposed"/>
 	<xs:element name="vector3dfieldconstant" type="CT_Vector3DFieldConstant"/>
+	<xs:element name="vector3dfieldfunction" type="CT_Vector3DFieldFunction"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
 	<xs:element name="boundary" type="CT_Boundary"/>
 	<xs:element name="composite" type="CT_Composite"/>
