@@ -406,6 +406,50 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- Node for decomposing a vector -->
+	<xs:complexType name="CT_DecomposeVector">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node for decomposing a vector into 3 scalar values. The input must have the identifier "vector", the outputs must have the identifiers x, y and z.
+			Example:
+			<decomposevector>
+				<in>
+					<vectorref identifier="vector" ref="inputs.vector"/>
+				</in>
+				<out>
+					<scalar identifier="x"/>
+					<scalar identifier="y"/>
+					<scalar identifier="z"/>
+				</out>
+			</decomposevector>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="vectorref" type="CT_VectorRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="scalar" type="CT_Scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- Node for composing a matrix from 16 scalar values -->
 	<xs:complexType name="CT_ComposeMatrix">
 		<xs:annotation>
@@ -1879,6 +1923,8 @@
 						<xs:element name="constmat" type="CT_ConstantMatrix" minOccurs="0"
 							maxOccurs="unbounded" />
 						<xs:element name="composevector" type="CT_ComposeVector" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="decomposevector" type="CT_DecomposeVector" minOccurs="0"
 							maxOccurs="unbounded" />
 						<xs:element name="composematrix" type="CT_ComposeMatrix" minOccurs="0"
 							maxOccurs="unbounded" />
