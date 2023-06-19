@@ -153,6 +153,17 @@
 		<xs:attribute name="ref" type="ST_MatrixID" use="required" />
 	</xs:complexType>
 
+	<xs:complexType name="CT_FunctionRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a function
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="ref" type="ST_ResourceID" use="required" />
+	</xs:complexType>
 
 	<!-- node is the base type for all nodes in the implicit function tree.	-->
 	<xs:complexType name="CT_Node">
@@ -205,6 +216,29 @@
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
 	</xs:complexType>
 
+	<!-- ResourceId output -->
+	<xs:complexType name="CT_ResourceId">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				ResourceId output
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<!-- FunctionId -->
+	<xs:complexType name="CT_FunctionId">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				FunctionId output
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
 
 	<xs:complexType name="CT_Addition">
 		<xs:annotation>
@@ -362,6 +396,68 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+
+	<xs:complexType name="CT_ConstFunctionId">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node that defines a function id that can be used as an input for a function call. The output must have the identifier "value".
+			Example:
+			<functionid identifier="functionid1" displayname="Function Id 1" value="1">
+				<out>
+					<functionid identifier="value"/>
+				</out>
+			</functionid>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="CT_FunctionId" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="value" type="ST_ResourceID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- CT_ResourceId -->
+	<xs:complexType name="CT_ConstResourceId">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node that defines a resource id that can be used as an input for a resource reference. The output must have the identifier "value".
+			Example:
+			<resourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
+				<out>
+					<resourceid identifier="value"/>
+				</out>
+			</resourceid>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:sequence>
+								<xs:element name="value" type="CT_ResourceId" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="value" type="ST_ResourceID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 
 	<!-- Node for composing a vector from 3 scalar values -->
 	<xs:complexType name="CT_ComposeVector">
@@ -1739,6 +1835,7 @@
 			<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
 				<in>
 								<vectorref identifier="point" ref="inputs.position"/>
+								<resourceref identifier="mesh" ref="2"/>
 				</in>
 				<out>
 					<scalar identifier="distance"/>
@@ -1761,6 +1858,7 @@
 							</xs:annotation>
 							<xs:sequence>
 								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="resourceref" type="ST_ResourceID" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1968,6 +2066,10 @@
 							maxOccurs="unbounded" />
 						<xs:element name="length" type="CT_Length" minOccurs="0"
 							maxOccurs="unbounded" />
+						<xs:element name="functionid" type="CT_ConstFunctionId" minOccurs="0"
+							maxOccurs="unbounded" />
+						<xs:element name="resourceid" type="CT_ConstResourceId" minOccurs="0"
+							maxOccurs="unbounded" />
 					</xs:sequence>
 
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -2000,10 +2102,11 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Calls a function.
+			Calls a function. It must at least have an functionref input with the identifier "functionId".
 			Example:
 			<functioncall functionref="mySphereFunction">
 				<in>
+					<functionref identifier="functionId" ref="othernode_0.function" />
 					<scalarref identifier="pos" ref="othernode_0.result" />
 					<scalarref identifier="radius" ref="othernode_1.result" />
 				</in>
@@ -2017,7 +2120,6 @@
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
 				<xs:sequence>
-					<xs:element name="functionref" type="ST_ResourceID" />
 					<xs:element name="in" minOccurs="1" maxOccurs="unbounded">
 						<xs:complexType>
 							<xs:annotation>
@@ -2032,6 +2134,10 @@
 									maxOccurs="unbounded" />
 								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
 									maxOccurs="unbounded" />
+								<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0"
+									maxOccurs="unbounded" />
+								<xs:element name="functionref" type="CT_FunctionRef" minOccurs="1"
+									maxOccurs="1" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
