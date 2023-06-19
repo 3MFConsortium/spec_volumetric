@@ -165,6 +165,7 @@
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
 		<xs:attribute name="displayname" type="xs:string" use="optional" />
+		<xs:attribute name="tag" type="xs:string" use="optional" />
 	</xs:complexType>
 
 	<!-- Scalar output value -->
