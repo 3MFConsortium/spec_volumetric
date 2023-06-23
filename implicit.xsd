@@ -217,7 +217,7 @@
 	</xs:complexType>
 
 	<!-- ResourceId output -->
-	<xs:complexType name="CT_ResourceId">
+	<xs:complexType name="CT_ResourceID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
@@ -427,8 +427,8 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- CT_ResourceId -->
-	<xs:complexType name="CT_ConstResourceId">
+	<!-- CT_ResourceID -->
+	<xs:complexType name="CT_ConstResourceID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
@@ -448,7 +448,7 @@
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="value" type="CT_ResourceId" />
+								<xs:element name="value" type="CT_ResourceID" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1834,7 +1834,7 @@
 			Example:
 			<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
 				<in>
-								<vectorref identifier="point" ref="inputs.position"/>
+								<vectorref identifier="pos" ref="inputs.pos"/>
 								<resourceref identifier="mesh" ref="2"/>
 				</in>
 				<out>
@@ -1995,6 +1995,7 @@
 								<xs:element name="scalar" type="CT_Scalar" />
 								<xs:element name="vector" type="CT_Vector" />
 								<xs:element name="matrix" type="CT_Matrix" />
+								<xs:element name="resourceid" type="CT_ResourceID" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -2068,7 +2069,7 @@
 							maxOccurs="unbounded" />
 						<xs:element name="functionid" type="CT_ConstFunctionId" minOccurs="0"
 							maxOccurs="unbounded" />
-						<xs:element name="resourceid" type="CT_ConstResourceId" minOccurs="0"
+						<xs:element name="resourceid" type="CT_ConstResourceID" minOccurs="0"
 							maxOccurs="unbounded" />
 					</xs:sequence>
 
