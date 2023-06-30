@@ -397,35 +397,6 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<xs:complexType name="CT_ConstFunctionId">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Node that defines a function id that can be used as an input for a function call. The output must have the identifier "value".
-			Example:
-			<functionid identifier="functionid1" displayname="Function Id 1" value="1">
-				<out>
-					<functionid identifier="value"/>
-				</out>
-			</functionid>
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="out" minOccurs="1" maxOccurs="1">
-						<xs:complexType>
-							<xs:sequence>
-								<xs:element name="value" type="CT_FunctionId" />
-							</xs:sequence>
-						</xs:complexType>
-					</xs:element>
-				</xs:sequence>
-				<xs:attribute name="value" type="ST_ResourceID" use="required" />
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
 
 	<!-- CT_ResourceID -->
 	<xs:complexType name="CT_ConstResourceID">
@@ -2067,8 +2038,6 @@
 							maxOccurs="unbounded" />
 						<xs:element name="length" type="CT_Length" minOccurs="0"
 							maxOccurs="unbounded" />
-						<xs:element name="functionid" type="CT_ConstFunctionId" minOccurs="0"
-							maxOccurs="unbounded" />
 						<xs:element name="resourceid" type="CT_ConstResourceID" minOccurs="0"
 							maxOccurs="unbounded" />
 					</xs:sequence>
@@ -2103,11 +2072,11 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Calls a function. It must at least have an functionref input with the identifier "functionId".
+			Calls a function. It must at least have an functionref input with the identifier "functionID".
 			Example:
-			<functioncall functionref="mySphereFunction">
+			<functioncall identifier="sphere" displayname="Sphere">
 				<in>
-					<functionref identifier="functionId" ref="othernode_0.function" />
+					<functionref identifier="functionID" ref="functionIDNode.value" />
 					<scalarref identifier="pos" ref="othernode_0.result" />
 					<scalarref identifier="radius" ref="othernode_1.result" />
 				</in>
