@@ -54,9 +54,15 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for an addition with a scalar as output and two scalar inputs or a
-			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "result".
+			Derived node for an addition. The inputs must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- scalar + scalar = scalar
+			- vector + vector = vector (vector is added componentwise)
+			- matrix + matrix = matrix (matrix is added componentwise)
+			- scalar + vector = vector (scalar is added to each component of the vector)
+			- scalar + matrix = matrix (scalar is added to each component of the matrix)
+			- vector + scalar = vector (scalar is added to each component of the vector)
+			- matrix + scalar = matrix (scalar is added to each component of the matrix)
 						
 			Example:
 			<addition identifier="addition1" displayname="Addition 1">
@@ -86,6 +92,7 @@
 							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -101,6 +108,7 @@
 							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -289,11 +297,11 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for decomposing a vector into 3 scalar values. The input must have the identifier "vector", the outputs must have the identifiers x, y and z.
+			Node for decomposing a vector into 3 scalar values. The input must have the identifier "A", the outputs must have the identifiers x, y and z.
 			Example:
 			<decomposevector>
 				<in>
-					<vectorref identifier="vector" ref="inputs.vector"/>
+					<vectorref identifier="A" ref="inputs.vector"/>
 				</in>
 				<out>
 					<scalar identifier="x"/>
@@ -406,14 +414,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1]. The inputs must have the following identifiers:
-			col0, col1, col2, col3.
+			A, B, C, D.
 			Example:
 			<composevector identifier="composeMatrixFromColumnVectors" displayname="composed matrix">
 				<in>
-					<vectorref identifier="col0" ref="vector0.vector"/>
-					<vectorref identifier="col1" ref="vector1.vector"/>
-					<vectorref identifier="col2" ref="vector2.vector"/>
-					<vectorref identifier="col3" ref="vector3.vector"/>
+					<vectorref identifier="A" ref="vector0.vector"/>
+					<vectorref identifier="B" ref="vector1.vector"/>
+					<vectorref identifier="C" ref="vector2.vector"/>
+					<vectorref identifier="D" ref="vector3.vector"/>
 				</in>
 				<out>
 					<matrix identifier="matrix"/>
@@ -453,14 +461,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1). The inputs must have the following identifiers:
-			row0, row1, row2, row3.
+			A, B, C, D.
 			Example:
 			<composematrixfromcolumnvectors identifier="composeMatrixFromRowVectors" displayname="composed vector">
 				<in>
-					<vectorref identifier="row0" ref="vector0.vector"/>
-					<vectorref identifier="row1" ref="vector1.vector"/>
-					<vectorref identifier="row2" ref="vector2.vector"/>
-					<vectorref identifier="row3" ref="vector3.vector"/>
+					<vectorref identifier="A" ref="vector0.vector"/>
+					<vectorref identifier="B" ref="vector1.vector"/>
+					<vectorref identifier="C" ref="vector2.vector"/>
+					<vectorref identifier="D" ref="vector3.vector"/>
 				</in>
 				<out>
 					<matrix identifier="matrix"/>
@@ -500,14 +508,20 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Performs the multiplication A x B = result. The inputs and output can be either scalar, vector or matrix, but must all have the same dimension.
-			The inputs must have the identifier "A" and "B", the output must have the identifier "result". If A and B are vectors, the multiplication is done per component.
+			Performs the multiplication A x B = result.
+			The inputs must have the identifier "A" and "B", the output must have the identifier "result". If only one of the inputs is a scalar, the operation is componentwise. The following combinations of inputs and outputs are allowed:
+			- scalar * scalar = scalar
+			- vector * vector = vector (vector is multiplied componentwise)
+			- scalar * vector = vector (scalar is multiplied to each component of the vector)
+			- scalar * matrix = matrix (scalar is multiplied to each component of the matrix)
+			- vector * scalar = vector (scalar is multiplied to each component of the vector)
+			- matrix * scalar = matrix (scalar is multiplied to each component of the matrix)
 						
 			Example:
 			<multiplication identifier="multiplication1" displayname="Multiplication 1">
 				<in>
-								<scalarref identifier="A" ref="constant1.c1"/>
-								<scalarref identifier="B" ref="inputs.radius"/>
+					<scalarref identifier="A" ref="constant1.c1"/>
+					<scalarref identifier="B" ref="inputs.radius"/>
 				</in>
 				<out>
 					<scalar identifier="result"/>
@@ -561,15 +575,21 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a subtraction with a scalar as output and two scalar inputs or a
-			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "result".
+			Derived node for a subtraction. The inputs must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- scalar - scalar = scalar
+			- vector - vector = vector (vector is subtracted componentwise)
+			- scalar - vector = vector (scalar is subtracted from each component of the vector)
+			- scalar - matrix = matrix (scalar is subtracted from each component of the matrix)
+			- vector - scalar = vector (scalar is subtracted from each component of the vector)
+			- matrix - scalar = matrix (scalar is subtracted from each component of the matrix)
+
 						
 			Example:
 			<subtraction identifier="subtraction1" displayname="Subtraction 1">
 				<in>
-								<scalarref identifier="A" ref="constant1.c1"/>
-								<scalarref identifier="B" ref="inputs.radius"/>
+					<scalarref identifier="A" ref="constant1.c1"/>
+					<scalarref identifier="B" ref="inputs.radius"/>
 				</in>
 				<out>
 					<scalar identifier="result"/>
@@ -593,6 +613,7 @@
 							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -608,6 +629,7 @@
 							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -621,15 +643,18 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a division with a scalar as output and two scalar inputs or a
-			vecotor as output and two vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "result". For vector inputs the division is componentwise.
+			Derived node for a division. The inputs must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- scalar / scalar = scalar
+			- vector / vector = vector (vector is divided componentwise)
+			- vector / scalar = vector (scalar is divided by each component of the vector)
+			- matrix / scalar = matrix (scalar is divided by each component of the matrix)
 						
 			Example:
 			<division identifier="division1" displayname="Division 1">
 				<in>
-								<scalarref identifier="A" ref="constant1.c1"/>
-								<scalarref identifier="B" ref="inputs.radius"/>
+					<scalarref identifier="A" ref="constant1.c1"/>
+					<scalarref identifier="B" ref="inputs.radius"/>
 				</in>
 				<out>
 					<scalar identifier="result"/>
@@ -653,6 +678,7 @@
 							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -668,6 +694,7 @@
 							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -682,13 +709,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a dot product with a scalar as output and two vector inputs. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "result". 
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- vector * vector = scalar (dot product of the two vectors)
 						
 			Example:
 			<dot identifier="dotproduct1" displayname="Dot Product 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
-								<vectorref identifier="B" ref="inputs.vector2"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
 					<scalar identifier="result"/>
@@ -738,14 +766,15 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a cross product with a vector as output and two vector inputs. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "result".
+			Derived node for a cross product. The inputs must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- vector x vector = vector (cross product of the two vectors)
 						
 			Example:
 			<cross identifier="crossproduct1" displayname="Cross Product 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
-								<vectorref identifier="B" ref="inputs.vector2"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -795,13 +824,14 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Performs the matrix vector multiplication A x B = result. The input A must be a matrix and the input B a vector. The output must be a vector with the name "result".
+			Performs the matrix vector multiplication A x B = result. The output must be a vector with the name "result". The following combinations of inputs and outputs are allowed:
+			- matrix * vector = vector
 						
 			Example:
 			<matrixvectormultiplication identifier="matVec1" displayname="Matrix Vector Multiplication 1">
 				<in>
-								<matrixref identifier="A" ref="inputs.matrix1"/>
-								<vectorref identifier="B" ref="inputs.vector1"/>
+					<matrixref identifier="A" ref="inputs.matrix1"/>
+					<vectorref identifier="B" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -857,7 +887,7 @@
 			Example:
 			<transpose identifier="transpose1" displayname="Transpose 1">
 				<in>
-								<matrixref identifier="A" ref="inputs.matrix1"/>
+					<matrixref identifier="A" ref="inputs.matrix1"/>
 				</in>
 				<out>
 					<matrix identifier="result"/>
@@ -902,6 +932,67 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- Inverse -->
+	<xs:complexType name="CT_Inverse">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Computes the inverse of a matrix. The input 'A' must be a matrix and the output must be a matrix with the identifier "result".
+						
+			Example:
+			<inverse identifier="inverse1" displayname="Inverse 1">
+				<in>
+					<matrixref identifier="A" ref="inputs.matrix1"/>
+				</in>
+				<out>
+					<matrix identifier="result"/>
+				</out>
+			</inverse>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the inverse.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							inverse of the matrix
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="matrix" type="vol:CT_Matrix" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Determinant -->
+	<xs:complexType name="CT_Determinant">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Performs the determinant of a matrix. The input 'A' must be a matrix and the output must be a scalar with the
 
 	<!-- sinus function for scalars or componentwise for vectors -->
 	<xs:complexType name="CT_Sinus">
@@ -909,12 +1000,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a sine function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "result". 
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- sin(scalar) = scalar
+			- sin(vector) = vector (sine of each component of the vector)
 						
 			Example:
 			<sin identifier="sinus1" displayname="Sinus 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -966,13 +1059,15 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a cosinus function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "result". Input and output must have the same dimension.
+			Derived node for a cosinus function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- cos(scalar) = scalar
+			- cos(vector) = vector (cosinus of each component of the vector)
 						
 			Example:
 			<cos identifier="cosinus1" displayname="Cosinus 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1025,12 +1120,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a tan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "result". Input and output must have the same dimension.
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- tan(scalar) = scalar
+			- tan(vector) = vector (tan of each component of the vector)
 						
 			Example:
 			<tan identifier="tan1" displayname="Tan 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1083,12 +1180,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "result". Input and output must have the same dimension.
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- arcsin(scalar) = scalar
+			- arcsin(vector) = vector (arcsin of each component of the vector)
 						
 			Example:
 			<arcsin identifier="arcsin1" displayname="Arcsin 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1141,12 +1240,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a arccos function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "result". Input and output must have the same dimension.
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- arccos(scalar) = scalar
+			- arccos(vector) = vector (arccos of each component of the vector)
 						
 			Example:
 			<arccos identifier="arccos1" displayname="Arccos 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1199,12 +1300,14 @@
 			<xs:documentation>
 				<![CDATA[
 			Derived node for a arctan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
-			the output must have the identifier "result". Input and output must have the same dimension.
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- arctan(scalar) = scalar
+			- arctan(vector) = vector (arctan of each component of the vector)
 						
 			Example:
 			<arctan identifier="arctan1" displayname="Arctan 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1251,19 +1354,89 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- min function of tow scalars or componentwise of two vectors -->
+	
+	<!-- arctan2 function -->
+	<xs:complexType name="CT_Arctan2">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a arctan2 function. The inputs must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- arctan2(scalar,scalar) = scalar
+			- arctan2(vector,vector) = vector (arctan2 of each component of the vectors)
+						
+			Example:
+			<arctan2 identifier="arctan21" displayname="Arctan2 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</arctan2>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="2" maxOccurs="2">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the arctan2 function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+									arctan2 of the input
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="vector" type="vol:CT_Vector" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- min function -->
 	<xs:complexType name="CT_Min">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a min function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "result". Inputs and output must have the same dimension.
+			Derived node for a min function. The inputs must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- min(scalar,scalar) = scalar
+			- min(vector,vector) = vector (min of each component of the vectors)
+			- min(matrix,matrix) = matrix (min of each component of the matrices)
+			- min(scalar,vector) = vector (min of the scalar and each component of the vector)
+			- min(vector,scalar) = vector (min of the scalar and each component of the vector)
+			- min(scalar,matrix) = matrix (min of the scalar and each component of the matrix)
+			- min(matrix,scalar) = matrix (min of the scalar and each component of the matrix)			
 						
 			Example:
 			<min identifier="min1" displayname="Min 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
-								<vectorref identifier="B" ref="inputs.vector2"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1287,6 +1460,7 @@
 							<xs:sequence>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1302,6 +1476,7 @@
 							<xs:sequence>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1310,19 +1485,27 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- max function of tow scalars or componentwise of two vectors -->
+	<!-- max function -->
 	<xs:complexType name="CT_Max">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a max function with a scalar or vector as output and two scalars or vectors as input. The inputs must have the identifier "A" and "B",
-			the output must have the identifier "result". Inputs and output must have the same dimension.
+			Derived node for a max function. The inputs must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- min(scalar,scalar) = scalar
+			- min(vector,vector) = vector (min of each component of the vectors)
+			- min(matrix,matrix) = matrix (min of each component of the matrices)
+			- min(scalar,vector) = vector (min of the scalar and each component of the vector)
+			- min(vector,scalar) = vector (min of the scalar and each component of the vector)
+			- min(scalar,matrix) = matrix (min of the scalar and each component of the matrix)
+			- min(matrix,scalar) = matrix (min of the scalar and each component of the matrix)		
+
 						
 			Example:
 			<max identifier="max1" displayname="Max 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
-								<vectorref identifier="B" ref="inputs.vector2"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1346,6 +1529,7 @@
 							<xs:sequence>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1361,6 +1545,7 @@
 							<xs:sequence>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1369,18 +1554,21 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- absolute value of a scalar or vector -->
+	<!-- absolute value  -->
 	<xs:complexType name="CT_Abs">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for an absolute value function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
-			the output must have the identifier "result". Inputs and output must have the same dimension.
+			Derived node for an absolute value function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- abs(scalar) = scalar
+			- abs(vector) = vector (absolute value of each component of the vector)
+			- abs(matrix) = matrix (absolute value of each component of the matrix)
 						
 			Example:
 			<abs identifier="abs1" displayname="Abs 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1404,6 +1592,7 @@
 							<xs:sequence>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1419,6 +1608,7 @@
 							<xs:sequence>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1432,14 +1622,17 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a fmod function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "A" and "B",
-			the output must have the identifier "result". Inputs and output must have the same dimension.
+			Derived node for a fmod function. The input must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- fmod(scalar,scalar) = scalar
+			- fmod(vector,vector) = vector (fmod of each component of the vectors)
+			- fmod(matrix,matrix) = matrix (fmod of each component of the matrices)
 						
 			Example:
 			<fmod identifier="fmod1" displayname="Fmod 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
-								<vectorref identifier="B" ref="inputs.vector2"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1463,6 +1656,7 @@
 							<xs:sequence>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1478,6 +1672,7 @@
 							<xs:sequence>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1491,14 +1686,17 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a pow function with a scalar or vector as output and two scalars or vectors as input. The input must have the identifier "base" and "exponent",
-			the output must have the identifier "result". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
+			Derived node for a pow function. The input must have the identifier "A" (base) and "B" (exponent),
+			the output must have the identifier "result". Inputs and output must have the same dimension. The following combinations of inputs and outputs are allowed:
+			- pow(scalar,scalar) = scalar
+			- pow(vector,vector) = vector (pow of each component of the vectors)
+			- pow(matrix,matrix) = matrix (pow of each component of the matrices)
 						
 			Example:
 			<pow identifier="pow1" displayname="Pow 1">
 				<in>
-								<vectorref identifier="base" ref="inputs.vector1"/>
-								<vectorref identifier="exponent" ref="inputs.vector2"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1522,6 +1720,7 @@
 							<xs:sequence>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1537,6 +1736,7 @@
 							<xs:sequence>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1550,13 +1750,16 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a sqrt function with a scalar or vector as output and a scalar or vector as input. The input must have the identifier "A",
-			the output must have the identifier "result". Inputs and output must have the same dimension. In the case of a vector input, the operation is performed element-wise.
+			Derived node for a sqrt function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- sqrt(scalar) = scalar
+			- sqrt(vector) = vector (sqrt of each component of the vector)
+			- sqrt(matrix) = matrix (sqrt of each component of the matrix)
 						
 			Example:
 			<sqrt identifier="sqrt1" displayname="Sqrt 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
@@ -1580,6 +1783,7 @@
 							<xs:sequence>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1595,6 +1799,7 @@
 							<xs:sequence>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -1608,15 +1813,15 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Node for evaluating the signed distance to a mesh. The input must have the identifier "point" and must be a vector. The output is a scalar and must have the identifier "distance".
+			Node for evaluating the signed distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
 			The mesh is defined by a resource identifier. The mesh is assumed to be closed and watertight. 
 			The distance is positive if the point is outside the mesh and negative if the point is inside the mesh.
 									
 			Example:
 			<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
 				<in>
-								<vectorref identifier="pos" ref="inputs.pos"/>
-								<resourceref identifier="mesh" ref="2"/>
+					<vectorref identifier="pos" ref="inputs.pos"/>
+					<resourceref identifier="mesh" ref="2"/>
 				</in>
 				<out>
 					<scalar identifier="distance"/>
@@ -1668,13 +1873,14 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a length function with a scalar as output and a vector as input. The input must have the identifier "X",
-			the output must have the identifier "result".
+			Derived node for a length function. The input must have the identifier "X",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- length(vector) = scalar
 						
 			Example:
 			<length identifier="length1" displayname="Length 1">
 				<in>
-								<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<scalar identifier="result"/>
@@ -1719,6 +1925,515 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- base for log, exp etc. -->
+	<xs:complexType name="CT_BaseOneParameterFunc">
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+									result of the function
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- natural log-->
+	<xs:complexType name="CT_Log">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a natural log function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- log(scalar) = scalar
+			- log(vector) = vector (ln of each component of the vector)
+			- log(matrix) = matrix (ln of each component of the matrix)
+						
+			Example:
+			<log identifier="log_1" displayname="Log_n 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</ln>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- log2 -->
+	<xs:complexType name="CT_Log2">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a log2 function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- log2(scalar) = scalar
+			- log2(vector) = vector (log2 of each component of the vector)
+			- log2(matrix) = matrix (log2 of each component of the matrix)
+						
+			Example:
+			<log2 identifier="log21" displayname="Log2 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</log2>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- log10 -->
+	<xs:complexType name="CT_Log10">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a log10 function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- log10(scalar) = scalar
+			- log10(vector) = vector (log10 of each component of the vector)
+			- log10(matrix) = matrix (log10 of each component of the matrix)
+						
+			Example:
+			<log10 identifier="log101" displayname="Log10 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</log10>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- exp -->
+	<xs:complexType name="CT_Exp">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for an exponential function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- exp(scalar) = scalar
+			- exp(vector) = vector (exp of each component of the vector)
+			- exp(matrix) = matrix (exp of each component of the matrix)
+						
+			Example:
+			<exp identifier="exp1" displayname="Exp 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</exp>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- cosh-->
+	<xs:complexType name="CT_Cosh">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a hyperbolic cosine function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- cosh(scalar) = scalar
+			- cosh(vector) = vector (cosh of each component of the vector)
+			- cosh(matrix) = matrix (cosh of each component of the matrix)
+						
+			Example:
+			<cosh identifier="cosh1" displayname="Cosh 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</cosh>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- sinh-->
+	<xs:complexType name="CT_Sinh">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a hyperbolic sine function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- sinh(scalar) = scalar
+			- sinh(vector) = vector (sinh of each component of the vector)
+			- sinh(matrix) = matrix (sinh of each component of the matrix)
+						
+			Example:
+			<sinh identifier="sinh1" displayname="Sinh 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</sinh>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- tanh-->
+	<xs:complexType name="CT_Tanh">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a hyperbolic tangent function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- tanh(scalar) = scalar
+			- tanh(vector) = vector (tanh of each component of the vector)
+			- tanh(matrix) = matrix (tanh of each component of the matrix)
+						
+			Example:
+			<tanh identifier="tanh1" displayname="Tanh 1">
+				<in>
+								<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</tanh>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- clamp -->
+	<xs:complexType name="CT_Clamp">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a clamp function. The input must have the identifier "A" (value), "min" and "max",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- clamp(scalar,scalar,scalar) = scalar
+			- clamp(vector,vector,vector) = vector (clamp of each component of the vectors)
+			- clamp(matrix,matrix,matrix) = matrix (clamp of each component of the matrices)			
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the clamp function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+									clamp of the inputs
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- select -->
+	<xs:complexType name="CT_Select">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a select function. The input must have the identifier "A", "B", "C", "D",
+			the output must have the identifier "result". If A < B then the result is C, otherwise D. The following combinations of inputs and outputs are allowed:
+			- select(scalar,scalar,scalar,scalar) = scalar
+			- select(vector,vector,vector,vector) = vector (select of each component of the vectors)
+
+			Example:
+			<select identifier="select1" displayname="Select 1">
+				<in>
+								<vectorref identifier="A" ref="inputs.vector1"/>
+								<vectorref identifier="B" ref="inputs.vector2"/>
+								<vectorref identifier="C" ref="inputs.vector3"/>
+								<vectorref identifier="D" ref="inputs.vector4"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</select>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the select function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+									result of A < B ? C : D
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="vector" type="vol:CT_Vector" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- round -->
+	<xs:complexType name="CT_Round">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a round function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- round(scalar) = scalar
+			- round(vector) = vector (round of each component of the vector)
+			- round(matrix) = matrix (round of each component of the matrix)
+						
+			Example:
+			<round identifier="round1" displayname="Round 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</round>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+	<!-- ceil-->
+	<xs:complexType name="CT_Ceil">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a ceil function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- ceil(scalar) = scalar
+			- ceil(vector) = vector (ceil of each component of the vector)
+			- ceil(matrix) = matrix (ceil of each component of the matrix)
+						
+			Example:
+			<ceil identifier="ceil1" displayname="Ceil 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</ceil>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- floor -->
+	<xs:complexType name="CT_Floor">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a floor function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- floor(scalar) = scalar
+			- floor(vector) = vector (floor of each component of the vector)
+			- floor(matrix) = matrix (floor of each component of the matrix)
+						
+			Example:
+			<floor identifier="floor1" displayname="Floor 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</floor>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- sign -->
+	<xs:complexType name="CT_Sign">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a sign function. The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- sign(scalar) = scalar
+			- sign(vector) = vector (sign of each component of the vector)
+			- sign(matrix) = matrix (sign of each component of the matrix)
+						
+			Example:
+			<sign identifier="sign1" displayname="Sign 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</sign>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- fract(A) -->
+	<xs:complexType name="CT_Fract">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Returns the fractional part of the input (A- floor(A)). The input must have the identifier "A",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- sign(scalar) = scalar
+			- sign(vector) = vector (sign of each component of the vector)
+			- sign(matrix) = matrix (sign of each component of the matrix)
+						
+			Example:
+			<sign identifier="sign1" displayname="Sign 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</sign>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_BaseOneParameterFunc">
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+
+
+	<!-- implicit function -->	
 	<xs:complexType name="CT_ImplicitFunction">
 		<xs:annotation>
 			<xs:documentation>
