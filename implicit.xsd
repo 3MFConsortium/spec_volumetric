@@ -6,6 +6,7 @@
 	xmlns:vol="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01">
 	<xs:import namespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
 		schemaLocation="volumetric.xsd" />
+	
 	<xs:annotation>
 		<xs:documentation>
 			<![CDATA[
@@ -986,13 +987,6 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-
-	<!-- Determinant -->
-	<xs:complexType name="CT_Determinant">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Performs the determinant of a matrix. The input 'A' must be a matrix and the output must be a scalar with the
 
 	<!-- sinus function for scalars or componentwise for vectors -->
 	<xs:complexType name="CT_Sinus">
@@ -2176,11 +2170,24 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a clamp function. The input must have the identifier "A" (value), "min" and "max",
+			Derived node for a clamp function max(min, min(A,max)). The input must have the identifier "A" (value), "min" and "max",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
 			- clamp(scalar,scalar,scalar) = scalar
 			- clamp(vector,vector,vector) = vector (clamp of each component of the vectors)
 			- clamp(matrix,matrix,matrix) = matrix (clamp of each component of the matrices)			
+			Example:
+			<clamp identifier="clamp1" displayname="Clamp 1">
+				<in>
+					<vectorref identifier="value" ref="inputs.vector1"/>
+					<vectorref identifier="min" ref="inputs.vector2"/>
+					<vectorref identifier="max" ref="inputs.vector3"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</clamp>
+			]]>
+			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
@@ -2193,34 +2200,35 @@
 							Inputs to the clamp function.
 							]]>
 								</xs:documentation>
-		</xs:annotation>
-		<xs:sequence>
-			<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-			<xs:element name="vectorref" type="vol:CT_VectorRef" />
-			<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-		</xs:sequence>
-	</xs:complexType>
-	</xs:element>
-	<xs:element name="out" minOccurs="1" maxOccurs="1">
-		<xs:complexType>
-			<xs:annotation>
-				<xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
 									<![CDATA[
-									clamp of the inputs
+									result of clamp(value,min,max)
 									]]>
 								</xs:documentation>
-			</xs:annotation>
-			<xs:sequence>
-				<xs:element name="scalar" type="vol:CT_Scalar" />
-				<xs:element name="vector" type="vol:CT_Vector" />
-				<xs:element name="matrix" type="vol:CT_Matrix" />
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-	</xs:sequence>
-	</xs:extension>
-	</xs:complexContent>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
+
 
 	<!-- select -->
 	<xs:complexType name="CT_Select">
