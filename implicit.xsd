@@ -1354,7 +1354,7 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	
+
 	<!-- arctan2 function -->
 	<xs:complexType name="CT_Arctan2">
 		<xs:annotation>
@@ -2193,33 +2193,33 @@
 							Inputs to the clamp function.
 							]]>
 								</xs:documentation>
-							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
-						</xs:complexType>
-					</xs:element>
-					<xs:element name="out" minOccurs="1" maxOccurs="1">
-						<xs:complexType>
-							<xs:annotation>
-								<xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+			<xs:element name="vectorref" type="vol:CT_VectorRef" />
+			<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+		</xs:sequence>
+	</xs:complexType>
+	</xs:element>
+	<xs:element name="out" minOccurs="1" maxOccurs="1">
+		<xs:complexType>
+			<xs:annotation>
+				<xs:documentation>
 									<![CDATA[
 									clamp of the inputs
 									]]>
 								</xs:documentation>
-							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
-						</xs:complexType>
-					</xs:element>
-				</xs:sequence>
-			</xs:extension>
-		</xs:complexContent>
+			</xs:annotation>
+			<xs:sequence>
+				<xs:element name="scalar" type="vol:CT_Scalar" />
+				<xs:element name="vector" type="vol:CT_Vector" />
+				<xs:element name="matrix" type="vol:CT_Matrix" />
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	</xs:sequence>
+	</xs:extension>
+	</xs:complexContent>
 	</xs:complexType>
 
 	<!-- select -->
@@ -2432,8 +2432,7 @@
 	</xs:complexType>
 
 
-
-	<!-- implicit function -->	
+	<!-- implicit function -->
 	<xs:complexType name="CT_ImplicitFunction">
 		<xs:annotation>
 			<xs:documentation>
@@ -2501,6 +2500,9 @@
 					<xs:element name="composematrixfromcolumnvectors"
 						type="CT_ComposeMatrixFromColumnVectors" minOccurs="0"
 						maxOccurs="unbounded" />
+					<xs:element name="composematrixfromrowvectors"
+						type="CT_ComposeMatrixFromRowVectors" minOccurs="0"
+						maxOccurs="unbounded" />
 					<xs:element name="dot" type="CT_DotProduct" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="cross" type="CT_CrossProduct" minOccurs="0"
@@ -2508,6 +2510,8 @@
 					<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication"
 						minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="transpose" type="CT_Transpose" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="inverse" type="CT_Inverse" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="sin" type="CT_Sinus" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="cos" type="CT_Cosinus" minOccurs="0"
@@ -2519,12 +2523,32 @@
 						maxOccurs="unbounded" />
 					<xs:element name="arctan" type="CT_Arctan" minOccurs="0"
 						maxOccurs="unbounded" />
+					<xs:element name="arctan2" type="CT_Arctan2" minOccurs="0"
+						maxOccurs="unbounded" />
 					<xs:element name="min" type="CT_Min" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="max" type="CT_Max" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="abs" type="CT_Abs" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="fmod" type="CT_Fmod" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="pow" type="CT_Pow" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="sqrt" type="CT_Sqrt" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="exp" type="CT_Exp" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="log" type="CT_Log" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="log2" type="CT_Log2" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="log10" type="CT_Log10" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="select" type="CT_Select" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="clamp" type="CT_Clamp" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="cosh" type="CT_Cosh" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="sinh" type="CT_Sinh" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="tanh" type="CT_Tanh" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="round" type="CT_Round" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="ceil" type="CT_Ceil" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="floor" type="CT_Floor" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="sign" type="CT_Sign" minOccurs="0" maxOccurs="unbounded" />
+					<xs:element name="fract" type="CT_Fract" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="functioncall" type="CT_FunctionCall" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="dot" type="CT_DotProduct" minOccurs="0"
@@ -2608,5 +2632,5 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	<xs:element name="implicitfunction" type="CT_ImplicitFunction"/>
+	<xs:element name="implicitfunction" type="CT_ImplicitFunction" />
 </xs:schema>
