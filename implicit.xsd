@@ -2559,10 +2559,6 @@
 					<xs:element name="fract" type="CT_Fract" minOccurs="0" maxOccurs="unbounded" />
 					<xs:element name="functioncall" type="CT_FunctionCall" minOccurs="0"
 						maxOccurs="unbounded" />
-					<xs:element name="dot" type="CT_DotProduct" minOccurs="0"
-						maxOccurs="unbounded" />
-					<xs:element name="cross" type="CT_CrossProduct" minOccurs="0"
-						maxOccurs="unbounded" />
 					<xs:element name="mesh" type="CT_SignedDistanceToMesh" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="length" type="CT_Length" minOccurs="0"
