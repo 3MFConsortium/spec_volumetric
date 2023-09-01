@@ -335,6 +335,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="outputname" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:attribute name="solidthreshold" type="ST_Number" default="0"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -345,6 +346,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="outputname" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -364,6 +366,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="outputname" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -376,6 +379,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:attribute name="name" type="xs:QName" use="required"/>
 		<xs:attribute name="required" type="xs:boolean" use="required"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
