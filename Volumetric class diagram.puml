@@ -154,17 +154,21 @@ package VolumetricData
     {
         solidthreshold : double
         functionid : resourceID
+        minfeaturesize : double
+        meshbboxonly : bool
     }
 
     Class Color
     {
         functionid : resourceID
+        minfeaturesize : double
     }
 
     Class Property
     {
         name : string
-        fieldid : resourceID
+        functionid : resourceID
+        minfeaturesize : double
     }
 
     Class Composite
