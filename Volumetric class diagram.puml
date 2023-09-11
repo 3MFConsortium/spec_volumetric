@@ -1,10 +1,9 @@
-@startuml
-
-title 3MF Volumetric 3D-Vector & Scalar Fields
+@startuml name
+title 3MF Volumetric & Implicit
 
 package Image3D
 {
-    class Image3D
+    Class Image3D
     {
         id : resourceID
         name : string
@@ -25,71 +24,69 @@ package Image3D
     ImageStack *-- "1..*" ImageSheet
 }
 
-package ScalarFields
+package DataTypes
 {
-    Class ScalarField
+    Class ScalarRef
     {
-        id: resourceID
+        identifer: string
+    }
+
+    Class VectorRef
+    {
         name: string
     }
 
-    Class ScalarFieldComposed extends ScalarField
-    {
-        method : string
-        scalarfield1id : resourceID
-        scalarfield2id : resourceID
-        scalarmaskfieldid : resourceID
-        factor1 : double
-        factor2 : double
-        transform1 : transform
-        transform2 : transform
-        transformmask : transform
-    }
+    class Scalar{}
+    class Vector{}
 
-    Class ScalarFieldFromImage3D extends ScalarField
-    {
-        image3did : resourceID
-        channel : string
-        filter : string
-        valueoffset: double
-        valuescale: double
-        tilestyleu : string
-        tilestylev : string
-        tilestylew : string
-    }
-
-    Class ScalarFieldConstant extends ScalarField
-    {
-        value: double
-    }
-
-    ScalarFieldComposed o-- "1..3" ScalarField
-    ScalarFieldFromImage3D o-- "1" Image3D
+    ScalarRef o-- "0..*" Scalar
+    VectorRef o-- "0..*" Vector
 }
 
-package Vector3DFields
+package FunctionArguments
 {
-    Class Vector3DField
+    Class Input
+    {
+
+    }
+    Class Output
+    {
+
+    }
+    Input *-- "0..*" Scalar
+    Input *-- "0..*" Vector
+    Output *-- "0..*" ScalarRef
+    Output *-- "0..*" VectorRef
+}
+
+package NodeArguments
+{
+    Class In
+    {
+
+    }
+    Class Out
+    {
+
+    }
+    Out *-- "0..*" Scalar
+    Out *-- "0..*" Vector
+    In *-- "0..*" ScalarRef
+    In *-- "0..*" VectorRef
+}
+
+package Functions
+{
+    Class Function
     {
         id: resourceID
-        name: string
+        displayname: string
     }
 
-    Class Vector3DFieldComposed extends Vector3DField
-    {
-        method : string
-        vector3dfield1id : resourceID
-        vector3dfield2id : resourceID
-        scalarmaskfieldid : resourceID
-        factor1 : double
-        factor2 : double
-        transform1 : transform
-        transform2 : transform
-        transformmask : transform
-        compositionspace : string
-    }
+    Function *-- "1" Input
+    Function *-- "1" Output
 
-    Class Vector3DFieldFromImage3D extends Vector3DField
+    Class FunctionFromImage3d extends Function
     {
         image3did : resourceID
         valueoffset: double
@@ -99,17 +96,54 @@ package Vector3DFields
         tilestylev : string
         tilestylew : string
     }
+    FunctionFromImage3d o-- "1" Image3D
 
-    Class Vector3DFieldConstant extends Vector3DField
+    Class FunctionImplicit extends Function
     {
-        valuex: double
-        valuey: double
-        valuez: double
+        xmlns: implicit
+    }
+    FunctionImplicit *-- "0..*" Node_
+
+    Class PrivateExtensionFunction extends Function
+    {
+        xmlns: XYZ
+    }
+}
+
+package Native
+{
+    Class Node_
+    {
+        xmlns: implicit
+
+        identifier: string
+        displayname: string
     }
 
-    Vector3DFieldComposed o-- "2" Vector3DField
-    Vector3DFieldComposed o-- "0..1 mask" ScalarField
-    Vector3DFieldFromImage3D o-- "1" Image3D
+    Class Add extends Node_
+    {
+    }
+
+    Class Min extends Node_
+    {
+    }
+
+    Class MatVecMul extends Node_
+    {
+    }
+
+    Class FunctionCall extends Node_
+    {
+    }
+
+    Class DistanceFromMesh extends Node_
+    {
+        meshid : resourceID
+    }
+    DistanceFromMesh o-- "1" Mesh
+
+    Node_ *-- "0..1" In
+    Node_ *-- "0..1" Out
 }
 
 package VolumetricData
@@ -118,21 +152,18 @@ package VolumetricData
 
     Class Boundary
     {
-        transform : matrix
         solidthreshold : double
-        scalarfieldid : resourceID
+        functionid : resourceID
     }
 
     Class Color
     {
-        vector3dfieldid : resourceID
-        transform : matrix
+        functionid : resourceID
     }
 
     Class Property
     {
         name : string
-        transform : matrix
         fieldid : resourceID
     }
 
@@ -143,9 +174,8 @@ package VolumetricData
 
     Class MaterialMapping
     {
-        scalarfieldid : resourceID
-        transform : matrix
-    }        
+        functionid : resourceID
+    }
 
     VolumeData *-- "0..1" Boundary
     VolumeData *-- "0..1" Color
@@ -153,13 +183,12 @@ package VolumetricData
     VolumeData *-- "0..1" Composite
     Composite *-- "1..*" MaterialMapping
 
-    Boundary o-- "1" ScalarField
-    Color o-- "1" Vector3DField
-    Property o-- "1" ScalarField
-    MaterialMapping o-- "1" ScalarField
+    Boundary o-- "1" Function
+    Color o-- "1" Function
+    Property o-- "1" Function
+    MaterialMapping o-- "1" Function
 }
 
 Class Mesh
 Mesh *-- VolumeData
-
 @enduml
