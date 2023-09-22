@@ -1,11 +1,11 @@
 #
-# 3MF Volumetric Extension
+# 3MF Volumetric & Implicit Extensions
 
 ## Specification & Reference Guide
 
 
 
-| **Version** | 0.7.0 |
+| **Version** | 0.8.0 |
 | --- | --- |
 | **Status** | Draft |
 
@@ -19,16 +19,23 @@
   * [Document Conventions](#document-conventions)
   * [Language Notes](#language-notes)
   * [Software Conformance](#software-conformance)
-- [Part I: 3MF Documents](#part-i-3mf-documents)
-  * [Chapter 1. Overview of Additions](#chapter-1-overview-of-additions)
-  * [Chapter 2. 3D Image](#chapter-2-3d-image)
-  * [Chapter 3. Scalar Fields](#chapter-3-scalar-fields)
-  * [Chapter 4. 3D Vector Fields](#chapter-4-3d-vector-fields)
+- [Part I: Volumetric Extension](#part-i-volumetric-extension)
+  * [Chapter 1. Overview of Volumetric Additions](#chapter-1-overview-of-volumetric-additions)
+  * [Chapter 2. DataTypes]()
+  * [Chapter 3. Functions](#chapter-3-functions)
+  * [Chapter 4. 3D Image](#chapter-4-3d-image)
   * [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
   * [Chapter 6. Notes](#chapter-6-notes)
-- [Part II. Appendices](#part-ii-appendices)
+- [Part II. Implicit Extension]()
+  * [Chatper 1. Overview of Implicit Additions]()
+  * [Chapter 2. Function Implicit]()
+  * [Chapter 3. Nodes]()
+  * [Chapter 4. Native Nodes]()
+  * [Chapter 5. Implicit Evaluation]()
+  * [Chapter 6. Notes]()
+- [Part III. Appendices](#part-ii-appendices)
   * [Appendix A. Glossary](#appendix-a-glossary)
-  * [Appendix B. 3MF XSD Schema for the Volumetric Extension](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
+  * [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
   * [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
   * [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
@@ -38,14 +45,14 @@
 # Preface
 
 ## Introduction
-Volumetric Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
+Volumetric/Implicit Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
 Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1. a) a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
-The volumetric modeling approach relies on a mathematical, field-based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (grey-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
+The implicit modeling approach relies on a mathematical, field-based description of the whole volume of the object. This is illustrated in Figure 1-1 c). Every point in space has a scalar (grey-scale) value. The iso-surface at value 0 describes the surface of the same object as in Figure 1-1 a). A section of this iso-surface is indicated by the blue line.
 
 The true advantage of volumetric modeling shows when properties of an object vary in space gradually, e.g. color or material-distribution and -composition of an object vary in space. E.g. in Figure 1-2 a) the object has a uniform color except for a red stripe at the front-left surface that gradually turns into turquoise. Note that not only the surface, but also the interior volume has a non-uniform color in this region. Figure 1-2 b) shows a distribution of three different materials, indicated by three different colors, red, blue and green.
 
-This is only a brief illustration of the volumetric modeling approach to geometric design and more information can be found in [references](#references) \[1\] and \[2\].
+This is only a brief illustration of the implicit modeling approach to geometric design and more information can be found in [references](#references) \[1\] and \[2\].
 
 _Figure 1-1. Explicit (a) and (b) vs. implicit (c) representation_
 ![Explicit vs. implicit representation](images/explicit_vs_implicit.png)
@@ -59,9 +66,13 @@ _Figure 1-2. Spatially varying properties_
 
 This 3MF volumetric specification is an extension to the core 3MF specification. This document cannot stand alone and only applies as an addendum to the core 3MF specification. Usage of this and any other 3MF extensions follow an a la carte model, defined in the core 3MF specification.
 
-Part I, "3MF Documents," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
+This 3MF implicit specification is an extension to the core 3MF specification and the 3MF volumetric specification. This document cannot stand alone and only applies as an addendum to the core 3MF specification. Usage of this and any other 3MF extensions follow an a la carte model, defined in the core 3MF specification.
 
-Part II, "Appendices," contains additional technical details and schemas too extensive to include in the main body of the text as well as convenient reference information.
+Part I, "Volumetric Extension," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
+
+Part II, "Implicit Extension," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
+
+Part III, "Appendices," contains additional technical details and schemas too extensive to include in the main body of the text as well as convenient reference information.
 
 The information contained in this specification is subject to change. Every effort has been made to ensure its accuracy at the time of publication.
 
@@ -86,9 +97,9 @@ See [the standard 3MF Language Notes documentation](https://github.com/3MFConsor
 See [the standard 3MF Software Conformance documentation](https://github.com/3MFConsortium/spec_resources/blob/master/software_conformance.md).
 
 
-# Part I. 3MF Documents
+# Part I. Volumetric Extension
 
-## Chapter 1. Overview of Additions
+## Chapter 1. Overview of Volumetric Additions
 
 _Figure 1-1: Overview of model XML structure of 3MF with volumetric additions_
 ![Overview of model XML structure of 3MF with volumetric additions](images/overview-of-additions.png)
@@ -101,10 +112,104 @@ This extension is meant to be an exact specification of geometric, appearance-re
 
 A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
+# Chapter 2. DataTypes
 
-# Chapter 2. 3D Image
+The volumetric extension of 3MF, defines 3 new datatypes that serve as inputs and outputs to <functions> for volumetric evaluation.
 
-## 2.1 3D Image
+## 2.1 ScalarReference
+Element **\<scalarRef>**
+
+![Scalar XML Structure](images/element_scalarReference.png)
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this scalar resource. |
+
+## 2.2 VectorReference
+Element **\<vectorRef>**
+
+![Vector XML Structure](images/element_vectorReference.png)
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this vector resource. |
+
+## 3.2 VectorReference
+Element **\<vectorRef>**
+
+![Vector XML Structure](images/element_vectorReference.png)
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this vector resource. |
+
+## 3.2 MatrixReference
+Element **\<matrixRef>**
+
+![Vector XML Structure](images/element_matrixReference.png)
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this matrix resource. |
+
+# Chapter 3. Functions and Function Types
+
+## 3.1 Functions
+Element **\<function>**
+
+![Function XML Structure](images/element_function.png)
+
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
+| displayname | xs:string | | | Function resource name used for annotations purposes. |
+
+Volumetric data is created with functions that are evaluatable for at given model position. Each \<function> element is assumed to represent a method which can be evaluated within the model being described. Functions have input arguments and output arguments, each argument MUST be one of the supported datatypes enumerated in Chapter 2.
+
+\<function> is a container for one of three distinct function types: FunctionFromImage3d, PrivateExtensionFunction, FunctionImplicit. The only function type that MUST be supported for the volumetric extension is FunctionFromImage3D which requires an Image3d resource.
+
+## 3.2 FunctionFromImage3D
+Element **\<functionFromImage3d>**
+
+![FunctionFromImage3d XML](images/element_functionFromImage3d.png)
+
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
+| displayname | xs:string | | | Function resource name used for annotations purposes. |
+| image3did | ST\_ResourceID | required | | Specifies an identifier for the image3d resource that this function uses during evaluation. |
+| valueoffset | xs:double | optional | 0.0 | ??????? |
+| valuescale | xs:double | optional | 1 | ??????? |
+| filter | xs:string | optional | linear | ??????? |
+| tilestyleu | xs:string | optional | clamp | ??????? |
+| tilestylev | xs:string | optional | clamp | ??????? |
+| tilestylew | xs:string | optional | clamp | ??????? |
+
+FunctionFromImage3d is a container for an image3D which is evaluatable. The output of functionFromImage3d is of <scalar> type. The input of functionFromImage3d is <vector> or <scalar> type.
+
+## 3.3 PrivateExtensionFunction
+Element **\<PrivateExtensionFunction>
+
+![PrivateExtensionFunction XML](images/element_privateextensionfunction.png)
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
+| displayname | xs:string | | | Function resource name used for annotations purposes. |
+| xmlns | ST\_namespace | required | | Specifies the namespace of the function. |
+
+PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
+
+## 3.4 FuncitonImplicit
+Element **\<functionImplict>
+
+![FunctionImplicit XML](images/element_functionImplict.png)
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
+| displayname | xs:string | | | Function resource name used for annotations purposes. |
+| xmlns | ST\_namespace | required | implict | Specifies the namespace of the function. |
+
+FunctionImplicit is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
+
+# Chapter 4. 3D Image
+
+## 4.1 3D Image
 
 Element **\<image3d>**
 
@@ -119,7 +224,7 @@ Volumetric data can be encoded as 3d images that consist of voxels. Each \<image
 
 \<image3d> is a container for different representations of voxeldata. This specification defines only the \<imagestack>-elements. Later versions of this specification might provide alternative child elements for the \<image3d> element.
 
-## 2.2 ImageStack
+## 4.2 ImageStack
 
 Element **\<imagestack>**
 
@@ -160,7 +265,7 @@ The sampling rules for UVW values are determined by the filter-rule, and the beh
 _Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
 ![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
-## 2.1.1 File Formats
+## 4.1.1 File Formats
 PNG images can provide acceptable compression and bit-depth for the boundary-function, color information, material mixing ratios or arbitrary property information.
 
 The following describes recommendations for the channel bit depth of PNG images used in this specification and is based on the nomenclature in the specification of the Portable Network Graphics (PNG, https://www.w3.org/TR/PNG) format.
@@ -176,7 +281,7 @@ The following describes recommendations for the channel bit depth of PNG images 
 - Producers SHOULD store information for which they require high resolution in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
 
 
-## 2.2.2 OPC package layout
+## 4.2.2 OPC package layout
 __Note__: Introductory information about the Open Packaging Conventions (OPC) can be found in the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#11-package).
 
 It is RECOMMENDED that producers of 3MF Documents with the Volumetric Extension specification use the following part naming convention:
@@ -188,7 +293,7 @@ This implies that all parts for \<imagesheet> in an imagestack SHOULD be located
 _Figure 2-3: OPC package layout_
 ![OPC package layout](images/OPC_overview.png)
 
-## 2.2.3 3D Image Sheet
+## 4.2.3 3D Image Sheet
 
 Element **\<imagesheet>**
 
