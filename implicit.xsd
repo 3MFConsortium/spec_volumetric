@@ -1867,7 +1867,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a length function. The input must have the identifier "X",
+			Derived node for a length function. The input must have the identifier "A",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
 			- length(vector) = scalar
 						
@@ -2178,7 +2178,7 @@
 			Example:
 			<clamp identifier="clamp1" displayname="Clamp 1">
 				<in>
-					<vectorref identifier="value" ref="inputs.vector1"/>
+					<vectorref identifier="A" ref="inputs.vector1"/>
 					<vectorref identifier="min" ref="inputs.vector2"/>
 					<vectorref identifier="max" ref="inputs.vector3"/>
 				</in>
@@ -2239,6 +2239,7 @@
 			the output must have the identifier "result". If A < B then the result is C, otherwise D. The following combinations of inputs and outputs are allowed:
 			- select(scalar,scalar,scalar,scalar) = scalar
 			- select(vector,vector,vector,vector) = vector (select of each component of the vectors)
+			- select(matrix,matrix,matrix,matrix) = matrix (select of each component of the matrices)
 
 			Example:
 			<select identifier="select1" displayname="Select 1">
