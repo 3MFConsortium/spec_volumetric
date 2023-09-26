@@ -843,15 +843,67 @@ This speciication is limited in scope. Three notoworthy limitations are
 
 ## Chapter 1. Overview of Implicit Additions
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
-![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png)
+![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds FunctionImplicit and Native nodes. Optionally PrivateExtensionFunction can be defined.
 
 ## Chapter 2. Function Implicit
+
 
 ## Chapter 3. Nodes
 
 ## Chapter 4. Native Nodes
 
+Overview of native nodes
 
+| Node Type                | Description                                                          |
+|--------------------------|----------------------------------------------------------------------|
+| `addition`               | Represents an addition operation                                      |
+| `subtraction`            | Represents a subtraction operation                                   |
+| `multiplication`         | Represents a multiplication operation                                |
+| `division`               | Represents a division operation                                      |
+| `constant`               | Represents a constant scalar value                                   |
+| `constvec`               | Represents a constant vector                                          |
+| `constmat`               | Represents a constant matrix                                          |
+| `composevector`          | Represents a vector composition operation                             |
+| `decomposevector`        | Represents a vector decomposition operation                           |
+| `composematrix`          | Represents a matrix composition operation                             |
+| `composematrixfromcolumnvectors`  | Represents matrix composition from column vectors             |
+| `composematrixfromrowvectors`     | Represents matrix composition from row vectors                   |
+| `dot`                    | Represents a dot product operation                                   |
+| `cross`                  | Represents a cross product operation                                 |
+| `matvecmultiplication`   | Represents a matrix-vector multiplication operation                  |
+| `transpose`              | Represents a matrix transpose operation                              |
+| `inverse`                | Represents a matrix inverse operation                                |
+| `sin`                    | Represents a sine function operation                                 |
+| `cos`                    | Represents a cosine function operation                               |
+| `tan`                    | Represents a tangent function operation                              |
+| `arcsin`                 | Represents an arcsine function operation                            |
+| `arccos`                 | Represents an arccosine function operation                          |
+| `arctan`                 | Represents an arctangent function operation                         |
+| `arctan2`                | Represents a two-argument arctangent function operation             |
+| `min`                    | Represents a minimum value operation                                 |
+| `max`                    | Represents a maximum value operation                                 |
+| `abs`                    | Represents an absolute value operation                               |
+| `fmod`                   | Represents a floating-point modulus operation                        |
+| `pow`                    | Represents a power function operation                                |
+| `sqrt`                   | Represents a square root function operation                          |
+| `exp`                    | Represents an exponential function operation                         |
+| `log`                    | Represents a natural logarithm function operation                    |
+| `log2`                   | Represents a base 2 logarithm function operation                     |
+| `log10`                  | Represents a base 10 logarithm function operation                    |
+| `select`                 | Represents a selection operation                                     |
+| `clamp`                  | Represents a clamping operation                                      |
+| `cosh`                   | Represents a hyperbolic cosine function operation                    |
+| `sinh`                   | Represents a hyperbolic sine function operation                      |
+| `tanh`                   | Represents a hyperbolic tangent function operation                   |
+| `round`                  | Represents a rounding operation                                      |
+| `ceil`                   | Represents a ceiling operation                                       |
+| `floor`                  | Represents a floor operation                                         |
+| `sign`                   | Represents a signum operation                                        |
+| `fract`                  | Represents a fractional part extraction operation                    |
+| `functioncall`           | Represents a function call operation                                 |
+| `mesh`                   | Represents a signed distance to mesh operation                       |
+| `length`                 | Represents a length operation                                        |
+| `resourceid`             | Represents a constant resource ID                                    |
 
 ## Chapter 5. Implicit Evaluation
 
