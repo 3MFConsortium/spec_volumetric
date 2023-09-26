@@ -839,9 +839,26 @@ This speciication is limited in scope. Three notoworthy limitations are
 
 3. It is not possible to assemble a field object that represents the RGB and alpha-channels from images. However one may assamble and blend data from RGBA-images explicitely by extracting the alpha channel into a scalar field and by using the alpha scalar field as a composition mask of two RGB 3d vector fields.
 
+# Part II. Implicit Extension
+
+## Chapter 1. Overview of Implicit Additions
+_Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
+![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png)
+
+## Chapter 2. Function Implicit
+
+## Chapter 3. Nodes
+
+## Chapter 4. Native Nodes
 
 
-# Part II. Appendices
+
+## Chapter 5. Implicit Evaluation
+
+## Chapter 6. Notes
+
+
+# Part III. Appendices
 
 # Appendix A. Glossary
 
