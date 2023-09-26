@@ -854,56 +854,1795 @@ _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 
 Overview of native nodes
 
-| Node Type                | Description                                                          |
-|--------------------------|----------------------------------------------------------------------|
-| `addition`               | Represents an addition operation                                      |
-| `subtraction`            | Represents a subtraction operation                                   |
-| `multiplication`         | Represents a multiplication operation                                |
-| `division`               | Represents a division operation                                      |
-| `constant`               | Represents a constant scalar value                                   |
-| `constvec`               | Represents a constant vector                                          |
-| `constmat`               | Represents a constant matrix                                          |
-| `composevector`          | Represents a vector composition operation                             |
-| `decomposevector`        | Represents a vector decomposition operation                           |
-| `composematrix`          | Represents a matrix composition operation                             |
-| `composematrixfromcolumnvectors`  | Represents matrix composition from column vectors             |
-| `composematrixfromrowvectors`     | Represents matrix composition from row vectors                   |
-| `dot`                    | Represents a dot product operation                                   |
-| `cross`                  | Represents a cross product operation                                 |
-| `matvecmultiplication`   | Represents a matrix-vector multiplication operation                  |
-| `transpose`              | Represents a matrix transpose operation                              |
-| `inverse`                | Represents a matrix inverse operation                                |
-| `sin`                    | Represents a sine function operation                                 |
-| `cos`                    | Represents a cosine function operation                               |
-| `tan`                    | Represents a tangent function operation                              |
-| `arcsin`                 | Represents an arcsine function operation                            |
-| `arccos`                 | Represents an arccosine function operation                          |
-| `arctan`                 | Represents an arctangent function operation                         |
-| `arctan2`                | Represents a two-argument arctangent function operation             |
-| `min`                    | Represents a minimum value operation                                 |
-| `max`                    | Represents a maximum value operation                                 |
-| `abs`                    | Represents an absolute value operation                               |
-| `fmod`                   | Represents a floating-point modulus operation                        |
-| `pow`                    | Represents a power function operation                                |
-| `sqrt`                   | Represents a square root function operation                          |
-| `exp`                    | Represents an exponential function operation                         |
-| `log`                    | Represents a natural logarithm function operation                    |
-| `log2`                   | Represents a base 2 logarithm function operation                     |
-| `log10`                  | Represents a base 10 logarithm function operation                    |
-| `select`                 | Represents a selection operation                                     |
-| `clamp`                  | Represents a clamping operation                                      |
-| `cosh`                   | Represents a hyperbolic cosine function operation                    |
-| `sinh`                   | Represents a hyperbolic sine function operation                      |
-| `tanh`                   | Represents a hyperbolic tangent function operation                   |
-| `round`                  | Represents a rounding operation                                      |
-| `ceil`                   | Represents a ceiling operation                                       |
-| `floor`                  | Represents a floor operation                                         |
-| `sign`                   | Represents a signum operation                                        |
-| `fract`                  | Represents a fractional part extraction operation                    |
-| `functioncall`           | Represents a function call operation                                 |
-| `mesh`                   | Represents a signed distance to mesh operation                       |
-| `length`                 | Represents a length operation                                        |
-| `resourceid`             | Represents a constant resource ID                                    |
+| Node Type                 | Description                                |
+|---------------------------|--------------------------------------------|
+| [addition](#addition)     | addition of two values                     |
+| [subtraction](#subtraction)    | subtraction operation                      |
+| [multiplication](#multiplication) | multiplication operation                   |
+| [division](#division)       | division operation                         |
+| [constant](#constant)       | constant scalar value                      |
+| [constvec](#constvec)       | constant vector                            |
+| [constmat](#constmat)       | constant matrix                            |
+| [composevector](#composevector) | vector composition operation               |
+| [decomposevector](#decomposevector) | vector decomposition operation             |
+| [composematrix](#composematrix) | matrix composition operation               |
+| [composematrixfromcolumnvectors](#composematrixfromcolumnvectors) | matrix composition from column vectors |
+| [composematrixfromrowvectors](#composematrixfromrowvectors)       | matrix composition from row vectors    |
+| [dot](#dot)                | dot product operation                      |
+| [cross](#cross)            | cross product operation                    |
+| [matvecmultiplication](#matvecmultiplication) | matrix-vector multiplication operation |
+| [transpose](#transpose)        | matrix transpose operation                 |
+| [inverse](#inverse)          | matrix inverse operation                   |
+| [sin](#sin)                | sine function operation                    |
+| [cos](#cos)                | cosine function operation                  |
+| [tan](#tan)                | tangent function operation                 |
+| [arcsin](#arcsin)          | arcsine function operation                 |
+| [arccos](#arccos)          | arccosine function operation               |
+| [arctan](#arctan)          | arctangent function operation              |
+| [arctan2](#arctan2)        | two-argument arctangent function operation |
+| [min](#min)                | minimum value operation                    |
+| [max](#max)                | maximum value operation                    |
+| [abs](#abs)                | absolute value operation                   |
+| [fmod](#fmod)              | floating-point modulus operation           |
+| [pow](#pow)                | power function operation                   |
+| [sqrt](#sqrt)              | square root function operation             |
+| [exp](#exp)                | exponential function operation             |
+| [log](#log)                | natural logarithm function operation        |
+| [log2](#log2)              | base 2 logarithm function operation         |
+| [log10](#log10)            | base 10 logarithm function operation        |
+| [select](#select)          | selection operation                        |
+| [clamp](#clamp)            | clamping operation                         |
+| [cosh](#cosh)              | hyperbolic cosine function operation        |
+| [sinh](#sinh)              | hyperbolic sine function operation          |
+| [tanh](#tanh)              | hyperbolic tangent function operation       |
+| [round](#round)            | rounding operation                         |
+| [ceil](#ceil)              | ceiling operation                          |
+| [floor](#floor)            | floor operation                            |
+| [sign](#sign)              | signum operation                           |
+| [fract](#fract)            | fractional part extraction operation        |
+| [functioncall](#functioncall) | function call operation                  |
+| [mesh](#mesh)              | signed distance to mesh operation           |
+| [length](#length)          | length operation                           |
+| [resourceid](#resourceid)  | constant resource ID                       |
+
+
+## addition
+
+**Description:**
+Performs an addtion of the inputs "A" and "B" and writes the result to the output "result". 
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | First summand                |
+| B      | Second summand               |
+
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Sum of A and B                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | B   | result   | comment   |
+|-----|-----|----------|------------|
+| scalar   | scalar   | scalar   |  |
+| vector   | vector   | vector   | vector is added componentwise |
+| matrix   | matrix   | matrix   | matrix elements are added componentwise |
+| scalar   | vector   | vector   | scalar is added to each component of the vector |	
+| scalar   | matrix   | matrix   | scalar is added to each component of the matrix |
+| vector   | scalar   | vector   | scalar is added to each component of the vector |
+| matrix   | scalar   | matrix   | scalar is added to each component of the matrix |
+
+
+
+**Example Usage:**
+
+```xml
+<addition identifier="addition1" displayname="Addition 1">
+    <in>
+        <scalarref identifier="A" ref="constant1.c1"/>
+        <scalarref identifier="B" ref="inputs.radius"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</addition>
+```
+
+
+
+## constant
+
+**Description:** Node for a constant scalar value. The output must have the identifier "value".
+
+Example:
+```xml
+<constant identifier="constant1" displayname="Constant 1" value="1.0">
+    <out>
+        <scalar identifier="value"/>
+    </out>
+</constant>
+```
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| None         |                                             |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| value        | Constant scalar value                       |
+
+
+## constvec
+
+**Description:** Node for a constant vector value. The output must have the identifier "vector".
+
+**Inputs:**
+
+None
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| vector     | Constant vector value |
+
+**Attributes:**
+
+| Attribute | Type    | Required | Description                  |
+|-----------|---------|----------|------------------------------|
+| x         | double  | yes      | X-component of the vector     |
+| y         | double  | yes      | Y-component of the vector     |
+| z         | double  | yes      | Z-component of the vector     |
+
+**Example Usage:**
+
+```xml
+<constvec identifier="constant1" displayname="Constant 1" x="1.0" y="2.0" z="3.0">
+    <out>
+        <vector identifier="vector"/>
+    </out>
+</constvec>
+```
+
+## constmat
+
+**Description:** Node for a constant 4x4 matrix value. The output must have the identifier "matrix".
+
+**Inputs:**
+
+None
+
+**Outputs:**
+
+| Identifier | Description            |
+|------------|------------------------|
+| matrix     | Constant 4x4 matrix    |
+
+**Attributes:**
+
+| Attribute | Type          | Required | Description                            |
+|-----------|---------------|----------|----------------------------------------|
+| matrix    | ST_Matrix4x4 | yes      | The constant 4x4 matrix representation |
+
+**Example Usage:**
+
+```xml
+<constmat identifier="constant1" displayname="identity" 
+    matrix="1.0 0.0 0.0 0.0
+            0.0 1.0 0.0 0.0
+            0.0 0.0 1.0 0.0 
+            0.0 0.0 0.0 1.0">
+    <out>
+        <matrix identifier="matrix"/>
+    </out>
+</constmat>
+```
+
+# resourceid
+
+**Description:** Defines a model resource id as a constant value.
+
+**Inputs:**
+
+None
+
+**Outputs:**
+
+| Identifier | Description            |
+|------------|------------------------|
+| value      | Resource ID            |
+
+**Attributes:**
+
+| Attribute | Type               | Required | Description                         |
+|-----------|--------------------|----------|-------------------------------------|
+| value     | ST_ResourceID     | yes      | The model resource id|
+
+**Example Usage:**
+
+```xml
+<resourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
+    <out>
+        <resourceid identifier="value"/>
+    </out>
+</resourceid>
+```
+
+## composevector
+
+**Description:** Node for composing a vector from 3 scalar values. The inputs must have the identifiers x, y and z.
+
+**Inputs:**
+
+| Identifier | Description            | Type      |
+|------------|------------------------|-----------|
+| x          | X-coordinate           | scalar    |
+| y          | Y-coordinate           | scalar    |
+| z          | Z-coordinate           | scalar    |
+
+**Outputs:**
+
+| Identifier | Description            | Type     |
+|------------|------------------------|----------|
+| vector     | Composed vector        | vector   |
+
+**Example Usage:**
+
+```xml
+<composevector>
+    <in>
+        <scalarref identifier="x" ref="inputs.x"/>
+        <scalarref identifier="y" ref="inputs.y"/>
+        <scalarref identifier="z" ref="inputs.z"/>
+    </in>
+    <out>
+        <vector identifier="vector"/>
+    </out>
+</composevector>
+```
+
+## decomposevector
+
+**Description:** Node for decomposing a vector into 3 scalar values. The input must have the identifier "A", and the outputs must have the identifiers x, y, and z.
+
+**Inputs:**
+
+| Identifier | Description            | Type      |
+|------------|------------------------|-----------|
+| A          | Vector to decompose    | vector    |
+
+**Outputs:**
+
+| Identifier | Description            | Type     |
+|------------|------------------------|----------|
+| x          | X-coordinate           | scalar   |
+| y          | Y-coordinate           | scalar   |
+| z          | Z-coordinate           | scalar   |
+
+**Example Usage:**
+
+```xml
+<decomposevector>
+    <in>
+        <vectorref identifier="A" ref="inputs.vector"/>
+    </in>
+    <out>
+        <scalar identifier="x"/>
+        <scalar identifier="y"/>
+        <scalar identifier="z"/>
+    </out>
+</decomposevector>
+```
+
+## composematrix
+**Description:** Composes a matrix from 16 scalar values.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| m00        | Scalar value for element (0,0) of the matrix |
+| mRC 		 | Scalar value for element (R,C) of the matrix |
+| ...		 | ... |
+| m33        | Scalar value for element (3,3) of the matrix |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| matrix     | Composed matrix |
+
+**Example Usage:**
+
+```xml
+<composematrix identifier="composeMatrix_0" displayname="composed matrix">
+	<in>
+		<scalarref identifier="m00" ref="constantM00.value"/>
+		<scalarref identifier="m01" ref="constantM01.value"/>
+		<scalarref identifier="m02" ref="constantM02.value"/>
+		<scalarref identifier="m03" ref="constantM03.value"/>
+		<scalarref identifier="m10" ref="constantM10.value"/>
+		<scalarref identifier="m11" ref="constantM11.value"/>
+		<scalarref identifier="m12" ref="constantM12.value"/>
+		<scalarref identifier="m13" ref="constantM13.value"/>
+		<scalarref identifier="m20" ref="constantM20.value"/>
+		<scalarref identifier="m21" ref="constantM21.value"/>
+		<scalarref identifier="m22" ref="constantM22.value"/>
+		<scalarref identifier="m23" ref="constantM23.value"/>
+		<scalarref identifier="m30" ref="constantM30.value"/>
+		<scalarref identifier="m31" ref="constantM31.value"/>
+		<scalarref identifier="m32" ref="constantM32.value"/>
+		<scalarref identifier="m33" ref="constantM33.value"/>
+	</in>
+	<out>
+		<matrix identifier="matrix"/>
+	</out>
+</composematrix>
+```
+
+## composevector
+
+**Description:** Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1]. 
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | First column vector                |
+| B      | Second column vector               |
+| C      | Third column vector                |
+| D      | Fourth column vector               |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| matrix      | Composed matrix               |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | B   | C   | D   | matrix   |
+|-----|-----|-----|-----|----------|
+|vector|vector|vector|vector|matrix|
+
+**Example Usage:** 
+```xml
+<composevector identifier="composeMatrixFromColumnVectors" displayname="composed matrix">
+    <in>
+        <vectorref identifier="A" ref="vector0.vector"/>
+        <vectorref identifier="B" ref="vector1.vector"/>
+        <vectorref identifier="C" ref="vector2.vector"/>
+        <vectorref identifier="D" ref="vector3.vector"/>
+    </in>
+    <out>
+        <matrix identifier="matrix"/>
+    </out>
+</composevector>
+```
+
+## composematrixfromrowvectors
+
+**Description:** Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1). 
+
+**Inputs:**
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | First row vector                |
+| B      | Second row vector               |
+| C      | Third row vector               |
+| D      | Fourth row vector               |
+
+**Outputs:**
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| matrix      | Composed matrix                |
+
+The operation can be used for the following types of inputs and outputs:
+| A   | B   | C   | D   | matrix   | comment   |
+|-----|-----|-----|-----|----------|------------|
+| vector   | vector   | vector   | vector   | matrix   | Each row vector represents each row in the matrix |
+
+**Example Usage:**
+
+```xml
+<composematrixfromrowvectors identifier="composeMatrixFromRowVectors" displayname="composed vector">
+    <in>
+        <vectorref identifier="A" ref="vector0.vector"/>
+        <vectorref identifier="B" ref="vector1.vector"/>
+        <vectorref identifier="C" ref="vector2.vector"/>
+        <vectorref identifier="D" ref="vector3.vector"/>
+    </in>
+    <out>
+        <matrix identifier="matrix"/>
+    </out>
+</composematrixfromrowvectors>
+```
+
+## multiplication  
+**Description:** Performs the multiplication A x B = result. The inputs must have the identifier "A" and "B", and the output must have the identifier "result". If only one of the inputs is a scalar, the operation is component-wise. 
+
+**Inputs:**  
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | First value to be multiplied                |
+| B      | Second value to be multiplied               |
+
+**Outputs:**  
+
+| Identifier   | Description                              |
+|--------------|------------------------------------------|
+| result      | Result of the multiplication             |
+
+The operation can be used for the following types of inputs and outputs:  
+
+| A         | B        | result       | comment                            |
+|-----------|----------|--------------|------------------------------------|
+| scalar    | scalar   | scalar       |                                  |
+| vector    | vector   | vector       | vector is multiplied componentwise |
+| matrix    | matrix   | matrix       | matrix elements are multiplied componentwise |
+| scalar    | vector   | vector       | scalar is multiplied with each component of the vector |
+| scalar    | matrix   | matrix       | scalar is multiplied with each component of the matrix |
+| vector    | scalar   | vector       | scalar is multiplied with each component of the vector |
+| matrix    | scalar   | matrix       | scalar is multiplied with each component of the matrix |
+
+**Example Usage:**  
+
+```xml 
+<multiplication identifier="multiplication1" displayname="Multiplication 1">
+	<in>
+		<scalarref identifier="A" ref="constant1.c1"/>
+		<scalarref identifier="B" ref="inputs.radius"/>
+	</in>
+	<out>
+		<scalar identifier="result"/>
+	</out>
+</multiplication>
+```
+
+## subtraction
+**Description:** Performs subtracts the inputs "A" and "B" and writes the difference to the output "result".
+
+**Inputs:**
+
+| Identifier | Description                               |
+|------------|-------------------------------------------|
+| A          | First value to subtract                   |
+| B          | Second value to subtract                  |
+
+**Outputs:**
+
+| Identifier | Description                               |
+|------------|-------------------------------------------|
+| result     | Difference of A and B                      |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A        | B          | result  | comment                                   |
+|----------|------------|---------|-------------------------------------------|
+| scalar   | scalar     | scalar  |                                           |
+| vector   | vector     | vector  | Vector is subtracted component-wise       |
+| scalar   | vector     | vector  | Scalar is subtracted from each component of the vector |
+| scalar   | matrix     | matrix  | Scalar is subtracted from each component of the matrix |
+| vector   | scalar     | vector  | Scalar is subtracted from each component of the vector |
+| matrix   | scalar     | matrix  | Scalar is subtracted from each component of the matrix |
+
+**Example Usage:**
+
+```xml 
+<subtraction identifier="subtraction1" displayname="Subtraction 1">     
+    <in>         
+        <scalarref identifier="A" ref="constant1.c1"/>         
+        <scalarref identifier="B" ref="inputs.radius"/>     
+    </in>     
+    <out>         
+        <scalar identifier="result"/>     
+    </out> 
+</subtraction> 
+```
+
+## division
+**Description:** Performs a division of the inputs "A" and "B" and writes the quotient to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| A          | Dividend    |
+| B          | Divisor     |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Quotient    |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | B       | result  | comment                               |
+|---------|---------|---------|---------------------------------------|
+| scalar  | scalar  | scalar  |                                       |
+| vector  | vector  | vector  | Vector is divided componentwise        |
+| matrix  | matrix  | matrix  | Matrix elements are divided componentwise |
+| scalar  | vector  | vector  | Scalar is divided by each component of the vector |
+| scalar  | matrix  | matrix  | Scalar is divided by each component of the matrix |
+| vector  | scalar  | vector  | Vector components are divided by the scalar     |
+| matrix  | scalar  | matrix  | Matrix components are divided by the scalar     |
+
+**Example Usage:**
+
+```xml
+<division identifier="division1" displayname="Division 1">
+    <in>
+        <scalarref identifier="A" ref="constant1.c1"/>
+        <scalarref identifier="B" ref="inputs.radius"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</division>
+```
+
+## dot
+
+**Description:** Performs a dot product of two vectors "A" and "B" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| A          | First vector |
+| B          | Second vector |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Dot product of A and B |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | B       | result  | comment                            |
+|---------|---------|---------|------------------------------------|
+| vector  | vector  | scalar  | dot product of the two vectors     |
+
+**Example Usage:**
+
+```xml
+<dot identifier="dotproduct1" displayname="Dot Product 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+        <vectorref identifier="B" ref="inputs.vector2"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</dot>
+```
+
+## cross
+
+**Description:** Performs a cross product of the inputs "A" and "B" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| A          | First vector |
+| B          | Second vector |
+
+**Outputs:**
+
+| Identifier | Description            |
+|------------|------------------------|
+| result     | Cross product of A and B |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | B       | result  | comment                              |
+|---------|---------|---------|--------------------------------------|
+| vector  | vector  | vector  | cross product of the two vectors      |
+
+**Example Usage:**
+
+```xml
+<cross identifier="crossproduct1" displayname="Cross Product 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+        <vectorref identifier="B" ref="inputs.vector2"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</cross>
+```
+
+## matrixvectormultiplication
+
+**Description:** Performs the matrix vector multiplication `A x B = result`. The output must be a vector with the name "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | Matrix                |
+| B      | Vector               |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Product of A and B                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | B   | result   | comment   |
+|-----|-----|----------|------------|
+| matrix   | vector   | vector   | 
+
+**Example Usage:**
+```xml
+<matrixvectormultiplication identifier="matVec1" displayname="Matrix Vector Multiplication 1">
+    <in>
+        <matrixref identifier="A" ref="inputs.matrix1"/>
+        <vectorref identifier="B" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</matrixvectormultiplication>
+```
+
+## transpose 
+
+**Description:** Performs the transpose of a matrix. The input 'A' must be a matrix and the output must be a matrix with the identifier "result".
+
+**Inputs:** 
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | Matrix to be transposed                |
+
+**Outputs:**  
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Transposed matrix                |
+
+The operation can be used for the following types of inputs and outputs:  
+
+| A   | result   | 
+|-----|----------|
+| matrix   | matrix   |
+
+**Example Usage:**  
+
+```xml
+<transpose identifier="transpose1" displayname="Transpose 1">
+	<in>
+		<matrixref identifier="A" ref="inputs.matrix1"/>
+	</in>
+	<out>
+		<matrix identifier="result"/>
+	</out>
+</transpose>
+```
+
+## inverse
+**Description:** Computes the inverse of a matrix. The input "A" must be a matrix and the output must be a matrix with the identifier "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | Matrix to compute inverse                |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Inverse of matrix A               |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | result   | 
+|-----|----------|
+| matrix   | matrix   |
+
+**Example Usage:**
+```xml
+<inverse identifier="inverse1" displayname="Inverse 1">
+    <in>
+        <matrixref identifier="A" ref="inputs.matrix1"/>
+    </in>
+    <out>
+        <matrix identifier="result"/>
+    </out>
+</inverse>
+```
+
+## sin
+
+**Description:** Computes sin(A) and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier  | Description                        |
+|-------------|------------------------------------|
+| A           | Input for sine function            |
+
+**Outputs:**
+
+| Identifier  | Description                        |
+|-------------|------------------------------------|
+| result      | Result of the sine function        |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | result  |
+|---------|---------|
+| scalar  | scalar  |
+| vector  | vector  |
+
+Example usage:
+
+```xml
+<sin identifier="sinus1" displayname="Sinus 1">
+    <in>
+        <scalarref identifier="A" ref="inputs.scalar1"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</sin>
+```
+
+## cosinus
+
+**Description:** Computes cos(A) and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | Input for cosine function               |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result       | Cosine of A                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | result    | comment                                   |
+|---------|-----------|-------------------------------------------|
+| scalar  | scalar    |                                           |
+| vector  | vector    | Cosine of each component of the vector     |
+
+**Example Usage:**
+
+```xml
+<cos identifier="cosinus1" displayname="Cosinus 1">
+    <in>
+        <scalarref identifier="A" ref="inputs.scalar1"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</cos>
+```
+
+## tan
+
+**Description:** Performs the tangent function on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | Input value                |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Tangent of A                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | result   |
+|-----|----------|
+| scalar   | scalar   |
+| vector   | vector (tangent of each component)  |
+
+**Example Usage:**
+
+```xml
+<tan identifier="tan1" displayname="Tan 1">
+    <in>
+        <scalarref identifier="A" ref="inputs.value"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</tan>
+```
+
+## arcsin
+
+**Description:** Performs an arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A", and the output must have the identifier "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A            | Input for the arcsin function               |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result       | Arcsin of the input                         |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A         | result  | comment                               |
+|-----------|---------|---------------------------------------|
+| scalar    | scalar  |                                       |
+| vector    | vector  | Arcsin of each component of the vector |
+
+**Example Usage:**
+
+```xml
+<arcsin identifier="arcsin1" displayname="Arcsin 1">
+    <in>
+        <scalarref identifier="A" ref="inputs.scalar1"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</arcsin>
+```
+
+## arccos
+
+**Description:** Performs the arccos function on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                 |
+|--------------|-----------------------------|
+| A            | Input value                 |
+
+**Outputs:**
+
+| Identifier   | Description                |
+|--------------|----------------------------|
+| result       | Arccos of A                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A         | result | comment                      |
+|-----------|--------|------------------------------|
+| scalar    | scalar | -                            |
+| vector    | vector | Arccos of each component     |
+
+**Example Usage:**
+
+```xml
+<arccos identifier="arccos1" displayname="Arccos 1">
+	<in>
+		<vectorref identifier="A" ref="inputs.vector1"/>
+	</in>
+	<out>
+		<vector identifier="result"/>
+	</out>
+</arccos>
+```
+
+## arctan
+
+**Description:** Performs an arctan function with a scalar or vector as input and a scalar or vector as output. The input must have the identifier "A", and the output must have the identifier "result". 
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| scalarref    | Scalar input                                |
+| vectorref    | Vector input                                |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| scalar       | Scalar output                               |
+| vector       | Vector output (arctan of each component)    |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A        | result                     | comment                             |
+|----------|----------------------------|-------------------------------------|
+| scalar   | scalar                     |                                     |
+| vector   | vector                     | arctan of each component of the vector |											
+
+**Example Usage:**
+
+```xml
+<arctan identifier="arctan1" displayname="Arctan 1">
+	<in>
+		<vectorref identifier="A" ref="inputs.vector1"/>
+	</in>
+	<out>
+		<vector identifier="result"/>
+	</out>
+</arctan>
+```
+
+## arctan2
+
+**Description:** Performs the arctangent of the inputs "A" and "B" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | First input                |
+| B      | Second input               |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Result of the arctan2 operation                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | B   | result   | comment   |
+|-----|-----|----------|------------|
+| scalar   | scalar   | scalar   |   |
+| vector   | vector   | vector   | arctan2 applied to each component of the vectors |
+
+**Example Usage:**
+
+```xml
+<arctan2 identifier="arctan21" displayname="Arctan2 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+        <vectorref identifier="B" ref="inputs.vector2"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</arctan2>
+```
+
+## min
+
+**Description:** Performs a minimum operation on the inputs "A" and "B" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A            | First operand                               |
+| B            | Second operand                              |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result       | Minimum value of A and B                     |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A        | B        | result    | comment                                    |
+|----------|----------|-----------|--------------------------------------------|
+| scalar   | scalar   | scalar    |                                            |
+| vector   | vector   | vector    | Minimum value of each component of vectors |
+| matrix   | matrix   | matrix    | Minimum value of each component of matrices|
+| scalar   | vector   | vector    | Minimum value of scalar and each component of the vector |
+| vector   | scalar   | vector    | Minimum value of scalar and each component of the vector |
+| scalar   | matrix   | matrix    | Minimum value of scalar and each component of the matrix |
+| matrix   | scalar   | matrix    | Minimum value of scalar and each component of the matrix |
+
+**Example Usage:**
+
+```xml
+<min identifier="min1" displayname="Min 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+        <vectorref identifier="B" ref="inputs.vector2"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</min>
+```
+
+## max
+
+**Description:** Performs a max function on the inputs "A" and "B" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | First value               |
+| B      | Second value              |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Maximum value of A and B                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | B   | result   | comment   |
+|-----|-----|----------|------------|
+| scalar   | scalar   | scalar   |        |
+| vector   | vector   | vector   | Maximum of each component of the vectors |
+| matrix   | matrix   | matrix   | Maximum of each component of the matrices |
+| scalar   | vector   | vector   | Maximum of the scalar and each component of the vector |
+| scalar   | matrix   | matrix   | Maximum of the scalar and each component of the matrix |
+| vector   | scalar   | vector   | Maximum of the scalar and each component of the vector |
+| matrix   | scalar   | matrix   | Maximum of the scalar and each component of the matrix |
+
+**Example Usage:**
+
+```xml
+<max identifier="max1" displayname="Max 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+        <vectorref identifier="B" ref="inputs.vector2"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</max>
+```
+
+## abs
+
+**Description:** Performs the absolute value operation on input "A" and writes the result to output "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | Input for absolute value function        |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Result of absolute value operation                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | result   | comment   |
+|-----|----------|------------|
+| scalar   | scalar   |            |
+| vector   | vector   | Absolute value is computed for each component of the vector |
+| matrix   | matrix   | Absolute value is computed for each component of the matrix |
+
+**Example Usage:**
+
+```xml
+<abs identifier="abs1" displayname="Abs 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</abs>
+```
+
+
+## fmod
+**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result".
+
+**Inputs:**
+| Identifier   | Description                      |
+|--------------|----------------------------------|
+| A            | The dividend                     |
+| B            | The divisor                      |
+
+**Outputs:**
+| Identifier   | Description                   |
+|--------------|-------------------------------|
+| result       | The remainder of A divided by B|
+
+The operation can be used for the following types of inputs and outputs:
+| A         | B         | result  | comment                           |
+|-----------|-----------|---------|-----------------------------------|
+| scalar    | scalar    | scalar  |                                   |
+| vector    | vector    | vector  | modulo operation of each component of the vectors |
+| matrix    | matrix    | matrix  | modulo operation of each component of the matrices|
+
+**Example Usage:**
+```xml 
+<fmod identifier="fmod1" displayname="Fmod 1">
+    <in>
+        <scalarref identifier="A" ref="constant1.c1"/>
+        <scalarref identifier="B" ref="inputs.radius"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</fmod>
+```
+
+## pow
+
+**Description:** Performs a power function with the input "A" as the base and "B" as the exponent. The result is written to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description         |
+|--------------|---------------------|
+| A            | Base of the power    |
+| B            | Exponent of the power|
+
+**Outputs:**
+
+| Identifier   | Description         |
+|--------------|---------------------|
+| result       | Result of the power  |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | B       | result  | comment                                    |
+|---------|---------|---------|--------------------------------------------|
+| scalar  | scalar  | scalar  |                                             |
+| vector  | vector  | vector  | Power of each component of the vectors      |
+| matrix  | matrix  | matrix  | Power of each component of the matrices     |
+
+**Example Usage:**
+```xml
+<pow identifier="pow1" displayname="Pow 1">
+	<in>
+		<vectorref identifier="A" ref="inputs.vector1"/>
+		<vectorref identifier="B" ref="inputs.vector2"/>
+	</in>
+	<out>
+		<vector identifier="result"/>
+	</out>
+</pow>
+```
+
+## sqrt
+
+**Description:** Performs the square root operation on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | The value to take the square root of                |
+
+**Outputs:**
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | The square root of A               |
+
+The operation can be used for the following types of inputs and outputs:
+| A   | result   | comment   |
+|-----|----------|------------|
+| scalar   | scalar   |  |
+| vector   | vector   | square root of each component of the vector |
+| matrix   | matrix   | square root of each component of the matrix |
+
+**Example Usage:**
+```xml
+<sqrt identifier="sqrt1" displayname="Sqrt 1">
+	<in>
+		<vectorref identifier="A" ref="inputs.vector1"/>
+	</in>
+	<out>
+		<vector identifier="result"/>
+	</out>
+</sqrt>
+```
+
+## mesh
+**Description:** Evaluates the signed distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar with the identifier "distance". The mesh is assumed to be closed and watertight.
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| pos      | Input vector                |
+| mesh      | Resource identifier for the mesh               |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| distance      | Distance to the mesh                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| pos   | mesh   | distance   | comment   |
+|-----|-----|----------|------------|
+| vector   | -   | scalar   | -  |
+
+**Example Usage:**
+```xml
+<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
+	<in>
+		<vectorref identifier="pos" ref="inputs.pos"/>
+	 	<resourceref identifier="mesh" ref="2"/>
+	</in>
+	<out>
+		<scalar identifier="distance"/>
+	</out>
+</mesh>
+```
+
+## length
+
+**Description:** Calculates the length of the input vector and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| A      | Input Vector                |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| result      | Length of the input vector                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A   | result   | comment   |
+|-----|----------|------------|
+| vector   | scalar   |  length(vector) = scalar  |
+
+**Example Usage:**
+
+```xml
+<length identifier="length1" displayname="Length 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</length>
+```
+
+## log
+
+**Description:** Performs a natural logarithm of the input "A" and writes the result to the output "result". 
+
+**Inputs:**
+
+| Identifier   | Description                              |
+|--------------|------------------------------------------|
+| A            | Value to compute natural logarithm for    |
+
+**Outputs:**
+
+| Identifier   | Description                             |
+|--------------|-----------------------------------------|
+| result       | Natural logarithm of input "A"           |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A         | result   | comment                                 |
+|-----------|----------|-----------------------------------------|
+| scalar    | scalar   |                                         |
+| vector    | vector   | Natural logarithm of each component     |
+| matrix    | matrix   | Natural logarithm of each component     |
+
+**Example Usage:**
+
+```xml
+<log identifier="log_1" displayname="Log_n 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</log>
+```
+
+## log2 
+
+**Description:** Performs a base 2 logarithm operation on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| A          | Value to calculate logarithm of |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Result of the logarithm calculation |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A      | result   | comment                             |
+|--------|----------|-------------------------------------|
+| scalar | scalar   |                                     |
+| vector | vector   | Logarithm is calculated componentwise |
+| matrix | matrix   | Logarithm is calculated componentwise |
+
+**Example Usage:**
+
+```xml
+<log2 identifier="log21" displayname="Log2 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</log2>
+```
+
+## log10
+**Description:** Performs a base 10 logarithm of the input "A" and writes the result to the output "result".
+
+**Inputs:**
+| Identifier | Description |
+|------------|-------------|
+| A          | Number to calculate the logarithm of |
+
+**Outputs:**
+| Identifier | Description                          |
+|------------|--------------------------------------|
+| result     | Base 10 logarithm of input number A   |
+
+The operation can be used for the following types of inputs and outputs:
+| A       | result  | comment                               |
+|---------|---------|---------------------------------------|
+| scalar  | scalar  |                                       |
+| vector  | vector  | Each component of the vector is logged |
+| matrix  | matrix  | Each component of the matrix is logged |
+
+**Example Usage:**
+```xml
+<log10 identifier="log101" displayname="Log10 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</log10>
+```
+
+## exp
+**Description:** Performs an exponential function on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+| Identifier | Description              |
+|------------|--------------------------|
+| A          | Input for exponential function |
+
+**Outputs:**
+| Identifier | Description              |
+|------------|--------------------------|
+| result     | Result of exponential function | 
+
+The operation can be used for the following types of inputs and outputs:
+| A      | result  | Comment                          |
+|--------|---------|----------------------------------|
+| scalar | scalar  |                                  | 
+| vector | vector  | Exponential of each component of the vector |
+| matrix | matrix  | Exponential of each component of the matrix | 
+
+**Example Usage:**
+```xml
+<exp identifier="exp1" displayname="Exp 1">
+	<in>
+		<vectorref identifier="A" ref="inputs.vector1"/>
+	</in>
+	<out>
+		<vector identifier="result"/>
+	</out>
+</exp>
+```
+
+## cosh
+
+**Description:** Performs a hyperbolic cosine function on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description                                 |
+|------------|---------------------------------------------|
+| A          | Input value for the hyperbolic cosine function |
+
+**Outputs:**
+
+| Identifier | Description                                 |
+|------------|---------------------------------------------|
+| result     | Result of the hyperbolic cosine function     |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | result     | comment                              |
+|---------|------------|--------------------------------------|
+| scalar  | scalar     |                                      |
+| vector  | vector     | cosh of each component of the vector |
+| matrix  | matrix     | cosh of each component of the matrix |
+
+**Example Usage:**
+
+```xml
+<cosh identifier="cosh1" displayname="Cosh 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</cosh>
+```
+
+## sinh
+
+**Description:** Calculates the hyperbolic sine of the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description | 
+|------------|-------------|
+| A          | Operand     |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Result      |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | result  | comment                              |
+|---------|---------|--------------------------------------|
+| scalar  | scalar  |                                      |
+| vector  | vector  | sinh of each component of the vector  |
+| matrix  | matrix  | sinh of each component of the matrix  |
+
+**Example Usage:**
+
+```xml
+<sinh identifier="sinh1" displayname="Sinh 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</sinh>
+```
+
+## tanh
+
+**Description:** Calculates the hyperbolic tangent of the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| A          | Operand     |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Result      |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | result  | comment                              |
+|---------|---------|--------------------------------------|
+| scalar  | scalar  |                                      |
+| vector  | vector  | tanh of each component of the vector  |
+| matrix  | matrix  | tanh of each component of the matrix  |
+
+**Example Usage:**
+
+```xml
+<tanh identifier="tanh1" displayname="Tanh 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</tanh>
+```
+
+## clamp
+
+**Description:** Performs the clamp function `max(min, min(A,max))`. The input must have the identifier "A" (value), "min", and "max". The output must have the identifier "result".
+
+**Inputs:**
+
+| Identifier | Description                |
+|------------|----------------------------|
+| A          | Value                      |
+| min        | Minimum value              |
+| max        | Maximum value              |
+
+**Outputs:**
+
+| Identifier | Description                |
+|------------|----------------------------|
+| result     | Result of the clamp function|
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | min     | max     | result                     | 
+|---------|---------|---------|----------------------------|
+| scalar  | scalar  | scalar  | scalar                     | 
+| vector  | vector  | vector  | Vector with clamped values (componentwise) |
+| matrix  | matrix  | matrix  | Matrix with clamped values (componentwise)|
+
+**Example Usage:**
+
+```xml
+<clamp identifier="clamp1" displayname="Clamp 1">
+    <in>
+        <scalarref identifier="A" ref="inputs.scalar1"/>
+        <scalarref identifier="min" ref="inputs.scalar2"/>
+        <scalarref identifier="max" ref="inputs.scalar3"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+</clamp>
+```
+
+## CT_Select
+
+**Description:** Derived node for a select function. The input must have the identifier "A", "B", "C", "D", and the output must have the identifier "result". If A < B then the result is C, otherwise D.
+
+**Inputs:**
+
+| Identifier  | Description                      |
+|-------------|----------------------------------|
+| A           | First value to compare           |
+| B           | Second value to compare          |
+| C           | Result if A < B                  |
+| D           | Result if A >= B                 |
+
+**Outputs:**
+
+| Identifier | Description                      |
+|------------|----------------------------------|
+| result     | Result of A < B ? C : D          |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | B       | C       | D       | result      |
+|---------|---------|---------|---------|-------------|
+| scalar  | scalar  | scalar  | scalar  | scalar      |
+| vector  | vector  | vector  | vector  | vector      |
+| matrix  | matrix  | matrix  | matrix  | matrix      |
+
+**Example Usage:**
+```xml
+<select identifier="select1" displayname="Select 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+        <vectorref identifier="B" ref="inputs.vector2"/>
+        <vectorref identifier="C" ref="inputs.vector3"/>
+        <vectorref identifier="D" ref="inputs.vector4"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</select>
+```
+
+## round
+
+**Description:** Performs a rounding operation on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+| --- | --- |
+| A | Value to be rounded |
+
+**Outputs:**
+
+| Identifier | Description |
+| --- | --- |
+| result | Rounded value of A |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A | result | comment |
+| --- | --- | --- |
+| scalar | scalar |  |
+| vector | vector | Round of each component of the vector |
+| matrix | matrix | Round of each component of the matrix |
+
+**Example Usage:**
+
+```xml
+<round identifier="round1" displayname="Round 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</round>
+```
+
+## ceil
+
+**Description:** Performs the ceil function on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier   | Description                           |
+|--------------|---------------------------------------|
+| A            | Value to be rounded up                |
+
+**Outputs:**
+
+| Identifier   | Description                           |
+|--------------|---------------------------------------|
+| result       | Rounded up value                       |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A          | result        | comment                                  |
+|------------|---------------|------------------------------------------|
+| scalar     | scalar        | Round up a single scalar value            |
+| vector     | vector        | Round up each component of the vector     |
+| matrix     | matrix        | Round up each component of the matrix     |
+
+**Example Usage:**
+
+```xml
+<ceil identifier="ceil1" displayname="Ceil 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</ceil>
+```
+
+## floor
+
+**Description:** Performs a floor function on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| A          | Value to be rounded down |
+
+**Outputs:**
+
+| Identifier | Description     |
+|------------|-----------------|
+| result     | Rounded down value of A |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | result  | comment                             |
+|---------|---------|-------------------------------------|
+| scalar  | scalar  |                                     |
+| vector  | vector  | Floor of each component of the vector |
+| matrix  | matrix  | Floor of each component of the matrix|
+
+**Example Usage:**
+
+```xml
+<floor identifier="floor1" displayname="Floor 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</floor>
+```
+## sign
+
+**Description:** Performs the sign function on the input "A" and writes the result to the output "result".
+
+**Inputs:**
+
+| Identifier | Description |
+| --- | --- |
+| A | Input value |
+
+**Outputs:**
+
+| Identifier | Description |
+| --- | --- |
+| result | Sign of the input |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A | result | comment |
+| --- | --- | --- |
+| scalar | scalar |  |
+| vector | vector | Sign of each component of the vector |
+| matrix | matrix | Sign of each component of the matrix |
+
+**Example Usage:**
+
+```xml
+<sign identifier="sign1" displayname="Sign 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</sign>
+```
+
+## fract
+**Description:** Returns the fractional part of the input (A - floor(A)).
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| A          | Input value |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Fractional part of A |
+
+The operation can be used for the following types of inputs and outputs:
+
+| A       | result | Comment                                     |
+|---------|--------|---------------------------------------------|
+| scalar  | scalar |                                              |
+| vector  | vector | Sign of each component of the vector         |
+| matrix  | matrix | Sign of each component of the matrix         |
+
+**Example Usage:**
+
+```xml
+<sign identifier="sign1" displayname="Sign 1">
+    <in>
+        <vectorref identifier="A" ref="inputs.vector1"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</sign>
+```
+
+
+
+
 
 ## Chapter 5. Implicit Evaluation
 
@@ -1454,4 +3193,4 @@ _sheet1.png_
 
 See also [the standard 3MF References](https://github.com/3MFConsortium/spec_resources/blob/master/references.md).
 
-Copyright 3MF Consortium 2021.
+Copyright 3MF Consortium 2023.
