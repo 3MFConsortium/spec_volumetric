@@ -872,59 +872,280 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Resources">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="scalarfield" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="vector3dfield" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element ref="function" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
+		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
 	<xs:complexType name="CT_Image3D">
 		<xs:sequence>
 			<xs:choice>
-				<xs:element ref="imagestack"/>
-				<xs:any namespace="##other" processContents="lax"/>
+				<xs:element ref="imagestack" />
+				<xs:any namespace="##other" processContents="lax" />
 			</xs:choice>
 		</xs:sequence>
-		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="id" type="ST_ResourceID" use="required" />
+		<xs:attribute name="name" type="xs:string" />
 	</xs:complexType>
 
 	<xs:complexType name="CT_ImageStack">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-			<xs:element ref="imagesheet" minOccurs="1" maxOccurs="1073741824"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element ref="imagesheet" minOccurs="1" maxOccurs="1073741824" />
 		</xs:sequence>
-		<xs:attribute name="rowcount" type="xs:positiveInteger" use="required"/>
-		<xs:attribute name="columncount" type="xs:positiveInteger" use="required"/>
-		<xs:attribute name="sheetcount" type="xs:positiveInteger" use="required"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
+		<xs:attribute name="rowcount" type="xs:positiveInteger" use="required" />
+		<xs:attribute name="columncount" type="xs:positiveInteger" use="required" />
+		<xs:attribute name="sheetcount" type="xs:positiveInteger" use="required" />
+		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
 	<xs:complexType name="CT_ImageSheet">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="path" type="ST_UriReference" use="required"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
+		<xs:attribute name="path" type="ST_UriReference" use="required" />
+		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
-	<xs:complexType name="CT_ScalarField">
+	<xs:simpleType name="ST_Identifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for referencing a node or a node output.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<xs:pattern value="[a-zA-Z0-9_]+" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ST_NodeOutputIdentifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a node output of the form "nodename.outputname".
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<!-- pattern allowing refs of the form "nodename.outputname" -->
+			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Identifer for a scalar output -->
+	<xs:simpleType name="ST_ScalarID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a scalar output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<!-- Identifer for a vector output -->
+	<xs:simpleType name="ST_VectorID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a vector output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<!-- Identifier for a Matrix-->
+	<xs:simpleType name="ST_MatrixID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a 4x4 Matrix
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<xs:complexType name="CT_Ref">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Base for reference types
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_ScalarRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a scalar output.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_ScalarID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="CT_VectorRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a vector output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="ref" type="ST_VectorID" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_MatrixRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a 4x4 Matrix
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="ref" type="ST_MatrixID" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_FunctionRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a function
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="ref" type="ST_ResourceID" use="required" />
+	</xs:complexType>
+
+	<!-- Scalar output value -->
+	<xs:complexType name="CT_Scalar">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Scalar output value
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+
+	<!-- Vector output value -->
+	<xs:complexType name="CT_Vector">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				Vector output value
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<!-- Matrix output value -->
+	<xs:complexType name="CT_Matrix">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				Matrix output value
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<!-- ResourceId output -->
+	<xs:complexType name="CT_ResourceID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				ResourceId output
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<!-- FunctionId -->
+	<xs:complexType name="CT_FunctionId">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				FunctionId output
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_Function">
 		<xs:sequence>
 			<xs:choice>
-				<xs:element ref="scalarfieldfromimage3d"/>
-				<xs:element ref="scalarfieldconstant"/>
-				<xs:element ref="scalarfieldcomposed"/>
+				<xs:element ref="functionfromimage3d"/>
 				<xs:any namespace="##other" processContents="lax"/>
 			</xs:choice>
+			<xs:element name="in" minOccurs="1" maxOccurs="unbounded">
+				<xs:complexType>
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[
+						Inputs to the function.
+						]]>
+							</xs:documentation>
+						</xs:annotation>
+						<xs:sequence>
+							<xs:element name="scalar" type="CT_Scalar" />
+							<xs:element name="vector" type="CT_Vector" />
+							<xs:element name="matrix" type="CT_Matrix" />
+							<xs:element name="resourceid" type="CT_ResourceID" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+				<xs:element name="out" minOccurs="1" maxOccurs="1">
+					<xs:complexType>
+						<xs:annotation>
+							<xs:documentation>
+								<![CDATA[
+						References to the outputs of the function.
+						]]>
+							</xs:documentation>
+						</xs:annotation>
+						<xs:sequence>
+							<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
+								maxOccurs="unbounded" />
+							<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
+								maxOccurs="unbounded" />
+							<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0"
+								maxOccurs="unbounded" />
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="name" type="xs:string"/>
+		<xs:attribute name="displayname" type="xs:string"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_ScalarFieldFromImage3D">
+	<xs:complexType name="CT_FunctionFromImage3D">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
@@ -938,86 +1159,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
-
-	<xs:complexType name="CT_ScalarFieldComposed">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="method" type="ST_Method" use="required"/>
-		<xs:attribute name="scalarfieldid1" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="scalarfieldid2" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="scalarmaksfieldid" type="ST_ResourceID"/>
-		<xs:attribute name="factor1" type="ST_Number" default="1.0"/>
-		<xs:attribute name="factor2" type="ST_Number" default="1.0"/>
-		<xs:attribute name="transform1" type="ST_Matrix3D"/>
-		<xs:attribute name="transform2" type="ST_Matrix3D"/>
-		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
-	<xs:complexType name="CT_ScalarFieldConstant">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="value" type="ST_Number" use="required"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
-	<xs:complexType name="CT_Vector3DField">
-		<xs:sequence>
-			<xs:choice>
-				<xs:element ref="vector3dfieldfromimage3d"/>
-				<xs:element ref="vector3dfieldconstant"/>
-				<xs:element ref="vector3dfieldcomposed"/>
-				<xs:any namespace="##other" processContents="lax"/>
-			</xs:choice>
-		</xs:sequence>
-		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="name" type="xs:string"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
 	
-	<xs:complexType name="CT_Vector3DFieldFromImage3D">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="filter" type="ST_Filter" default="linear"/>
-		<xs:attribute name="valueoffset" type="ST_Number" default="0.0"/>
-		<xs:attribute name="valuescale" type="ST_Number" default="1.0"/>
-		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap"/>
-		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap"/>
-		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
-	<xs:complexType name="CT_Vector3DFieldComposed">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="method" type="ST_Method" use="required"/>
-		<xs:attribute name="vector3dfieldid1" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="vector3dfieldid2" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="scalarmaksfieldid" type="ST_ResourceID"/>
-		<xs:attribute name="factor1" type="ST_Number" default="1.0"/>
-		<xs:attribute name="factor2" type="ST_Number" default="1.0"/>
-		<xs:attribute name="transform1" type="ST_Matrix3D"/>
-		<xs:attribute name="transform2" type="ST_Matrix3D"/>
-		<xs:attribute name="transformmask" type="ST_Matrix3D"/>
-		<xs:attribute name="compositionspace" type="ST_CompositionSpace" default="raw"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
-	<xs:complexType name="CT_Vector3DFieldConstant">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-		<xs:attribute name="valuex" type="ST_Number" use="required"/>
-		<xs:attribute name="valuey" type="ST_Number" use="required"/>
-		<xs:attribute name="valuez" type="ST_Number" use="required"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
 	<xs:complexType name="CT_Mesh">
 		<xs:sequence>
 			<xs:element ref="volumedata" minOccurs="0" maxOccurs="1"/>
@@ -1040,9 +1182,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="scalarfieldid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="channel" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:attribute name="solidthreshold" type="ST_Number" default="0"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
+		<xs:attribute name="meshbboxonly" type="xs:boolean" default="false"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -1050,8 +1195,10 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="vector3dfieldid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="channel" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -1068,8 +1215,10 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="scalarfieldid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="channel" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -1077,10 +1226,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="fieldid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="channel" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
 		<xs:attribute name="name" type="xs:QName" use="required"/>
 		<xs:attribute name="required" type="xs:boolean" use="required"/>
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -1148,14 +1299,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="imagestack" type="CT_ImageStack"/>
 	<xs:element name="imagesheet" type="CT_ImageSheet"/>
-	<xs:element name="scalarfield" type="CT_ScalarField"/>
-	<xs:element name="scalarfieldfromimage3d" type="CT_ScalarFieldFromImage3D"/>
-	<xs:element name="scalarfieldcomposed" type="CT_ScalarFieldComposed"/>
-	<xs:element name="scalarfieldconstant" type="CT_ScalarFieldConstant"/>
-	<xs:element name="vector3dfield" type="CT_Vector3DField"/>
-	<xs:element name="vector3dfieldfromimage3d" type="CT_Vector3DFieldFromImage3D"/>
-	<xs:element name="vector3dfieldcomposed" type="CT_Vector3DFieldComposed"/>
-	<xs:element name="vector3dfieldconstant" type="CT_Vector3DFieldConstant"/>
+	<xs:element name="function" type="CT_Function"/>
+	<xs:element name="functionfromimage3d" type="CT_FunctionFromImage3D"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
 	<xs:element name="boundary" type="CT_Boundary"/>
 	<xs:element name="composite" type="CT_Composite"/>
