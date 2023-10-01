@@ -120,7 +120,7 @@ They allow to reference the output of nodes in a graph for the implicit extensio
 ## 2.1 ST_NodeOutputIdentifier
 The `ST_NodeOutputIdentifier` is a simple type used to represent an identifier for a node output in the format of "nodename.outputname".
 
-ST_ScalarID, ST_VectorID, ST_MatrixID, ST_FunctionID are all derived from ST_NodeOutputIdentifier.
+ST_ScalarID, ST_VectorID, ST_MatrixID, ST_ResourceID are all derived from ST_NodeOutputIdentifier.
 
 ### Format
 The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier must consist of alphanumeric characters and underscores. The dot (.) separates the node name and the output name.
@@ -158,17 +158,17 @@ References to functions are only used for the implicit extension.
 | displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
 | ref       | ST_MatrixID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".                              |
 
-## 2.5 FunctionReference
-Element \<functionref>
+## 2.5 ResourceReference
+Element \<resourceref>
 
-References to functions are only used for the implicit extension.
+References to resources are only used for the implicit extension.
 
-![Function XML Structure](images/element_functionReference.png)
+![Function XML Structure](images/element_resourceReference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this function resource.                          |
 | displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_FunctionID      | required |         | Reference to the scalar in the form "NodeIdentifier.FunctionIdentifier".                              |
+| ref       | ST_ResourceOutputID      | required |         | Reference to the resource output in the form "NodeIdentifier.OutputIdentifier".                              |
 
 
 # Chapter 3. Functions and Function Types
@@ -2660,11 +2660,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="ref" type="ST_MatrixID" use="required" />
 	</xs:complexType>
 
-	<xs:complexType name="CT_FunctionRef">
+	<xs:complexType name="CT_ResourceRef">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Reference to a function
+			Reference to a resource, e.g. a function or an image3d
 			]]>
 			</xs:documentation>
 		</xs:annotation>

@@ -121,6 +121,17 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
 
+	<xs:simpleType name="ST_ResourceOutputID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier of an output providing a resource id
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
 	<xs:complexType name="CT_Ref">
 		<xs:annotation>
 			<xs:documentation>
@@ -172,16 +183,16 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="ref" type="ST_MatrixID" use="required" />
 	</xs:complexType>
 
-	<xs:complexType name="CT_FunctionRef">
+	<xs:complexType name="CT_ResourceRef">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Reference to a function
+			Reference to a resource
 			]]>
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_ResourceID" use="required" />
+		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
 	</xs:complexType>
 
 	<!-- Scalar output value -->

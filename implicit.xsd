@@ -2576,11 +2576,11 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Calls a function. It must at least have an functionref input with the identifier "functionID".
+			Calls a function. It must at least have an resourceref input with the identifier "functionID".
 			Example:
 			<functioncall identifier="sphere" displayname="Sphere">
 				<in>
-					<functionref identifier="functionID" ref="functionIDNode.value" />
+					<resourceref identifier="functionID" ref="functionIDNode.value" />
 					<scalarref identifier="pos" ref="othernode_0.result" />
 					<scalarref identifier="radius" ref="othernode_1.result" />
 				</in>
@@ -2610,7 +2610,7 @@
 									maxOccurs="unbounded" />
 								<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="0"
 									maxOccurs="unbounded" />
-								<xs:element name="functionref" type="vol:CT_FunctionRef"
+								<xs:element name="resourceref" type="vol:CT_ResourceRef"
 									minOccurs="1"
 									maxOccurs="1" />
 							</xs:sequence>
@@ -2621,15 +2621,19 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							References to the outputs of the function.
-							]]>
+									Outputs of the function.
+									]]>
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="0"
-									maxOccurs="unbounded" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="0"
-									maxOccurs="unbounded" />
+								<xs:element name="scalar" type="vol:CT_Scalar" minOccurs="0"
+								maxOccurs="unbounded" />
+								<xs:element name="vector" type="vol:CT_Vector" minOccurs="0"
+								maxOccurs="unbounded" />
+								<xs:element name="matrix" type="vol:CT_Matrix" minOccurs="0"
+								maxOccurs="unbounded" />
+								<xs:element name="resourceid" type="vol:CT_ResourceID" minOccurs="0"
+								maxOccurs="unbounded" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
