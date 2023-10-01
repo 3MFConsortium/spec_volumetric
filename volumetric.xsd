@@ -244,18 +244,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
 	</xs:complexType>
 
-	<!-- FunctionId -->
-	<xs:complexType name="CT_FunctionId">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				FunctionId output
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
 	<xs:complexType name="CT_Function">
 		<xs:sequence>
 			<xs:choice>

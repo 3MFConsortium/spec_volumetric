@@ -2486,7 +2486,7 @@ See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/
 
 ## Appendix B. 3MF XSD Schema for the Volumetric Extension
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
+<<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
 	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
@@ -2609,6 +2609,17 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
 
+	<xs:simpleType name="ST_ResourceOutputID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier of an output providing a resource id
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
 	<xs:complexType name="CT_Ref">
 		<xs:annotation>
 			<xs:documentation>
@@ -2664,12 +2675,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Reference to a resource, e.g. a function or an image3d
+			Reference to a resource
 			]]>
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_ResourceID" use="required" />
+		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
 	</xs:complexType>
 
 	<!-- Scalar output value -->
@@ -2715,18 +2726,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:documentation>
 				<![CDATA[
 				ResourceId output
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-	<!-- FunctionId -->
-	<xs:complexType name="CT_FunctionId">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				FunctionId output
 				]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -2946,65 +2945,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="property" type="CT_Property"/>
 	<xs:element name="mesh" type="CT_Mesh"/>
 </xs:schema>
-```
 
-# Appendix C. Standard Namespace
-
-Volumetric [http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01](http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01)
-
-# Appendix D: Example file
-
-3dmodel.model-file corresponding to the structure in Figure 3-4 b):
-```xml
-<?xml version="1.0" encoding="utf-8"?>
-<model xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02" unit="millimeter" xml:lang="en-US" 
-xmlns:v="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" >
-	<resources>
-		<v:image3d id="1">
-			<v:imagestack rowcount="3" columncount="4" sheetcount="2">
-				<v:imagesheet path="/3D/volumetric/colors/sheet0.png"/>
-				<v:imagesheet path="/3D/volumetric/colors/sheet1.png"/>
-			</v:imagestack>
-		</v:image3d>
-		<v:vector3dfield id="2">
-			<v:vector3dfieldfromimage3d image3did="1"/>
-		</v:vector3dfield>
-		<object id="3" name="Body1" type="model">
-			<mesh>
-				<vertices>
-					<vertex x="200" y="100" z="75"/>
-					<vertex x="-100" y="100" z="75"/>
-					<vertex x="-100" y="16.66667" z="75"/>
-					<vertex x="200" y="16.66667" z="75"/>
-					<vertex x="-100" y="100" z="-100"/>
-					<vertex x="200" y="100" z="-100"/>
-					<vertex x="200" y="16.66667" z="-100"/>
-					<vertex x="-100" y="16.66667" z="-100"/>
-				</vertices>
-				<triangles>
-					<triangle v1="1" v2="2" v3="0"/>
-					<triangle v1="0" v2="2" v3="3"/>
-					<triangle v1="5" v2="6" v3="4"/>
-					<triangle v1="4" v2="6" v3="7"/>
-					<triangle v1="3" v2="6" v3="0"/>
-					<triangle v1="0" v2="6" v3="5"/>
-					<triangle v1="2" v2="7" v3="3"/>
-					<triangle v1="3" v2="7" v3="6"/>
-					<triangle v1="1" v2="4" v3="2"/>
-					<triangle v1="2" v2="4" v3="7"/>
-					<triangle v1="0" v2="5" v3="1"/>
-					<triangle v1="1" v2="5" v3="4"/>
-				</triangles>
-				<v:volumedata>
-					<color vector3dfieldid="2" transform="0.01 0 0 0 0.0133333333333 0 0 0 0.02 0 0 0"/>
-				</v:volumedata>
-			</mesh>
-		</object>
-	</resources>
-	<build>
-		<item objectid="3"/>
-	</build>
-</model>
 
 ```
 
