@@ -397,206 +397,9 @@ _Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The consider that
 The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
 
-## 3.3 Constant Scalar Field
+# Chapter 4. Volumetric Data
 
-Element type
-**\<scalarfieldconstant>**
-
-![scalarfieldconstant XML structure](images/element_scalarfieldconstant.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| value | ST\_Number | required | | The constant value this scalar field evaluates to. |
-
-A \<scalarfieldconstant>-element encodes a constant function, i.e. when the \<scalarfieldconstant>-element is being sampled, it evaluates to the constant value given by its attribute `value`.
-
-## 3.4 Composed Scalar Field
-
-Element type
-**\<scalarfieldcomposed>**
-
-![scalarfieldcomposed XML structure](images/element_scalarfieldcomposed.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| method | ST\_Method | required | | Determines how the referenced scalar fields are composed. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
-| scalarfieldid1 | ST\_ResourceId | required | | The resource id of a \<scalarfield> resource that will be used as first field during the composition.  |
-| scalarfieldid2 | ST\_ResourceId | required | | The resource id of a \<scalarfield> resource that will be used as second field during the composition.  |
-| factor1 | ST\_Number | | 1.0 | Numeric scale factor for the first composited field. Only used if method is "weightedsum". |
-| factor2 | ST\_Number | | 1.0 | Numeric scale factor for the second composited field. Only used if method is "weightedsum". |
-| transform1 | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for as first field during the composition. |
-| transform2 | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for as second field during the composition. |
-| scalarfieldmaskid | ST\_ResourceId | | | The resource id of a \<scalarfield> resource which shall be used for masking. Required if method is "mask".  |
-| transformmask | ST\_Matrix3D | | | Transformation of this \<scalarfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for masking. |
-
-Each \<scalarfieldcomposed>-element encodes a simple volumetric modeling operation, that is the composition of two (or three, in the case of the method "mask") scalar fields.
-
-To simplify parsing, producers MUST define \<scalarfield>-elements prior to referencing them via scalarfieldid1, scalarfieldid1 or scalarfieldmaskid in a \<scalarfieldcomposed>-element.
-
-**method**: controls according to which formula referred scalar fields should be composed.
-
-Let's denote the sampled value of this \<scalarfieldcomposed>-element at point `(x,y,z)` as `c`.
-To evaluate `c`, the first scalar field needs to be evaluated at `T1*(x,y,z)`, yielding `s2`, where `T1` is given by the transform1 attribute.
-The second scalar field needs to be evaluated at `T2*(x,y,z)`, yielding `s2`, where `T2` is given by the transform2 attribute.
-
-With these definitions at hand the sampled value of this composed scalar field `c` is calculated according to the method attribute:
-
-- "weightedsum":
-
-    `c = factor1 * s1 + factor2 * s2`
-    
-- "multiply":
-
-    `c = s1 * s2`
-
-- "min" or "max":
-   
-    `c = min(s1, s2)`  or  `c = min(s1, s2)`
-    
-    Methods "min" and "max" are useful to capture boolean operations (union and intersection, respectively) between fields representing levelset functions.
-
-- "mask":
-
-    The method "mask" provides a means to use another scalarfield as a volumetric decal that only affects a region of complex shape within the volume.
-
-    `c = m * s1 + (1 - m) * s2`
-    
-    Here, `m` is the value of the scalar field referred to by the `scalarfieldmaskid` attribute of this \<scalarfieldcomposed>-element evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
-    
-    __Note__: The method "mask" implements the same formula as the method "mix" for the rgb-values of an \<multiproperties>-element in the [Materials and Properties Extension specification, Chapter 5](https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-5-multiproperties).
-
-
-Figure 4-1 shows example of the composition of two scalar fields by a \<scalarfieldcomposed> using the different methods and varying factors.
-
-_Figure 4-1: Example of composition methods and parameters_
-![Example of composition methods and parameters](images/composition.png)
-
-# Chapter 4. 3D Vector Fields
-
-3D Vector fields work analogously to scalar fields, however, each composition or sampling operation is being performed for the three components of the vector valued function: `f=(f1,f2,f3)`. Each of these vector-components could as well be described as a scalar field. However, when describing color values or vector valued properties, it is more natural to choose a vector-based representation.
-
-The only differences are in how the 3D Vector Field gets sampled from an image3d, and how the method "mask" during composition work.
-The rigorous specification of the 3D Vector field follows now.
-
-## 4.1 3D Vector Field
-
-Element type **\<vector3dfield>**
-
-![vector3dfield XML structure](images/element_vector3dfield.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | The resource id of this vector3dfield resource |
-| name | xs:string | | | Field for a human readable name of this field |
-
-This container contains one of multiple specialization. This speficiation defines the \<vector3dfieldfromimage3d>-, \<vector3dfieldconstant>- and \<vector3dfieldcomposed>-elements. Later versions of this specification might provide alternative child elements for the \<vector3dfield> element.
-
-Whenever a language element of this specification refers to a \<vector3dfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the element referred to.
-
-
-## 4.2 3D Vector Field from Image3D
-
-Element type
-**\<vector3dfieldfromimage3d>**
-
-![vector3dfieldfromimage3d XML structure](images/element_vector3dfieldfromimage3d.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource. |
-| filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation. |
-| valueoffset | ST\_Number |  | 0.0 | Specifies a numerical offset for the values obtained from any channel within the `image3d` referred to by this `vector3dfieldfromimage3d`. |
-| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from any channel within the `image3d` referred to by this `vector3dfieldfromimage3d`. |
-| tilestyleu | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range. |
-| tilestylev | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range. |
-| tilestylew | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range. |
-
-Elements of type \<vector3dfieldfromimage3d> define a 3d-vector valued field (which can be sampled at any point in space) from values on a voxel grid defined in the \<image3d> element.
-
-To simplify parsing, producers MUST define \<image3d>-elements prior to referencing them via imaged3did in a \<vector3dfieldfromimage3d>-element.
-
-This element samples the channels "R", "G" and "B" from the image3d. Channels "R", "G" and "B" of the image3d are interpreted as components `f1`, `f2` and `f3` respectively. If the image3d does not provide either of these channels, the image3d provides the values for "R", "G" and "B" according to the table in [Chapter 2. 3D Image](#chapter-2-3d-image).
-
-The attributes tilestyleu, tilestylev, tilestylew, and filter, valueoffset and valuescale work as they do for the scalar field from image3d for the individual vector components of this 3d vector field from image3d.
-
-## 4.3 Constant 3D Vector Field
-
-Element type
-**\<vector3dfieldconstant>**
-
-![vector3dfieldconstant XML structure](images/element_vector3dfieldconstant.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| valuex | ST\_Number | required | | The constant x-component that this 3d vector field evaluates to. |
-| valuey | ST\_Number | required | | The constant y-component that this 3d vector field evaluates to. |
-| valuez | ST\_Number | required | | The constant z-component that this 3d vector field evaluates to. |
-
-A \<vector3dfieldconstant>-element encodes a constant 3d vector valued function, i.e. when the \<vector3dfieldconstant>-element is being sampled, it evaluates to the constant vector `(valuex, valuey, valuez)`.
-
-## 4.4 Composed 3D Vector Field
-
-Element type
-**\<vector3dfieldcomposed>**
-
-![vector3dfieldcomposed XML structure](images/element_vector3dfieldcomposed.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| method | ST\_Method | required | | Determines how the referenced scalar fields are composed. Allowed values are "weightedsum", "multiply", "min", "max" or "mask". |
-| vector3dfieldid1 | ST\_ResourceId | required | | The resource id of a \<vector3dfield> resource that will be used as first field during the composition.  |
-| vector3dfieldid2 | ST\_ResourceId | required | | The resource id of a \<vector3dfield> resource that will be used as second field during the composition.  |
-| factor1 | ST\_Number | | 1.0 | Numeric scale factor for the first composited field. Only used if method is "weightedsum". |
-| factor2 | ST\_Number | | 1.0 | Numeric scale factor for the second composited field. Only used if method is "weightedsum". |
-| transform1 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as first field during the composition. |
-| transform2 | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<vector3dfield> used for as second field during the composition. |
-| compositionspace | ST\_CompositionSpace | | "raw" | Determines whether composition should take place with raw numerircal values, or in linearized color space. |
-| scalarfieldmaskid | ST\_ResourceId | | | The resource id of a \<scalarfield> resource which shall be used for masking. Required if method is "mask".  |
-| transformmask | ST\_Matrix3D | | | Transformation of this \<vector3dfieldcomposed> coordinate system into the coordinate system of the \<scalarfield> used for masking. |
-
-Each \<vector3dfieldcomposed>-element encodes a simple volumetric modeling operation that acts on a 3D-vector-valued function, that is the composition of two 3D vector fields and optionally a scalar field in the case of the method "mask".
-
-To simplify parsing, producers MUST define \<vector3dfield>- and \<scalarfield>-elements prior to referencing them via scalarfieldid1, scalarfieldid1 or scalarfieldmaskid in a \<vector3dfieldcomposed>-element, respectively.
-
-All attributes work analogously to how they work in the \<scalarfieldcomposed>-element in that they are applied per vector component `f1`, `f2` and `f3`. The only deviation is in the method "mask" which applies the same scalar mask field to all components of the \<vector3dfields> vector3dfieldid1 and vector3dfieldid2.
-
-Let's denote the sampled value of this \<vector3dfieldcomposed>-element at point `(x,y,z)` as **`c`**.
-To evaluate **`c`**, the first 3D vector field is evaluated at `T1*(x,y,z)`, yielding **`s2`**, where `T1` is given by the transform1 attribute.
-To evaluate **`c`**, the second 3D vector field is evaluated at `T2*(x,y,z)`, yielding **`s2`**, where `T2` is given by the transform2 attribute.
-
-With these definitions at hand the sampled value of this composed 3D vector field **`c`** is calculated according to the method attribute:
-
-- "mask":
-
-    The method "mask" provides a means to use another 3D vector field as a volumetric decal that only affects a region of complex shape within the volume.
-
-    `c = m * s1 + (1 - m) * s2`
-    
-    Here, m is the value of the scalar field referred to by the `scalarfieldmaskid` attribute of this composed 3D vector field evaluated at `Tmask*(x,y,z)`, where `Tmask` is given by the transformmask attribute.
-
-The compositionspace-attribute determines whether values of the input 3D vector fields are composited as they are being sampled ("raw") or whether the composition takes place in linearized color space ("linearcolor").
-The "linearcolor" option SHOULD be used when the results of a \<vector3dfieldcomposed> are used (directly or indirectly) as \<color>-element (see [\<volumedata>](#5-2-volumetric-data)). This is to be consistent with the blending in the Materials and Properties extension specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
-
-If the option is "linearcolor" the following modification to the formulae of the composition methods above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field) MUST be made:
-1. Values sampled from any of the input 3D vector fields MUST be transformed into "linear-space" values according to this formula:
-
-	![value linear](images/formula_value_linear.png)
-
-2. These transformed values values_linear are composited using the formulae above and in [3.3 Composed Scalar Field](##3.3-composed-scalar-field).
-
-3. The values from step 2 must be transformed back into raw-values according to this formula:
-
-	![value raw](images/formula_value_raw.png)
-
-__Note:__
-The values sampled from the masking scalar field MUST NOT be linearized.
-
-_Figure 4-2: Example of the composition method "mask" for the composed 3D vector field_
-![Example of the composition method "mask" for the composed 3D vector field](images/compositing_mask.png)
-
-# Chapter 5. Volumetric Data
-
-## 5.1. Volumetric Data extension to Mesh
+## 4.1. Volumetric Data extension to Mesh
  
 Element **\<mesh>**
 
@@ -605,7 +408,7 @@ Element **\<mesh>**
 The volumetric data \<volumedata> element is a new OPTIONAL element which extends the root triangular mesh representation (i.e. the \<mesh> element).
 
 
-## 5.2. Volumetric Data
+## 4.2. Volumetric Data
 
 Element **\<volumedata>**
 
@@ -653,7 +456,7 @@ _Figure 5-1: a) Mesh object A (circle) with \<volumedata> child element X. b) Me
 ![Illustration of overlapping meshes with \<volumedata> child elements](images/overlap_properties.png)
 
 
-### 5.2.1 Boundary element
+### 4.2.1 Boundary element
 
 Element **\<boundary>**
 
@@ -685,7 +488,7 @@ The transformation of the object coordinate system into the scalar field coordin
 If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 See Figure 6-1 for an illustration of this transform in the sampling process.
 
-### 5.2.2 Color element
+### 4.2.2 Color element
 
 Element **\<color>**
 
@@ -710,7 +513,7 @@ This specification does not capture well the properties for semi-transparent, di
 The transformation of the object coordinate system into the 3D vector field coordinate system.
 If this \<color>>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the 3D vector field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
-## 5.2.3 Composite element
+## 4.2.3 Composite element
 
 Element **\<composite>**
 
@@ -726,7 +529,7 @@ This element MUST contain at least one \<materialmapping> element, which will en
 
 The number of \<base>-elements in the \<basematerials> element referenced by a \<composite> element MUST equal the number of \<materialmapping>-elements in the \<composite> element. To simplify parsing, producers MUST define the referenced \<basematerials>-element prior to referencing it via the basematerialid in a \<composite>-element.
 
-## 5.2.4 Material mapping element
+## 4.2.4 Material mapping element
 
 Element **\<materialmapping>**
 
@@ -757,7 +560,7 @@ Producers MUST NOT create files where the sum of all values in its child \<mater
 
 The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
 
-### 5.2.4.1 Property element
+### 4.2.4.1 Property element
 
 Element **\<property>**
 
