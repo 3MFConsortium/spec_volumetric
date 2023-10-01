@@ -114,39 +114,62 @@ A producer using the boundary element of the volumetric specification MUST mark 
 
 # Chapter 2. DataTypes
 
-The volumetric extension of 3MF, defines 3 new datatypes that serve as inputs and outputs to <functions> for volumetric evaluation.
+The volumetric extension of 3MF, defines 4 new datatypes that are used for definition of the outputs of functions for volumetric evaluation. 
+They allow to reference the output of nodes in a graph for the implicit extension or define the mapping of the output channels for the sampling of an image3d with functionFromImage3D. The References are of the type ST_NodeOutputIdentifier.
 
-## 2.1 ScalarReference
-Element **\<scalarRef>**
+## 2.1 ST_NodeOutputIdentifier
+The `ST_NodeOutputIdentifier` is a simple type used to represent an identifier for a node output in the format of "nodename.outputname".
+
+ST_ScalarID, ST_VectorID, ST_MatrixID, ST_FunctionID are all derived from ST_NodeOutputIdentifier.
+
+### Format
+The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier must consist of alphanumeric characters and underscores. The dot (.) separates the node name and the output name.
+
+## 2.2 ScalarReference
+Element \<scalarref>
 
 ![Scalar XML Structure](images/element_scalarReference.png)
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | Specifies an identifier for this scalar resource. |
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this scalar resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_ScalarID      | required |         | Reference to the scalar in the form "NodeIdentifier.ScalarIdentifier".  
 
-## 2.2 VectorReference
-Element **\<vectorRef>**
-
-![Vector XML Structure](images/element_vectorReference.png)
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | Specifies an identifier for this vector resource. |
-
-## 3.2 VectorReference
-Element **\<vectorRef>**
+## 2.3 VectorReference
+Element \<vectorref>
 
 ![Vector XML Structure](images/element_vectorReference.png)
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | Specifies an identifier for this vector resource. |
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  
+                              |
 
-## 3.2 MatrixReference
-Element **\<matrixRef>**
+## 2.4 MatrixReference
+Element \<matrixref>
+
+References to functions are only used for the implicit extension.
 
 ![Vector XML Structure](images/element_matrixReference.png)
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | Specifies an identifier for this matrix resource. |
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this matrix resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_MatrixID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".                              |
+
+## 2.5 FunctionReference
+Element \<functionref>
+
+References to functions are only used for the implicit extension.
+
+![Function XML Structure](images/element_functionReference.png)
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this function resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_FunctionID      | required |         | Reference to the scalar in the form "NodeIdentifier.FunctionIdentifier".                              |
+
 
 # Chapter 3. Functions and Function Types
 
@@ -308,8 +331,11 @@ Each \<imagesheet> element has one required attribute. The path property determi
 __Note__:
 Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of \<image3d> and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different data format for a voxel grid as child under \<image3d> would not affect the remaining parts of this specification.
 
-# Chapter 3. Scalar Fields
+# Chapter 3. Functions
  
+
+
+
 This specification relies on the notion of scalar and vectorial fields.
 A scalar field is a mathematical function `f:R^3 -> R` that assigns to every point in 3D space a single numerical (scalar) value. Examples would be the temperature in degrees Celsius in a room at any point in space or the function `f(x,y,z) = x^2 + y^2 + z^2`.
 
