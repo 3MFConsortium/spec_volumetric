@@ -21,8 +21,8 @@
   * [Software Conformance](#software-conformance)
 - [Part I: Volumetric Extension](#part-i-volumetric-extension)
   * [Chapter 1. Overview of Volumetric Additions](#chapter-1-overview-of-volumetric-additions)
-  * [Chapter 2. DataTypes]()
-  * [Chapter 3. Functions](#chapter-3-functions)
+  * [Chapter 2. DataTypes](#chapter-2-DataTypes)
+  * [Chapter 3. Functions](#chapter-3-functions-and-function-types)
   * [Chapter 4. 3D Image](#chapter-4-3d-image)
   * [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
   * [Chapter 6. Notes](#chapter-6-notes)
@@ -70,7 +70,7 @@ This 3MF implicit specification is an extension to the core 3MF specification an
 
 Part I, "Volumetric Extension," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
 
-Part II, "Implicit Extension," presents the details of the primarily XML-based 3MF Document format. This section describes the XML markup that defines the composition of 3D documents and the appearance of each model within the document.
+Part II, "Implicit Extension," describes the XML markup for describing implicit functions and their evaluation by defining a graph of nodes and their connections.
 
 Part III, "Appendices," contains additional technical details and schemas too extensive to include in the main body of the text as well as convenient reference information.
 
@@ -120,7 +120,7 @@ They allow to reference the output of nodes in a graph for the implicit extensio
 ## 2.1 ST_NodeOutputIdentifier
 The `ST_NodeOutputIdentifier` is a simple type used to represent an identifier for a node output in the format of "nodename.outputname".
 
-ST_ScalarID, ST_VectorID, ST_MatrixID, ST_ResourceID are all derived from ST_NodeOutputIdentifier.
+ST_ScalarID, ST_VectorID, ST_MatrixID and ST_ResourceOutputID are derived from ST_NodeOutputIdentifier.
 
 ### Format
 The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier must consist of alphanumeric characters and underscores. The dot (.) separates the node name and the output name.
@@ -197,14 +197,94 @@ Element **\<functionFromImage3d>**
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 | image3did | ST\_ResourceID | required | | Specifies an identifier for the image3d resource that this function uses during evaluation. |
-| valueoffset | xs:double | optional | 0.0 | ??????? |
-| valuescale | xs:double | optional | 1 | ??????? |
-| filter | xs:string | optional | linear | ??????? |
-| tilestyleu | xs:string | optional | clamp | ??????? |
-| tilestylev | xs:string | optional | clamp | ??????? |
-| tilestylew | xs:string | optional | clamp | ??????? |
+| valueoffset | xs:double | optional | 0.0 | Specifies a numerical offset for the samples values |
+| valuescale | xs:double | optional | 1.0 | Specifies a numerical scaling of the sampled values |
+| filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation. |
+ tilestyleu | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range. |
+| tilestylev | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range. |
+| tilestylew | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range. |
 
-FunctionFromImage3d is a container for an image3D which is evaluatable. The output of functionFromImage3d is of <scalar> type. The input of functionFromImage3d is <vector> or <scalar> type.
+Elements of type \<functionfromimage3d> define a function which can be sampled at any point in space from values on a voxel grid defined in the \<image3d> element. The function is evaluated by sampling the image3d at the UVW coordinates of the model position. The UVW coordinates are determined by the filter-rule and the tilestyle attributes of the \<functionfromimage3d>-element.
+
+To simplify parsing, producers MUST define \<image3d>-elements prior to referencing them via imaged3did in a \<functionfromimage3d>-element.
+
+**tilestyle-u, -v or -w**:
+
+MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavior of the sampler of this \<scalarfieldfromimage3d> for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
+
+1. "wrap" assumes periodic texture sampling, see Figure 3-1 a). A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
+</br>s’ = s – floor(s)
+
+2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture MUST be reflected across a plane perpendicular to the axis in question, see Figure 3-1 b). This behavior follows this formula:
+</br>s’ = 1 - abs( s - 2 * floor(s/2) - 1 )
+
+3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 3-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
+</br>s’ = min(1, max(0,s))
+
+	_Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second \<imagesheet>. b) tilestyle mirror illustrated throughout the second \<imagesheet>. c) tilestyle clamp along the u-direction illustrated throughout the second \<imagesheet>_
+	![Tilestyles](images/tilestyle_all.png)
+
+**filter**:
+The filter attribute defines the interpolation method used when a \<functionfromimage3d> is being sampled. This is illustrated in Figure 3-4.
+
+- If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
+
+	_Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
+
+	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
+
+
+- If the interpolation method of an elements of type \<functionfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
+
+_Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
+![Tilestyle mirror](images/filter.png)
+
+**`offsetvalue` and `scalevalue`**:
+
+The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
+
+
+A \<functionfromimage3d> is a container for an image3D which is evaluatable. In contrast to implict functions, the inputs and outputs of a functionfromimage3d are fixed and are not defined in the markup, but can be referenced by volumedata elements or as an output of a functionCall-Node in the implicit extension.
+It has the following input and outputs:
+
+**Inputs:**
+| Identifier | Type |	Description |
+|------------|-------------|-------------|
+| pos        | vector    | Normaliced position in the model space  |
+
+**Outputs:**
+| Identifier | Type |	Description |
+|------------|-------------|-------------|
+| color      | vector    | Vector containg the rgb values |
+| red		 | scalar    | Scalar containing the red value |
+| green		 | scalar    | Scalar containing the green value |
+| blue		 | scalar    | Scalar containing the blue value |
+| alpha      | scalar    | Scalar containing the alpha value |
+
+The appearance of color and red, green, blue might seem redundant, but allows to also use the output directly as a vectorial field. 
+
+**Example Usage:**
+```xml 
+<v:image3d id="2">
+			<v:imagestack rowcount="821" columncount="819" sheetcount="11">
+				<v:imagesheet path="/volume/layer_01.png"/>
+				...
+			</v:imagestack>
+		</v:image3d>
+<v:functionfromimage3d id="3" displayname="function from image3d" image3dID="2" offset="0" scale="1400" tilestyleu="wrap" tilestylev="clamp" tilestylew="mirror" filter="linear"></v:functionfromimage3d>
+...
+<mesh>
+	<vertices>
+		...
+	</vertices>
+	<triangles>
+		...
+	</triangles>
+	<v:volumedata>
+		<v:property name="Temp" transform="0.01 0 0 0 0.01 0 0 0 0.01 0.5 0.5 0.5" functionid="3" channel="red"/>
+	</v:volumedata>
+</mesh>
+```
 
 ## 3.3 PrivateExtensionFunction
 Element **\<PrivateExtensionFunction>
@@ -330,97 +410,6 @@ Each \<imagesheet> element has one required attribute. The path property determi
 
 __Note__:
 Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of \<image3d> and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different data format for a voxel grid as child under \<image3d> would not affect the remaining parts of this specification.
-
-# Chapter 3. Functions
- 
-
-
-
-This specification relies on the notion of scalar and vectorial fields.
-A scalar field is a mathematical function `f:R^3 -> R` that assigns to every point in 3D space a single numerical (scalar) value. Examples would be the temperature in degrees Celsius in a room at any point in space or the function `f(x,y,z) = x^2 + y^2 + z^2`.
-
-Similarly, a vectorial field is a mathematical function `f:R^3 -> R^3` that assigns to every point in 3D space a 3D vector value. Examples would be the speed and direction of wind that also differs in space or the function `f(x,y,z) = (sin(x), cos(y), (x+y)/sqrt(1+z^2))`. More about 3d vector valued fields in [Chapter 4. 3D Vector Fields](#chapter-4-3d-vector-fields).
-
-## 3.1 Scalar Field
-
-Mathematical fields naturally lend themselves to represent volumetric structures. Their defining property is that one can attain (or sample) their value at any point in 3D space. To deal with them in the context of this specification, it introduces a container \<scalarfield> that is a resource in the 3MF model file.
-
-Element type
-**\<scalarfield>**
-
-![scalarfield XML structure](images/element_scalarfield.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| id | ST\_ResourceID | required | | The resource id of this scalarfield resource |
-| name | xs:string | | | Field for a human readable name of this field |
-
-This container contains one of multiple specialization. This specification defines the \<scalarfieldfromimage3d>,  \<scalarfieldconstant> and \<scalarfieldcomposed>-elements. Later versions of this specification or third parties may provide alternative child elements for the \<scalarfield> element in different XML namespaces.
-
-Whenever a language element of this specification refers to a \<scalarfield> element, this element provides an additional, optional transform-attribute, which determines the transformation of the coordinate space of said element into the coordinate system of the referred to element.
-
-## 3.2 Scalar Field From Image3D
-
-Element type
-**\<scalarfieldfromimage3d>**
-
-![scalarfieldfromimage3d XML structure](images/element_scalarfieldfromimage3d.png)
-
-| Name   | Type   | Use | Default| Annotation |
-| --- | --- | --- | --- | --- |
-| image3did | ST\_ResourceID | required | | Specifies the id of the 3d image resource. |
-| channel | ST\_ChannelName | required | | Specifies which channel to reference in the 3d image resource. |
-| valueoffset | ST\_Number |  | 0.0 | Specifies a numerical offset for the values obtained from the `channel` within the `image3d` referred to by this `scalarfieldfromimage3d`. |
-| valuescale | ST\_Number | | 1.0 | Specifies a numerical scaling for the values obtained from the `channel`  within the `image3d` referred to by this `scalarfieldfromimage3d`. |
-| filter |ST\_Filter | | linear | "linear" or "nearest" neighbor interpolation. |
-| tilestyleu | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate u outside the [0,1] range. |
-| tilestylev | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate v outside the [0,1] range. |
-| tilestylew | ST\_TileStyle | | wrap | Determines the behavior of the sampler for texture coordinate w outside the [0,1] range. |
-
-Elements of type \<scalarfieldfromimage3d> define a scalar field (which can be sampled at any point in space) from values on a voxel grid defined in the \<image3d> element.
-
-To simplify parsing, producers MUST define \<image3d>-elements prior to referencing them via imaged3did in a \<scalarfieldfromimage3d>-element.
-
-**channel**:
-
-The channel-attribute determines which channel to reference in the 3d image resource. Note that attributes of type \<ST\_ChannelName> are case-sensitive.
-The elements of type \<scalarfieldfromimage3d> MUST contain a \<ST\_ChannelName> attribute which determines which channel to pick from the \<image3d> element. This attribute must be any of the reserved channel names (i.e. "R", "G", "B", or "A").
-
-
-**tilestyle-u, -v or -w**:
-
-MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavior of the sampler of this \<scalarfieldfromimage3d> for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
-
-1. "wrap" assumes periodic texture sampling, see Figure 3-1 a). A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
-</br>s’ = s – floor(s)
-
-2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture MUST be reflected across a plane perpendicular to the axis in question, see Figure 3-1 b). This behavior follows this formula:
-</br>s’ = 1 - abs( s - 2 * floor(s/2) - 1 )
-
-3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 3-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
-</br>s’ = min(1, max(0,s))
-
-	_Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second \<imagesheet>. b) tilestyle mirror illustrated throughout the second \<imagesheet>. c) tilestyle clamp along the u-direction illustrated throughout the second \<imagesheet>_
-	![Tilestyles](images/tilestyle_all.png)
-
-**filter**:
-The filter attribute defines the interpolation method used when a \<scalarfieldfromimage3d> is being sampled. This is illustrated in Figure 3-4.
-
-- If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
-
-	_Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
-
-	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
-
-
-- If the interpolation method of an elements of type \<scalarfieldfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
-
-_Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
-![Tilestyle mirror](images/filter.png)
-
-**`offsetvalue` and `scalevalue`**:
-
-The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
 
 # Chapter 4. Volumetric Data
