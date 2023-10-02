@@ -210,7 +210,7 @@ To simplify parsing, producers MUST define \<image3d>-elements prior to referenc
 
 **tilestyle-u, -v or -w**:
 
-MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavior of the sampler of this \<scalarfieldfromimage3d> for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
+MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavior of the sampler of this \<functionfromimage3d> for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
 1. "wrap" assumes periodic texture sampling, see Figure 3-1 a). A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
@@ -298,7 +298,7 @@ Element **\<PrivateExtensionFunction>
 
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
-## 3.4 FuncitonImplicit
+## 3.4 FunctionImplicit
 Element **\<functionImplict>
 
 ![FunctionImplicit XML](images/element_functionImplict.png)
@@ -355,7 +355,7 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 | YA | Y | Y | Y | A |
 | Y | Y | Y | Y | 1 |
 
-For example, if a field (see [\<scalarfieldfromimage3d>](#3-2-scalar-field-from-image3d)- and [\<vector3dfieldfromimage3d>](#4-2-3d-vector-field-from-image3d)) in a 3MF-file specifies that a certain value is sampled from the image’s R channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all "R", "G", "B" color channels share the same greyscale value. If there is no alpha channel present in the image, the highest possible value `1` MUST be used.
+For example, if a function output from \<functionfromimage3d> in a 3MF-file that maps to the R(ed) channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all "R", "G", "B" color channels share the same greyscale value. If there is no alpha channel present in the image, the highest possible value `1` MUST be used.
 
 The \<imagestack>-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1} x {0,1,...,columncount-1} x {0,1,...,sheetcount-1}). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each \<imagesheet> corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel indices are shown as bold black triple, the UVW-coordinate values as red triples.
 Figure 2-1 b) illustrates the voxel indices and the UVW-values throughout the first \<imagesheet>, Figure 2-1 c) illustrates these quantities throughout the second \<imagesheet>. A voxel index triple `(i,j,k)` corresponds to a voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
@@ -363,7 +363,7 @@ Figure 2-1 b) illustrates the voxel indices and the UVW-values throughout the fi
 __Note__: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
 Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d.
 
-The sampling rules for UVW values are determined by the filter-rule, and the behavior for UVW-values outside the unit-cube are determined by the tilestyle attributes [of the \<scalarfieldfromimage3d>](#3-2-scalar-field-from-image3d)- and [\<vector3dfieldfromimage3d>](#4-2-3d-vector-field-from-image3d)-elements.
+The sampling rules for UVW values are determined by the filter-rule, and the behavior for UVW-values outside the unit-cube are determined by the tilestyle attributes [of the \<functionfromimage3d>](#32-functionfromimage3d).
 
 _Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
 ![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
@@ -431,7 +431,7 @@ Element **\<volumedata>**
 
 The \<volumedata> defines the volumetric properties in the interior of a \<mesh> element.
 
-The child-element of the \<volumedata> element reference the field-data given by \<scalarfield>- and \<vector3dfiled>-elements and defines how they are mapped to specific properties within the interior volume of the enclosing mesh.
+The child-element of the \<volumedata> element reference a function, that has to match the signature requirements of the child element. 
 Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
 
@@ -447,6 +447,7 @@ The clipping surface is defined as follows:
 2. If the \<boundary> element exists, the clipping surface is defined by the intersection of the geometry from 1. and the interior of the levelset-channel used in the \<boundary> element.
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
+
 
 __Note__
 At least some closed mesh is required to enclose any volumedata element, for example a simple box that represents the bounding box of the geometry encoded in the \<boundary>-element. An empty mesh would not represent infinite space.
@@ -477,25 +478,25 @@ Element **\<boundary>**
 
 ![boundary XML structure](images/element_boundary.png)
 
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| scalarfieldid | ST\_ResourceID | required | | ResourceID of the \<scalarfield> that encodes the boundary as a levelset. |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<scalarfield> coordinate system. |
-| solidthreshold | ST\_Number | | 0.0 | Determines the values of the levelset function which are considered inside or outside the specified object. |
+| Name           | Type         | Use      | Default | Annotation                                                           |
+| -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
+| functionid     | ST_ResourceID| required |         | ResourceID of the \<function> that provides the boundary as a levelset. |
+| channel      | xs:QName  |          |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
+| transform      | ST_Matrix3D  |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
+| solidthreshold | ST_Number    |          | 0.0     | Determines the values of the levelset function which are considered inside or outside the specified object. |
+| minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
+| meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
-To simplify parsing, producers MUST define a \<scalarfield>-element prior to referencing it via the scalarfieldid-attribute in a \<boundary>-element.
+To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<boundary>-element.
 
-**scalarfieldid**:
+**functionid**:
 
-The levelset function is given by the scalar field with resource id matching the sourceid-attribute of the \<boundary>-element.
+ResourceID of the \<function> that provides the boundary as a levelset. The function MUST have an input of type vector with the name "pos" and an output of type scalar that matches the name given as the channel attribute of the \<boundary> element.
 
-**solidthreshold**:
-
-The value of the levelset function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
- - If `f<=solidthreshold`, then `(x,y,z)` is inside the specified object.
- - If `f>solidthreshold`, then `(x,y,z)` is outside the specified object.
+**channel**:
+Defines which function output channel is used as the levelset function. The channel MUST be of type scalar.
 
 **transform**:
 
@@ -503,16 +504,31 @@ The transformation of the object coordinate system into the scalar field coordin
 If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 See Figure 6-1 for an illustration of this transform in the sampling process.
 
+**solidthreshold**:
+
+The value of the levelset function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
+ - If `f<=solidthreshold`, then `(x,y,z)` is inside the specified object, otherwise it is outside (also for `nan`)
+
+**minfeaturesize**:
+
+The minimum size of features to be considered in the boundary. This is used as a hint for the consumer to determine the resolution of the boundary. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+**meshbboxonly**:
+
+If this attribute is set to "true", the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh.
+
 ### 4.2.2 Color element
 
 Element **\<color>**
 
 ![color XML structure](images/element_color.png)
 
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| vector3dfieldid | ST\_ResourceID | required | | ResourceID of the \<vector3dfield> that holds color information. |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<vector3dfield> coordinate system. |
+| Name            | Type           | Use      | Default | Annotation                                                |
+| --------------- | -------------- | -------- | ------- | --------------------------------------------------------- |
+|| functionid      | ST_ResourceID  | required |         | Model Resource Id of the function providing the color                                                          |
+| transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
+| channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
+| minfeaturesize  | ST_Number      |          |  0       | Hint for the minimum size of features. |
 
 To simplify parsing, producers MUST define a \<vector3dfield>-element prior to referencing it via the vector3dfieldid in a \<color>-element.
 
@@ -525,8 +541,16 @@ This specification does not capture well the properties for semi-transparent, di
 
 **transform**:
 
-The transformation of the object coordinate system into the 3D vector field coordinate system.
+The transformation of the object coordinate system into the coordinate system of the function (e.g. noramlized coordinates for functionFromImage3D).
 If this \<color>>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the 3D vector field must be sampled at position `(x',y',z') = T*(x,y,z)`.
+
+**channel**
+
+Name of the function ouput to be used as color. The output must be of type vector.
+
+**minfeaturesize**:
+
+The minimum size of features to be considered in the color. This is used as a hint for the consumer to determine the resolution of the color estimation. It might also be used to determine the level of super sampling requiered, if the printer cannot reproduce the resolution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
 
 ## 4.2.3 Composite element
 
@@ -550,27 +574,37 @@ Element **\<materialmapping>**
 
 ![materialmapping XML structure](images/element_materialmapping.png)
 
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| scalarfieldid | ST\_ResourceID | required | | ResourceID of the \<scalarfield> providing the mixing contribution value for a material in the \<basematerial>-element. |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<scalarfield> coordinate system |
+| Name           | Type          | Use      | Default | Annotation                                                |
+| -------------- | ------------- | -------- | ------- | --------------------------------------------------------- |
+| functionid  | ST_ResourceID | required |         | ResourceID of the \<function> providing the mixing contribution value for a material in the \<basematerial>-element. |
+| transform      | ST_Matrix3D   |          |         | Transformation of the object coordinate system into the \<function> coordinate system |
+| channel        | xs:QName      | required |         | Name of the function output to be used for the mixing contribution. The output must be a scalar. |
+| minfeaturesize | ST_Number     |          | 0       | Hint for the minimum size of features. |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent \<composite>-element.
 
-To simplify parsing, producers MUST define the referenced \<scalarfield>-element prior to referencing it via the scalarfieldid in a \<materialmapping>-element.
+To simplify parsing, producers MUST define the referenced \<function>-element prior to referencing it via the functionid in a \<materialmapping>-element.
 
 **transform**:
 
 The transformation of the object coordinate system into the scalar field coordinate system.
 If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
-If the sampled value of a \<scalarfield> is `<0` it must be evaluated as "0".
+**channel**:
+
+Name of the function output to be used for the mixing contribution. The output must be a scalar. The value is clamped to the range [0,1].
+
+**minfeaturesize**:
+
+The minimum size of features to be considered in the mixing contribution. This is used as a hint for the consumer to determine the resolution of the mixing contribution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+If the sampled value of a \<function> is `<0` it must be evaluated as "0".
 
 Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
 - If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
    ```
-   value of channel i / sum(value of all N scalarfields at point X)
+   value of channel i / sum(value of all N mixing contributions at point X)
    ```
 
 The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
@@ -583,19 +617,24 @@ Element **\<property>**
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
-| fieldid | ST\_ResourceID | required | | ResourceID of the \<scalarfield> or \<vector3dfield> that holds the value of this property |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<scalarfield> or \<vector3dfield> coordinate system |
+| functionid | ST\_ResourceID | required | | ResourceID of the \<function> that provides the value of this property |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<function> coordinate system |
+| channel | xs:QName | required |  | Name of the function output to be used for the property. |
 | name | xs:QName | required | | Contains either the name of the property, defined in a 3MF extension specification, or the name of a vendor-defined property. Either MUST be prefixed with a valid XML namespace name declared on the \<model> element. |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
 
 The \<property> element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
 
-To simplify parsing, producers MUST define the referenced \<scalarfield>- or \<vector3dfield>-element prior to referencing it via the sourcefieldid in a \<property>-element.
+To simplify parsing, producers MUST define the referenced \<function>-element prior to referencing it via the functionid in a \<property>-element.
 
 **transform**:
 
-The transformation of the object coordinate system into the \<scalarfield> or \<vector3dfield> coordinate system.
-If a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<scalarfield> or \<vector3dfield> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+The transformation of the object coordinate system into the \<function> coordinate system.
+If a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<function> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+
+**channel**:
+
+Name of the function output to be used for the property. Note that the type of the output determines the type of the property.
 
 This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
 A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called "http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05".
@@ -605,7 +644,7 @@ The names of \<property>-elements MUST be unique within a \<volumedata>. This na
 The interpretation of the value MUST be defined by the owner of the namespace. 
 	
 __Note__:
-The producer of a 3MF file is responsible for assembling the values in the \<property> (and the referenced \<scalarfield> or \<vector3dfields>) such that sampling it in the print-bed coordinate system as a e.g. physical property, is sensible. This requirement is particularly important if the accumulated transformation `T0` between print-bed coordinates and local object coordinates is not a rigid body transformation.
+The producer of a 3MF file is responsible for assembling the values in the \<property> (and the referenced \<function> such that sampling it in the print-bed coordinate system as a e.g. physical property, is sensible. This requirement is particularly important if the accumulated transformation `T0` between print-bed coordinates and local object coordinates is not a rigid body transformation.
 (The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component, and Figure 6.2 in this document).
 
 If the interpretation of a property might result in a conflict with the standard volumedata-elements (boundary, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
@@ -615,47 +654,39 @@ If a physical unit is necessary, the namespace owner MUST define a unique and un
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
 
-# Chapter 6. Notes
+# Chapter 5. Notes
 
-## 6.1. Evaluation Graph
+## 5.1. Evaluation Graph
 
 The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
-The evaluation order of this graph can end with an \<scalarfieldconstant> (or \<vector3dfieldconstant>), or with a \<scalarfieldfromimage3d> (or \<vector3dfieldfromimage3d>), which inturn evaluated an \<image3d>-element.
-Optionally, the evaluation graph can contain potentially multiple \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements.
-
-In this sense, the \<scalarfieldfromimage3d> (or \<vector3dfieldfromimage3d>) and \<scalarfieldconstant> (or \<vector3dfieldconstant>) elements form standalone, atomic ways to define \<scalarfield>s (or \<vector3dfield>s), whereas the \<scalarfieldcomposed> (or \<vector3dfieldcomposed>)-elements encode volumetric modeling operations, as described in [3.4 Composed Scalar Field](##3.4-composed-scalar-field) and [4.4 Composed 3D Vector Field](##4.4-composed-3d-vector-field).
 
 It is RECOMMENDED that calculations during evaluation of the graph are performed in at least single-precision floating-point arithmethic, according to IEEE 754.
 
-## 6.2. Evaluation Process
+## 5.2. Evaluation Process
 
 Equipped with the language elements of this specification, one can recapitulate the core concepts with an overview of the sampling process.
 
-Figure 6-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
+Figure 5-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
 
-Figure 6-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
+Figure 5-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
 
-Figure 6-1 b) shows the \<vector3dfieldfromimage3d> underlying the color of the object. The sampling point is represented in the coordinate system of the \<vector3dfieldfromimage3d>. The transformation `T1` from object coordinate space to \<vector3dfieldfromimage3d> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<vector3dfieldfromimage3d> context.
-The color value sampled in this illustration directly originates from a \<vector3dfieldfromimage3d> element. However, as mentioned in the note above, it could as well be the result of one or multiple compositions via \<vector3dfieldcomposed>, see Figure 4-1.
+Figure 5-1 b) shows the \<functionfromimage3d> underlying the color of the object. The sampling point is represented in the coordinate system of the \<functionfromimage3d>. The transformation `T1` from object coordinate space to \<functionfromimage3d> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<functionfromimage3d> context.
+The color value sampled in this illustration directly originates from a \<functionfromimage3d> element.
 
-Figure 6-1 c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<vector3dfieldfromimage3d> coordinate system and UVW space is given according to the `transform`-attribute of the \<vector3dfieldfromimage3d> element.
+Figure 5-1 c) Shows the \<functionfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<functionfromimage3d> coordinate system and UVW space is given according to the `transform`-attribute of the \<functionfromimage3d> element.
 
-Figure 6-1 d) Shows the UVW coordinate space of the \<image3d>-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying \<imagestack>-element map.
+Figure 5-1 d) Shows the UVW coordinate space of the \<image3d>-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying \<imagestack>-element map.
 
-Figure 6-1 e) illustrates where the sampling point (+) ends up in the voxel index space of the \<imagestack>. The mapping of UVW to voxel indices in the \<imagestack>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
+Figure 5-1 e) illustrates where the sampling point (+) ends up in the voxel index space of the \<imagestack>. The mapping of UVW to voxel indices in the \<imagestack>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 6-1: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<vector3dfieldfromimage3d>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<vector3dfieldfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
+_Figure 5-1: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<functionfromimage3d>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<functionfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
-## 6.3. Limitations
+## 5.3. Limitations
 
 This speciication is limited in scope. Three notoworthy limitations are
 
-1. One cannot overlay a scalar or vector field over a meshless (composite) object, one has to duplicate the scalar fields at the object leaves.
-
-2. The fields in this definition are limited to be scalar- (or 1D-vector-) valued and 3D-vector valued. Vectors of other dimensionality must be assembled by the producer / consumer using multiple scalar / 3D-vector fields.
-
-3. It is not possible to assemble a field object that represents the RGB and alpha-channels from images. However one may assamble and blend data from RGBA-images explicitely by extracting the alpha channel into a scalar field and by using the alpha scalar field as a composition mask of two RGB 3d vector fields.
+1. One cannot overlay a function over a meshless (composite) object, one has to duplicate the scalar fields at the object leaves.
 
 # Part II. Implicit Extension
 
