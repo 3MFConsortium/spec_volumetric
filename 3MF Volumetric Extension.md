@@ -686,7 +686,7 @@ _Figure 5-1: Illustration of the different coordinate systems and 3MF elements i
 
 This speciication is limited in scope. Three notoworthy limitations are
 
-1. One cannot overlay a function over a meshless (composite) object, one has to duplicate the scalar fields at the object leaves.
+1. One cannot overlay a function over a meshless (composite) object, one has to duplicate the volume data elements at the object leaves.
 
 # Part II. Implicit Extension
 
