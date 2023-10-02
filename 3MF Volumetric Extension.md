@@ -190,7 +190,7 @@ Volumetric data is created with functions that are evaluatable for at given mode
 ## 3.2 FunctionFromImage3D
 Element **\<functionFromImage3d>**
 
-![FunctionFromImage3d XML](images/element_functionFromImage3d.png)
+![FunctionFromImage3d XML](images/element_functionformimage3d.png)
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
