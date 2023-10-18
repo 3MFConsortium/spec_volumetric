@@ -1454,7 +1454,7 @@ Example usage:
 </sin>
 ```
 
-## cosinus
+## cos
 
 **Description:** Computes cos(A) and writes the result to the output "result".
 
@@ -2064,8 +2064,8 @@ The operation can be used for the following types of inputs and outputs:
 | A       | result  | comment                               |
 |---------|---------|---------------------------------------|
 | scalar  | scalar  |                                       |
-| vector  | vector  | Each component of the vector is logged |
-| matrix  | matrix  | Each component of the matrix is logged |
+| vector  | vector  | Logarithm is calculated componentwise |
+| matrix  | matrix  | Logarithm is calculated componentwise |
 
 **Example Usage:**
 ```xml
@@ -2263,7 +2263,7 @@ The operation can be used for the following types of inputs and outputs:
 </clamp>
 ```
 
-## CT_Select
+## select
 
 **Description:** Derived node for a select function. The input must have the identifier "A", "B", "C", "D", and the output must have the identifier "result". If A < B then the result is C, otherwise D.
 
