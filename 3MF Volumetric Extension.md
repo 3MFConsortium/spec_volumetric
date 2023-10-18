@@ -483,7 +483,6 @@ Element **\<boundary>**
 | functionid     | ST_ResourceID| required |         | ResourceID of the \<function> that provides the boundary as a levelset. |
 | channel      | xs:QName  |          |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
 | transform      | ST_Matrix3D  |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
-| solidthreshold | ST_Number    |          | 0.0     | Determines the values of the levelset function which are considered inside or outside the specified object. |
 | minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
 | meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
 
@@ -2841,7 +2840,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="channel" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="solidthreshold" type="ST_Number" default="0"/>
 		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:attribute name="meshbboxonly" type="xs:boolean" default="false"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>

@@ -333,7 +333,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
 		<xs:attribute name="channel" type="xs:QName" use="required"/>
 		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="solidthreshold" type="ST_Number" default="0"/>
 		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
 		<xs:attribute name="meshbboxonly" type="xs:boolean" default="false"/>
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
