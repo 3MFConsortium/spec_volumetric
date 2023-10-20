@@ -191,7 +191,7 @@ Volumetric data is created with functions that are evaluatable for at given mode
 Element **\<functionFromImage3d>**
 
 ![FunctionFromImage3d XML](images/element_functionformimage3d.png)
-
+ISO/TC 261 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
@@ -503,10 +503,6 @@ The transformation of the object coordinate system into the scalar field coordin
 If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 See Figure 6-1 for an illustration of this transform in the sampling process.
 
-**solidthreshold**:
-
-The value of the levelset function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
- - If `f<=solidthreshold`, then `(x,y,z)` is inside the specified object, otherwise it is outside (also for `nan`)
 
 **minfeaturesize**:
 
