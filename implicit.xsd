@@ -60,10 +60,6 @@
 			- scalar + scalar = scalar
 			- vector + vector = vector (vector is added componentwise)
 			- matrix + matrix = matrix (matrix is added componentwise)
-			- scalar + vector = vector (scalar is added to each component of the vector)
-			- scalar + matrix = matrix (scalar is added to each component of the matrix)
-			- vector + scalar = vector (scalar is added to each component of the vector)
-			- matrix + scalar = matrix (scalar is added to each component of the matrix)
 						
 			Example:
 			<addition identifier="addition1" displayname="Addition 1">
@@ -513,11 +509,8 @@
 			The inputs must have the identifier "A" and "B", the output must have the identifier "result". If only one of the inputs is a scalar, the operation is componentwise. The following combinations of inputs and outputs are allowed:
 			- scalar * scalar = scalar
 			- vector * vector = vector (vector is multiplied componentwise)
-			- scalar * vector = vector (scalar is multiplied to each component of the vector)
-			- scalar * matrix = matrix (scalar is multiplied to each component of the matrix)
-			- vector * scalar = vector (scalar is multiplied to each component of the vector)
-			- matrix * scalar = matrix (scalar is multiplied to each component of the matrix)
-						
+			- matrix * matrix = matrix (matrix is multiplied componentwise)
+
 			Example:
 			<multiplication identifier="multiplication1" displayname="Multiplication 1">
 				<in>
@@ -580,11 +573,7 @@
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
 			- scalar - scalar = scalar
 			- vector - vector = vector (vector is subtracted componentwise)
-			- scalar - vector = vector (scalar is subtracted from each component of the vector)
-			- scalar - matrix = matrix (scalar is subtracted from each component of the matrix)
-			- vector - scalar = vector (scalar is subtracted from each component of the vector)
-			- matrix - scalar = matrix (scalar is subtracted from each component of the matrix)
-
+			- matrix - matrix = matrix (matrix is subtracted componentwise)
 						
 			Example:
 			<subtraction identifier="subtraction1" displayname="Subtraction 1">
@@ -648,8 +637,7 @@
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
 			- scalar / scalar = scalar
 			- vector / vector = vector (vector is divided componentwise)
-			- vector / scalar = vector (scalar is divided by each component of the vector)
-			- matrix / scalar = matrix (scalar is divided by each component of the matrix)
+			- matrix / matrix = matrix (matrix is divided componentwise)
 						
 			Example:
 			<division identifier="division1" displayname="Division 1">
@@ -1421,10 +1409,6 @@
 			- min(scalar,scalar) = scalar
 			- min(vector,vector) = vector (min of each component of the vectors)
 			- min(matrix,matrix) = matrix (min of each component of the matrices)
-			- min(scalar,vector) = vector (min of the scalar and each component of the vector)
-			- min(vector,scalar) = vector (min of the scalar and each component of the vector)
-			- min(scalar,matrix) = matrix (min of the scalar and each component of the matrix)
-			- min(matrix,scalar) = matrix (min of the scalar and each component of the matrix)			
 						
 			Example:
 			<min identifier="min1" displayname="Min 1">
@@ -1489,11 +1473,6 @@
 			- min(scalar,scalar) = scalar
 			- min(vector,vector) = vector (min of each component of the vectors)
 			- min(matrix,matrix) = matrix (min of each component of the matrices)
-			- min(scalar,vector) = vector (min of the scalar and each component of the vector)
-			- min(vector,scalar) = vector (min of the scalar and each component of the vector)
-			- min(scalar,matrix) = matrix (min of the scalar and each component of the matrix)
-			- min(matrix,scalar) = matrix (min of the scalar and each component of the matrix)		
-
 						
 			Example:
 			<max identifier="max1" displayname="Max 1">

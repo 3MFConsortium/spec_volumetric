@@ -191,7 +191,7 @@ Volumetric data is created with functions that are evaluatable for at given mode
 Element **\<functionFromImage3d>**
 
 ![FunctionFromImage3d XML](images/element_functionformimage3d.png)
-
+ISO/TC 261 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
@@ -503,10 +503,6 @@ The transformation of the object coordinate system into the scalar field coordin
 If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 See Figure 6-1 for an illustration of this transform in the sampling process.
 
-**solidthreshold**:
-
-The value of the levelset function `f` at a position `(x,y,z)` and the solidthreshold determine whether (x,y,z) is inside or outside the specified object:
- - If `f<=solidthreshold`, then `(x,y,z)` is inside the specified object, otherwise it is outside (also for `nan`)
 
 **minfeaturesize**:
 
@@ -780,11 +776,6 @@ The operation can be used for the following types of inputs and outputs:
 | scalar   | scalar   | scalar   |  |
 | vector   | vector   | vector   | vector is added componentwise |
 | matrix   | matrix   | matrix   | matrix elements are added componentwise |
-| scalar   | vector   | vector   | scalar is added to each component of the vector |	
-| scalar   | matrix   | matrix   | scalar is added to each component of the matrix |
-| vector   | scalar   | vector   | scalar is added to each component of the vector |
-| matrix   | scalar   | matrix   | scalar is added to each component of the matrix |
-
 
 
 **Example Usage:**
@@ -1136,12 +1127,8 @@ The operation can be used for the following types of inputs and outputs:
 | A         | B        | result       | comment                            |
 |-----------|----------|--------------|------------------------------------|
 | scalar    | scalar   | scalar       |                                  |
-| vector    | vector   | vector       | vector is multiplied componentwise |
+| vector    | vector   | vector       | vector components are multiplied componentwise |
 | matrix    | matrix   | matrix       | matrix elements are multiplied componentwise |
-| scalar    | vector   | vector       | scalar is multiplied with each component of the vector |
-| scalar    | matrix   | matrix       | scalar is multiplied with each component of the matrix |
-| vector    | scalar   | vector       | scalar is multiplied with each component of the vector |
-| matrix    | scalar   | matrix       | scalar is multiplied with each component of the matrix |
 
 **Example Usage:**  
 
@@ -1178,11 +1165,8 @@ The operation can be used for the following types of inputs and outputs:
 | A        | B          | result  | comment                                   |
 |----------|------------|---------|-------------------------------------------|
 | scalar   | scalar     | scalar  |                                           |
-| vector   | vector     | vector  | Vector is subtracted component-wise       |
-| scalar   | vector     | vector  | Scalar is subtracted from each component of the vector |
-| scalar   | matrix     | matrix  | Scalar is subtracted from each component of the matrix |
-| vector   | scalar     | vector  | Scalar is subtracted from each component of the vector |
-| matrix   | scalar     | matrix  | Scalar is subtracted from each component of the matrix |
+| vector   | vector     | vector  | Vector components are subtracted component-wise       |
+| matrix   | matrix     | matrix  | Matrix elements are subtracted componentwise |
 
 **Example Usage:**
 
@@ -1216,15 +1200,12 @@ The operation can be used for the following types of inputs and outputs:
 
 The operation can be used for the following types of inputs and outputs:
 
-| A       | B       | result  | comment                               |
-|---------|---------|---------|---------------------------------------|
-| scalar  | scalar  | scalar  |                                       |
-| vector  | vector  | vector  | Vector is divided componentwise        |
-| matrix  | matrix  | matrix  | Matrix elements are divided componentwise |
-| scalar  | vector  | vector  | Scalar is divided by each component of the vector |
-| scalar  | matrix  | matrix  | Scalar is divided by each component of the matrix |
-| vector  | scalar  | vector  | Vector components are divided by the scalar     |
-| matrix  | scalar  | matrix  | Matrix components are divided by the scalar     |
+
+| A        | B          | result  | comment                                   |
+|----------|------------|---------|-------------------------------------------|
+| scalar   | scalar     | scalar  |                                           |
+| vector   | vector     | vector  | Vector components are divided component-wise       |
+| matrix   | matrix     | matrix  | Matrix elements are divided componentwise |
 
 **Example Usage:**
 
@@ -1698,10 +1679,6 @@ The operation can be used for the following types of inputs and outputs:
 | scalar   | scalar   | scalar    |                                            |
 | vector   | vector   | vector    | Minimum value of each component of vectors |
 | matrix   | matrix   | matrix    | Minimum value of each component of matrices|
-| scalar   | vector   | vector    | Minimum value of scalar and each component of the vector |
-| vector   | scalar   | vector    | Minimum value of scalar and each component of the vector |
-| scalar   | matrix   | matrix    | Minimum value of scalar and each component of the matrix |
-| matrix   | scalar   | matrix    | Minimum value of scalar and each component of the matrix |
 
 **Example Usage:**
 
@@ -1741,10 +1718,6 @@ The operation can be used for the following types of inputs and outputs:
 | scalar   | scalar   | scalar   |        |
 | vector   | vector   | vector   | Maximum of each component of the vectors |
 | matrix   | matrix   | matrix   | Maximum of each component of the matrices |
-| scalar   | vector   | vector   | Maximum of the scalar and each component of the vector |
-| scalar   | matrix   | matrix   | Maximum of the scalar and each component of the matrix |
-| vector   | scalar   | vector   | Maximum of the scalar and each component of the vector |
-| matrix   | scalar   | matrix   | Maximum of the scalar and each component of the matrix |
 
 **Example Usage:**
 
