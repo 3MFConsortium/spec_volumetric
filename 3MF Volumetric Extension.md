@@ -941,7 +941,7 @@ None
 
 | Identifier | Description            | Type     |
 |------------|------------------------|----------|
-| vector     | Composed vector        | vector   |
+| result     | Composed vector        | vector   |
 
 **Example Usage:**
 
@@ -953,7 +953,7 @@ None
         <scalarref identifier="z" ref="inputs.z"/>
     </in>
     <out>
-        <vector identifier="vector"/>
+        <vector identifier="result"/>
     </out>
 </composevector>
 ```
@@ -1007,7 +1007,7 @@ None
 
 | Identifier | Description |
 |------------|-------------|
-| matrix     | Composed matrix |
+| result     | Composed matrix |
 
 **Example Usage:**
 
@@ -1032,12 +1032,12 @@ None
 		<scalarref identifier="m33" ref="constantM33.value"/>
 	</in>
 	<out>
-		<matrix identifier="matrix"/>
+		<matrix identifier="result"/>
 	</out>
 </composematrix>
 ```
 
-## composevector
+## composematrixfromcolumnvectors
 
 **Description:** Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1]. 
 
@@ -1064,7 +1064,7 @@ The operation can be used for the following types of inputs and outputs:
 
 **Example Usage:** 
 ```xml
-<composevector identifier="composeMatrixFromColumnVectors" displayname="composed matrix">
+<composematrixfromcolumnvectors identifier="composeMatrixFromColumnVectors" displayname="composed matrix">
     <in>
         <vectorref identifier="A" ref="vector0.vector"/>
         <vectorref identifier="B" ref="vector1.vector"/>
@@ -1072,9 +1072,9 @@ The operation can be used for the following types of inputs and outputs:
         <vectorref identifier="D" ref="vector3.vector"/>
     </in>
     <out>
-        <matrix identifier="matrix"/>
+        <matrix identifier="result"/>
     </out>
-</composevector>
+</composematrixfromcolumnvectors>
 ```
 
 ## composematrixfromrowvectors
@@ -1092,10 +1092,10 @@ The operation can be used for the following types of inputs and outputs:
 **Outputs:**
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
-| matrix      | Composed matrix                |
+| result      | Composed matrix                |
 
 The operation can be used for the following types of inputs and outputs:
-| A   | B   | C   | D   | matrix   | comment   |
+| A   | B   | C   | D   | result   | comment   |
 |-----|-----|-----|-----|----------|------------|
 | vector   | vector   | vector   | vector   | matrix   | Each row vector represents each row in the matrix |
 
@@ -1110,7 +1110,7 @@ The operation can be used for the following types of inputs and outputs:
         <vectorref identifier="D" ref="vector3.vector"/>
     </in>
     <out>
-        <matrix identifier="matrix"/>
+        <matrix identifier="result"/>
     </out>
 </composematrixfromrowvectors>
 ```

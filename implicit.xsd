@@ -263,7 +263,7 @@
 					<scalarref identifier="z" ref="inputs.z"/>
 				</in>
 				<out>
-					<vector identifier="vector"/>
+					<vector identifier="result"/>
 				</out>
 			</composevector>
 			]]>
@@ -365,7 +365,7 @@
 					<scalarref identifier="m33" ref="constantM33.value"/>
 				</in>
 				<out>
-					<matrix identifier="matrix"/>
+					<matrix identifier="result"/>
 				</out>
 			</composematrix>
 			]]>
