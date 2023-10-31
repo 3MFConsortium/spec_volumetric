@@ -1049,7 +1049,7 @@ None
 
 The operation can be used for the following types of inputs and outputs:
 
-| A   | B   | C   | D   | matrix   |
+| A   | B   | C   | D   | result   |
 |-----|-----|-----|-----|----------|
 |vector|vector|vector|vector|matrix|
 

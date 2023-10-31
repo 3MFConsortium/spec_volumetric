@@ -421,7 +421,7 @@
 					<vectorref identifier="D" ref="vector3.vector"/>
 				</in>
 				<out>
-					<matrix identifier="matrix"/>
+					<matrix identifier="result"/>
 				</out>
 			</composevector>
 			]]>
@@ -468,7 +468,7 @@
 					<vectorref identifier="D" ref="vector3.vector"/>
 				</in>
 				<out>
-					<matrix identifier="matrix"/>
+					<matrix identifier="result"/>
 				</out>
 			</composematrixfromcolumnvectors>
 			]]>
