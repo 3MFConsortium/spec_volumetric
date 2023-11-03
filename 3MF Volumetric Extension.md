@@ -299,7 +299,7 @@ Element **\<PrivateExtensionFunction>
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
 ## 3.4 FunctionImplicit
-Element **\<functionImplict>
+Element **\<function>
 
 ![FunctionImplicit XML](images/element_functionImplict.png)
 | Name   | Type   | Use | Default | Annotation |
@@ -685,12 +685,73 @@ This speciication is limited in scope. Three notoworthy limitations are
 
 # Part II. Implicit Extension
 
+The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to <functionfromimage3d> for generating volumetric data.
+
+The functions can be integrated with <volumedata><boundary><volumedata/><boundary/>, where they are evaluated at every point across the mesh or its bounding box. Created via a connected node set, these functions link inputs and outputs, and allow interaction with other resources.
+
 ## Chapter 1. Overview of Implicit Additions
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 ![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds FunctionImplicit and Native nodes. Optionally PrivateExtensionFunction can be defined.
 
 ## Chapter 2. Function Implicit
 
+The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alenative to <functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs. 
+
+When used as input for `<volumedata><boundary><volumedata/><boundary/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
+
+Consider an example:
+
+```xml
+<v:function id="3" displayname="sphere">
+	<in>
+		<vector identifier="pos" displayname="position"></vector>
+	</in>
+	<out>
+		<scalarref identifier="shape" displayname="signed distance to the surface" ref="distance_2.result"></scalarref>
+	</out>
+	<constant identifier="radius" displayname="radius of the spehere" tag="group_a" value="1.23456">
+		<out>
+			<scalar identifier="value" displayname="value"></scalar>
+		</out>
+	</constant>
+	<constvec identifier="vector_1" displayname="translation vector" tag="group_a" x="1.23456" y="2.34567" z="3.45678">
+		<out>
+			<vector identifier="vector" displayname="vector"></vector>
+		</out>
+	</constvec>
+	<subtraction identifier="translate_1" displayname="Translation" tag="group_a">
+		<in>
+			<vectorref identifier="B" displayname="B" ref="vector_1.vector"></vectorref>
+			<vectorref identifier="A" displayname="A" ref="inputs.pos"></vectorref>
+		</in>
+		<out>
+			<vector identifier="result" displayname="result"></vector>
+		</out>
+	</subtraction>
+	<length identifier="distance_1" displayname="distance to sphere" tag="group_a">
+		<in>
+			<vectorref identifier="A" displayname="A" ref="translate_1.result"></vectorref>
+		</in>
+		<out>
+			<scalar identifier="result" displayname="result"></scalar>
+		</out>
+	</length>
+	<subtraction identifier="distance_2" displayname="distance to sphere" tag="group_a">
+		<in>
+			<scalarref identifier="B" displayname="B" ref=""></scalarref>
+			<scalarref identifier="A" displayname="A" ref="distance_1.result"></scalarref>
+		</in>
+		<out>
+			<scalar identifier="result" displayname="result"></scalar>
+		</out>
+	</subtraction>
+</v:function>
+```
+In this example, the _function_ representing a sphere takes two inputs, 'pos' and 'radius'. It showcases the flexibility of defining various mathematical operations like length computation and subtraction through nested nodes within the function. The result of these computations can be accessed through the 'outputs' member.
+
+Furthermore, a function can include basic mathematical operations like additions, subtractions, and multiplications to cosines, logarithms or clamping. The operations can use different types like scalars, vectors, and matrices.
+
+This flexible architecture allows the user to define almost any mathematical function with an arbitrary number of inputs and outputs, allowing extensive customization for generating volumetric data.
 
 ## Chapter 3. Nodes
 
@@ -2461,9 +2522,34 @@ The operation can be used for the following types of inputs and outputs:
 </sign>
 ```
 
+## functionCall
+**Description:** Calls a function with the given identifier. The input must have the identifier "functionID". The rest of the inputs and outputs must match the inputs and outputs of the function.
 
+**Inputs:**
 
+| Identifier | Description |
+|------------|-------------|
+| functionID | Identifier of the function to call |
+| defined by function | |
 
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| defined by function | |
+
+**Example Usage:**
+
+```xml
+<functionCall identifier="functionCall1" displayname="Function Call 1">
+	<in>
+		<reourceref identifier="functionID" ref="resourceidnode.value"/>
+	</in>
+	<out>
+		<scalar identifier="result"/>
+	</out>
+</functionCall>
+```
 
 ## Chapter 5. Implicit Evaluation
 
@@ -2478,7 +2564,7 @@ See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/
 
 ## Appendix B. 3MF XSD Schema for the Volumetric Extension
 ```xml
-<<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
 	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
