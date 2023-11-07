@@ -755,6 +755,8 @@ This flexible architecture allows the user to define almost any mathematical fun
 
 ## Chapter 3. Nodes
 
+A node has an unique identifier and an abritary displayname. A must not have the identifier "inputs" or "outputs".
+
 ## Chapter 4. Native Nodes
 
 Overview of native nodes
@@ -771,7 +773,7 @@ Overview of native nodes
 | [composevector](#composevector) | vector composition operation               |
 | [decomposevector](#decomposevector) | vector decomposition operation             |
 | [composematrix](#composematrix) | matrix composition operation               |
-| [composematrixfromcolumnvectors](#composematrixfromcolumnvectors) | matrix composition from column vectors |
+| [matrixfromcolumn](#composematrixfromcolumnvectors) | matrix composition from column vectors |
 | [composematrixfromrowvectors](#composematrixfromrowvectors)       | matrix composition from row vectors    |
 | [dot](#dot)                | dot product operation                      |
 | [cross](#cross)            | cross product operation                    |
@@ -806,10 +808,11 @@ Overview of native nodes
 | [sign](#sign)              | signum operation                           |
 | [fract](#fract)            | fractional part extraction operation        |
 | [functioncall](#functioncall) | function call operation                  |
-| [mesh](#mesh)              | signed distance to mesh operation           |
+| [distancetomesh](#mesh)              | signed distance to mesh operation           |
 | [length](#length)          | length operation                           |
 | [resourceid](#resourceid)  | constant resource ID                       |
-
+| [vectorfromscalar](#vectorfromscalar) | vector from scalar operation   |
+| [unsingeddistancetomesh](#unsignedmesh) | unsigned distance to mesh operation     |
 
 ## addition
 
@@ -1089,7 +1092,7 @@ None
 </composematrix>
 ```
 
-## composematrixfromcolumnvectors
+## matrixfromcolumns
 
 **Description:** Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1]. 
 
