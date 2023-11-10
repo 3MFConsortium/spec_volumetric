@@ -771,6 +771,7 @@ Overview of native nodes
 | [constvec](#constvec)       | constant vector                            |
 | [constmat](#constmat)       | constant matrix                            |
 | [composevector](#composevector) | vector composition operation               |
+| [vectorfromscalar](#vectorfromscalar) | vector from scalar operation   |
 | [decomposevector](#decomposevector) | vector decomposition operation             |
 | [composematrix](#composematrix) | matrix composition operation               |
 | [matrixfromcolumn](#composematrixfromcolumnvectors) | matrix composition from column vectors |
@@ -808,11 +809,11 @@ Overview of native nodes
 | [sign](#sign)              | signum operation                           |
 | [fract](#fract)            | fractional part extraction operation        |
 | [functioncall](#functioncall) | function call operation                  |
-| [distancetomesh](#mesh)              | signed distance to mesh operation           |
+| [mesh](#mesh)              | signed distance to mesh operation           |
+| [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
 | [length](#length)          | length operation                           |
 | [resourceid](#resourceid)  | constant resource ID                       |
-| [vectorfromscalar](#vectorfromscalar) | vector from scalar operation   |
-| [unsingeddistancetomesh](#unsignedmesh) | unsigned distance to mesh operation     |
+
 
 ## addition
 
@@ -1011,6 +1012,35 @@ None
         <vector identifier="result"/>
     </out>
 </composevector>
+```
+
+## vectorfromscalar
+
+**Description:** Node for creating a vector from a single scalar value. The input must have the identifier "A".
+
+**Inputs:**
+
+| Identifier | Description            | Type      |
+|------------|------------------------|-----------|
+| A          | A -> X, Y, Z           | scalar    |
+
+**Outputs:**
+
+| Identifier | Description            | Type     |
+|------------|------------------------|----------|
+| result     | vector (A, A, A)        | vector   |
+
+**Example Usage:**
+
+```xml
+<vectorfromscalar>
+    <in>
+        <scalarref identifier="A" ref="inputs.x"/>
+    </in>
+    <out>
+        <vector identifier="result"/>
+    </out>
+</vectorfromscalar>
 ```
 
 ## decomposevector
@@ -1967,12 +1997,47 @@ The operation can be used for the following types of inputs and outputs:
 <mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
 	<in>
 		<vectorref identifier="pos" ref="inputs.pos"/>
-	 	<resourceref identifier="mesh" ref="2"/>
+	 	<resourceref identifier="mesh" ref="reosurceidnode.value"/>
 	</in>
 	<out>
 		<scalar identifier="distance"/>
 	</out>
 </mesh>
+```
+
+## unsignedmesh
+**Description:** Evaluates the unsigned distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar with the identifier "distance". The mesh does not need to be closed or watertight.
+
+**Inputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| pos      | Input vector                |
+| mesh      | Resource identifier for the mesh               |
+
+**Outputs:**
+
+| Identifier   | Description                                 |
+|--------------|---------------------------------------------|
+| distance      | Distance to the mesh                |
+
+The operation can be used for the following types of inputs and outputs:
+
+| pos   | mesh   | distance   | comment   |
+|-----|-----|----------|------------|
+| vector   | -   | scalar   | -  |
+
+**Example Usage:**
+```xml
+<unsignedmesh identifier="UnsignedDistToMesh1" displayname="Unsigned distance to Mesh" objectid="1" >
+	<in>
+		<vectorref identifier="pos" ref="inputs.pos"/>
+	 	<resourceref identifier="mesh" ref="reosurceidnode.value"/>
+	</in>
+	<out>
+		<scalar identifier="distance"/>
+	</out>
+</unsignedmesh>
 ```
 
 ## length

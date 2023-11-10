@@ -289,6 +289,46 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+		<!-- Node for creating a vector from a single scalar value -->
+		<xs:complexType name="CT_VectorFromScalar">
+			<xs:annotation>
+				<xs:documentation>
+					<![CDATA[
+				Node for creating a vector from a single scalar value. The input must have the identifier "A".
+				Example:
+				<vectorfromscalar>
+					<in>
+						<scalarref identifier="A" ref="inputs.x"/>
+					</in>
+					<out>
+						<vector identifier="result"/>
+					</out>
+				</composevector>
+				]]>
+				</xs:documentation>
+			</xs:annotation>
+			<xs:complexContent>
+				<xs:extension base="CT_Node">
+					<xs:sequence>
+						<xs:element name="in" minOccurs="1" maxOccurs="1">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+						<xs:element name="out" minOccurs="1" maxOccurs="1">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="vector" type="vol:CT_Vector" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+
 	<!-- Node for decomposing a vector -->
 	<xs:complexType name="CT_DecomposeVector">
 		<xs:annotation>
@@ -1794,7 +1834,7 @@
 			<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
 				<in>
 					<vectorref identifier="pos" ref="inputs.pos"/>
-					<resourceref identifier="mesh" ref="2"/>
+					<resourceref identifier="mesh" ref="resourceidnode.value"/>
 				</in>
 				<out>
 					<scalar identifier="distance"/>
@@ -1827,6 +1867,66 @@
 								<xs:documentation>
 									<![CDATA[
 							distance to mesh of the inputs
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="objectid" type="vol:ST_ResourceID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- unsigned distance to mesh -->
+	<xs:complexType name="CT_UnsignedDistanceToMesh">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node for evaluating the unsigned distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
+			The mesh is defined by a resource identifier. The mesh may be be open and is not required to be watertight. 
+			The distance is positive if the point is outside the mesh and negative if the point is inside the mesh.
+									
+			Example:
+			<unsignedmesh identifier="UnsigendDistanceToMesh1" displayname="Unsigned Distance to Mesh 1" objectid="1" >
+				<in>
+					<vectorref identifier="pos" ref="inputs.pos"/>
+					<resourceref identifier="mesh" ref="resourceidnode.value"/>
+				</in>
+				<out>
+					<scalar identifier="distance"/>
+				</out>
+			</unsignedmesh>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:sequence>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the distance to mesh function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="resourceref" type="vol:ST_ResourceID" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							unsigned distance to mesh of the inputs
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -2481,6 +2581,8 @@
 						maxOccurs="unbounded" />
 					<xs:element name="composevector" type="CT_ComposeVector" minOccurs="0"
 						maxOccurs="unbounded" />
+					<xs:element name="vectorfromscalar" type="CT_VectorFromScalar" minOccurs="0"
+						maxOccurs="unbounded" />
 					<xs:element name="decomposevector" type="CT_DecomposeVector" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="composematrix" type="CT_ComposeMatrix" minOccurs="0"
@@ -2540,6 +2642,8 @@
 					<xs:element name="functioncall" type="CT_FunctionCall" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="mesh" type="CT_SignedDistanceToMesh" minOccurs="0"
+						maxOccurs="unbounded" />
+					<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="length" type="CT_Length" minOccurs="0"
 						maxOccurs="unbounded" />
