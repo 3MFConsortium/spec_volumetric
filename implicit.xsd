@@ -446,14 +446,14 @@
 	</xs:complexType>
 
 	<!-- Node for composing a Matrix from column vectors -->
-	<xs:complexType name="CT_ComposeMatrixFromColumnVectors">
+	<xs:complexType name="CT_MatrixFromColumns">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
 			Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1]. The inputs must have the following identifiers:
 			A, B, C, D.
 			Example:
-			<composevector identifier="composeMatrixFromColumnVectors" displayname="composed matrix">
+			<matrixfromcolumns identifier="matrixfromcolumns" displayname="composed matrix">
 				<in>
 					<vectorref identifier="A" ref="vector0.vector"/>
 					<vectorref identifier="B" ref="vector1.vector"/>
@@ -463,7 +463,7 @@
 				<out>
 					<matrix identifier="result"/>
 				</out>
-			</composevector>
+			</matrixfromcolumns>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -493,14 +493,14 @@
 	</xs:complexType>
 
 	<!-- Node for composing a Matrix from row vectors -->
-	<xs:complexType name="CT_ComposeMatrixFromRowVectors">
+	<xs:complexType name="CT_MatrixFromRows">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
 			Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1). The inputs must have the following identifiers:
 			A, B, C, D.
 			Example:
-			<composematrixfromcolumnvectors identifier="composeMatrixFromRowVectors" displayname="composed vector">
+			<matrixfromrows identifier="matrixfromrows" displayname="composed matrix">
 				<in>
 					<vectorref identifier="A" ref="vector0.vector"/>
 					<vectorref identifier="B" ref="vector1.vector"/>
@@ -510,7 +510,7 @@
 				<out>
 					<matrix identifier="result"/>
 				</out>
-			</composematrixfromcolumnvectors>
+			</matrixfromrows>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -2587,11 +2587,11 @@
 						maxOccurs="unbounded" />
 					<xs:element name="composematrix" type="CT_ComposeMatrix" minOccurs="0"
 						maxOccurs="unbounded" />
-					<xs:element name="composematrixfromcolumnvectors"
-						type="CT_ComposeMatrixFromColumnVectors" minOccurs="0"
+					<xs:element name="matrixfromcolumns"
+						type="CT_MatrixFromColumns" minOccurs="0"
 						maxOccurs="unbounded" />
-					<xs:element name="composematrixfromrowvectors"
-						type="CT_ComposeMatrixFromRowVectors" minOccurs="0"
+					<xs:element name="matrixfromrows"
+						type="CT_MatrixFromRows" minOccurs="0"
 						maxOccurs="unbounded" />
 					<xs:element name="dot" type="CT_DotProduct" minOccurs="0"
 						maxOccurs="unbounded" />

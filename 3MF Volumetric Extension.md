@@ -774,8 +774,8 @@ Overview of native nodes
 | [vectorfromscalar](#vectorfromscalar) | vector from scalar operation   |
 | [decomposevector](#decomposevector) | vector decomposition operation             |
 | [composematrix](#composematrix) | matrix composition operation               |
-| [matrixfromcolumn](#composematrixfromcolumnvectors) | matrix composition from column vectors |
-| [composematrixfromrowvectors](#composematrixfromrowvectors)       | matrix composition from row vectors    |
+| [matrixfromcolumns](#matrixfromcolumns) | matrix composition from column vectors |
+| [matrixfromrows](#matrixfromrows)       | matrix composition from row vectors    |
 | [dot](#dot)                | dot product operation                      |
 | [cross](#cross)            | cross product operation                    |
 | [matvecmultiplication](#matvecmultiplication) | matrix-vector multiplication operation |
@@ -1149,7 +1149,7 @@ The operation can be used for the following types of inputs and outputs:
 
 **Example Usage:** 
 ```xml
-<composematrixfromcolumnvectors identifier="composeMatrixFromColumnVectors" displayname="composed matrix">
+<matrixfromcolumns identifier="matrixfromcolumns" displayname="composed matrix">
     <in>
         <vectorref identifier="A" ref="vector0.vector"/>
         <vectorref identifier="B" ref="vector1.vector"/>
@@ -1159,10 +1159,10 @@ The operation can be used for the following types of inputs and outputs:
     <out>
         <matrix identifier="result"/>
     </out>
-</composematrixfromcolumnvectors>
+</matrixfromcolumns>
 ```
 
-## composematrixfromrowvectors
+## matrixfromrows
 
 **Description:** Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1). 
 
@@ -1187,7 +1187,7 @@ The operation can be used for the following types of inputs and outputs:
 **Example Usage:**
 
 ```xml
-<composematrixfromrowvectors identifier="composeMatrixFromRowVectors" displayname="composed vector">
+<matrixfromrows identifier="matrixfromrows" displayname="composed vector">
     <in>
         <vectorref identifier="A" ref="vector0.vector"/>
         <vectorref identifier="B" ref="vector1.vector"/>
@@ -1197,7 +1197,7 @@ The operation can be used for the following types of inputs and outputs:
     <out>
         <matrix identifier="result"/>
     </out>
-</composematrixfromrowvectors>
+</matrixfromrows>
 ```
 
 ## multiplication  
