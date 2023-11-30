@@ -687,7 +687,7 @@ This speciication is limited in scope. Three notoworthy limitations are
 
 The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to <functionfromimage3d> for generating volumetric data.
 
-The functions can be integrated with <volumedata><boundary><volumedata/><boundary/>, where they are evaluated at every point across the mesh or its bounding box. Created via a connected node set, these functions link inputs and outputs, and allow interaction with other resources.
+The functions can be integrated with <volumedata><boundary>Volumetric Data<volumedata/><boundary/>, where they are evaluated at every point across the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
 
 ## Chapter 1. Overview of Implicit Additions
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
@@ -695,7 +695,7 @@ _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 
 ## Chapter 2. Function Implicit
 
-The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alenative to <functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs. 
+The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alenative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs. 
 
 When used as input for `<volumedata><boundary><volumedata/><boundary/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
@@ -997,7 +997,7 @@ None
 
 | Identifier | Description            | Type     |
 |------------|------------------------|----------|
-| result     | Composed vector        | vector   |
+| result     | Composed vector (x,y,z)       | vector   |
 
 **Example Usage:**
 
@@ -1201,7 +1201,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## multiplication  
-**Description:** Performs the multiplication A x B = result. The inputs must have the identifier "A" and "B", and the output must have the identifier "result". If only one of the inputs is a scalar, the operation is component-wise. 
+**Description:** Performs the multiplication A x B = result. The inputs must have the identifier "A" and "B", and the output must have the identifier "result". All imputs must be of the same type (scalar, vector, matrix).
 
 **Inputs:**  
 
@@ -1221,8 +1221,8 @@ The operation can be used for the following types of inputs and outputs:
 | A         | B        | result       | comment                            |
 |-----------|----------|--------------|------------------------------------|
 | scalar    | scalar   | scalar       |                                  |
-| vector    | vector   | vector       | vector components are multiplied componentwise |
-| matrix    | matrix   | matrix       | matrix elements are multiplied componentwise |
+| vector    | vector   | vector       | vector components are multiplied component-wise |
+| matrix    | matrix   | matrix       | matrix elements are multiplied component-wise |
 
 **Example Usage:**  
 
@@ -1260,7 +1260,7 @@ The operation can be used for the following types of inputs and outputs:
 |----------|------------|---------|-------------------------------------------|
 | scalar   | scalar     | scalar  |                                           |
 | vector   | vector     | vector  | Vector components are subtracted component-wise       |
-| matrix   | matrix     | matrix  | Matrix elements are subtracted componentwise |
+| matrix   | matrix     | matrix  | Matrix elements are subtracted component-wise |
 
 **Example Usage:**
 
@@ -1299,7 +1299,7 @@ The operation can be used for the following types of inputs and outputs:
 |----------|------------|---------|-------------------------------------------|
 | scalar   | scalar     | scalar  |                                           |
 | vector   | vector     | vector  | Vector components are divided component-wise       |
-| matrix   | matrix     | matrix  | Matrix elements are divided componentwise |
+| matrix   | matrix     | matrix  | Matrix elements are divided component-wise |
 
 **Example Usage:**
 
@@ -1511,10 +1511,10 @@ The operation can be used for the following types of inputs and outputs:
 
 The operation can be used for the following types of inputs and outputs:
 
-| A       | result  |
-|---------|---------|
-| scalar  | scalar  |
-| vector  | vector  |
+| A       | result  | comment |
+|---------|---------|---------|
+| scalar  | scalar  |         |
+| vector  | vector  | Sine of each component of the vector |
 
 Example usage:
 
@@ -1567,7 +1567,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## tan
 
-**Description:** Performs the tangent function on the input "A" and writes the result to the output "result".
+**Description:** Computes tan(A) and writes the result to the output "result".
 
 **Inputs:**
 
@@ -1586,7 +1586,7 @@ The operation can be used for the following types of inputs and outputs:
 | A   | result   |
 |-----|----------|
 | scalar   | scalar   |
-| vector   | vector (tangent of each component)  |
+| vector   | Tangent of each component of the vector  |
 
 **Example Usage:**
 
@@ -1639,7 +1639,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## arccos
 
-**Description:** Performs the arccos function on the input "A" and writes the result to the output "result".
+**Description:** Performs an arctan function with a scalar or vector as input and a scalar or vector as output. The input must have the identifier "A", and the output must have the indentifier "result".
 
 **Inputs:**
 
@@ -1658,7 +1658,7 @@ The operation can be used for the following types of inputs and outputs:
 | A         | result | comment                      |
 |-----------|--------|------------------------------|
 | scalar    | scalar | -                            |
-| vector    | vector | Arccos of each component     |
+| vector    | vector | Arccos of each component of the vector |
 
 **Example Usage:**
 
@@ -1713,7 +1713,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## arctan2
 
-**Description:** Performs the arctangent of the inputs "A" and "B" and writes the result to the output "result".
+**Description:** Performs the arctangent of the inputs "A" and "B" and writes the result to the output "result". The inputs can be scalar or vector and the output is scalar or vector.
 
 **Inputs:**
 
@@ -1733,7 +1733,7 @@ The operation can be used for the following types of inputs and outputs:
 | A   | B   | result   | comment   |
 |-----|-----|----------|------------|
 | scalar   | scalar   | scalar   |   |
-| vector   | vector   | vector   | arctan2 applied to each component of the vectors |
+| vector   | vector   | vector   | arctan2 of each component of the vectors |
 
 **Example Usage:**
 
@@ -1866,7 +1866,7 @@ The operation can be used for the following types of inputs and outputs:
 
 
 ## fmod
-**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result".
+**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result". 
 
 **Inputs:**
 | Identifier   | Description                      |
@@ -2347,8 +2347,8 @@ The operation can be used for the following types of inputs and outputs:
 | A       | min     | max     | result                     | 
 |---------|---------|---------|----------------------------|
 | scalar  | scalar  | scalar  | scalar                     | 
-| vector  | vector  | vector  | Vector with clamped values (componentwise) |
-| matrix  | matrix  | matrix  | Matrix with clamped values (componentwise)|
+| vector  | vector  | vector  | Vector with clamped values component-wise |
+| matrix  | matrix  | matrix  | Matrix with clamped values component-wise |
 
 **Example Usage:**
 
@@ -2620,6 +2620,39 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## Chapter 5. Implicit Evaluation
+
+## 5.1 Graph Creation
+
+Using the functions above, one can construct a fully connected graph representation of an sdf, however there is no requirement of order or naming conventions. The consumer must construct the graph from the individual functions and nodes within those functions by following the references contained in the inputs and outputs.
+
+*Description of Graph (XML) & image of graph after evaluation.
+
+The image above provides an example of the inputs and outputs being converted into a graph for evaluation.
+
+## 5.2 Undefined Results and Fallback Values
+
+The native nodes provided can create graphs that have some regions that will evaluate to an undefined value. This undefined value presents a problem when trying to determine the boundary, color, or any other property of a volume. Therefore, when a node or function produces an undefined result, i.e. divide by zero, the result is then assumed to be zero.
+
+Consider the following function which will always returns imaginary numbers, this SHOULD be evaluated to zero.
+
+```xml
+
+```
+
+## 5.3 Level-Set Evaluation And IsoSurfaces
+
+In general, when evaluating implict models, the value of the levelset function that defines the surface is arbitrary but typicaly zero. To reduce ambiguity Levelset functions SHOULD be evaluated such that the object surface is defined by the set of points where the levelset function is evaluated to 0.
+
+Furthermore, When evaluating functions that define a levelset of the boundary, the volume defining the part SHOULD be defined as the closure of all negative numbers.
+
+## 5.4 Field Evaluation Resolution
+
+To provide clarity as to the desired level of detail and accuracy in the evaluation of an implicit model, the producer SHOULD specify a "minimum feature size" parameter. This parameter represents the smallest geometric feature or detail that should be captured in the evaluation process.
+
+The "consumer" of the implicit model should then evaluate the field at a resolution that is equal to or smaller than the specified minimum feature size. By doing so, the consumer can ensure that the resulting boundary, color, or property representation accurately captures the desired level of detail and fidelity. The example below shows how to add a minimum feature size to the graph.
+
+```xml
+```
 
 ## Chapter 6. Notes
 
