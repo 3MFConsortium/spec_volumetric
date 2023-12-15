@@ -512,6 +512,10 @@ The minimum size of features to be considered in the boundary. This is used as a
 
 If this attribute is set to "true", the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh.
 
+**fallbackvalue**:
+
+If this attribute is set, any undefined result MUST be evaluated as the value. If this attribute is not set, any undefined result MUST be evaluated to zero.
+
 ### 4.2.2 Color element
 
 Element **\<color>**
@@ -523,7 +527,7 @@ Element **\<color>**
 || functionid      | ST_ResourceID  | required |         | Model Resource Id of the function providing the color                                                          |
 | transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
 | channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
-| minfeaturesize  | ST_Number      |          |  0       | Hint for the minimum size of features. |
+| minfeaturesize  | ST_Number      |          |  0.0       | Hint for the minimum size of features. |
 
 To simplify parsing, producers MUST define a \<vector3dfield>-element prior to referencing it via the vector3dfieldid in a \<color>-element.
 
@@ -679,15 +683,20 @@ _Figure 5-1: Illustration of the different coordinate systems and 3MF elements i
 
 ## 5.3. Limitations
 
-This speciication is limited in scope. Three notoworthy limitations are
+This specification is limited in scope. Three noteworthy limitations are:
 
 1. One cannot overlay a function over a meshless (composite) object, one has to duplicate the volume data elements at the object leaves.
+
+
+2. The fields in this definition are limited to be scalar- (or 1D-vector-) valued and 3D-vector valued. Vectors of other dimensionality must be assembled by the producer / consumer using multiple scalar / 3D-vector fields.
+
+3. It is not possible to assemble a field object that represents the RGB and alpha-channels from images. However one may assamble and blend data from RGBA-images explicitely by extracting the alpha channel into a scalar field and by using the alpha scalar field as a composition mask of two RGB 3d vector fields.
 
 # Part II. Implicit Extension
 
 The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to <functionfromimage3d> for generating volumetric data.
 
-The functions can be integrated with <volumedata><boundary>Volumetric Data<volumedata/><boundary/>, where they are evaluated at every point across the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
+The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property,boundary, color), where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
 
 ## Chapter 1. Overview of Implicit Additions
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
@@ -695,9 +704,9 @@ _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 
 ## Chapter 2. Function Implicit
 
-The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alenative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs. 
+The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs. 
 
-When used as input for `<volumedata><boundary><volumedata/><boundary/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
+When used as input for `<volumedata><boundary><boundary/><volumedata/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
 Consider an example:
 
@@ -755,7 +764,7 @@ This flexible architecture allows the user to define almost any mathematical fun
 
 ## Chapter 3. Nodes
 
-A node has an unique identifier and an abritary displayname. A must not have the identifier "inputs" or "outputs".
+A node has an unique identifier and an abritary displayname. A node must not have the identifier "inputs" or "outputs". Identifiers are restricted to alpha-numerical characters.
 
 ## Chapter 4. Native Nodes
 
@@ -2519,7 +2528,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 ## sign
 
-**Description:** Performs the sign function on the input "A" and writes the result to the output "result".
+**Description:** Performs the sign function on the input "A" and writes the result to the output "result". If the input is less than zero this function returns -1, if the input is greater than zero this function returns 1, and if the input is equal to zero this function returns 0.
 
 **Inputs:**
 
@@ -2621,38 +2630,9 @@ The operation can be used for the following types of inputs and outputs:
 
 ## Chapter 5. Implicit Evaluation
 
-## 5.1 Graph Creation
+## 5.1 Undefined Results and Fallback Values
 
-Using the functions above, one can construct a fully connected graph representation of an sdf, however there is no requirement of order or naming conventions. The consumer must construct the graph from the individual functions and nodes within those functions by following the references contained in the inputs and outputs.
-
-*Description of Graph (XML) & image of graph after evaluation.
-
-The image above provides an example of the inputs and outputs being converted into a graph for evaluation.
-
-## 5.2 Undefined Results and Fallback Values
-
-The native nodes provided can create graphs that have some regions that will evaluate to an undefined value. This undefined value presents a problem when trying to determine the boundary, color, or any other property of a volume. Therefore, when a node or function produces an undefined result, i.e. divide by zero, the result is then assumed to be zero.
-
-Consider the following function which will always returns imaginary numbers, this SHOULD be evaluated to zero.
-
-```xml
-
-```
-
-## 5.3 Level-Set Evaluation And IsoSurfaces
-
-In general, when evaluating implict models, the value of the levelset function that defines the surface is arbitrary but typicaly zero. To reduce ambiguity Levelset functions SHOULD be evaluated such that the object surface is defined by the set of points where the levelset function is evaluated to 0.
-
-Furthermore, When evaluating functions that define a levelset of the boundary, the volume defining the part SHOULD be defined as the closure of all negative numbers.
-
-## 5.4 Field Evaluation Resolution
-
-To provide clarity as to the desired level of detail and accuracy in the evaluation of an implicit model, the producer SHOULD specify a "minimum feature size" parameter. This parameter represents the smallest geometric feature or detail that should be captured in the evaluation process.
-
-The "consumer" of the implicit model should then evaluate the field at a resolution that is equal to or smaller than the specified minimum feature size. By doing so, the consumer can ensure that the resulting boundary, color, or property representation accurately captures the desired level of detail and fidelity. The example below shows how to add a minimum feature size to the graph.
-
-```xml
-```
+The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a volume data element such as <boundary>. Such undefined results SHALL make the result of the function undefined and the volumetric data element SHOULD be evaluated to the volumetric data element's fallback value.
 
 ## Chapter 6. Notes
 
