@@ -234,7 +234,7 @@ The filter attribute defines the interpolation method used when a \<functionfrom
 	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
 
 
-- If the interpolation method of an elements of type \<functionfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
+- If the interpolation method of an elements of type \<functionfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight point coordinates defining a box that contains the arbitrary (u,v,w), which transforms back to voxel centers in the 3D image resource.
 
 _Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
 ![Tilestyle mirror](images/filter.png)
@@ -485,6 +485,7 @@ Element **\<boundary>**
 | transform      | ST_Matrix3D  |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
 | minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
 | meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
@@ -514,7 +515,7 @@ If this attribute is set to "true", the boundary is only intersected with the bo
 
 **fallbackvalue**:
 
-If this attribute is set, any undefined result MUST be evaluated as the value. If this attribute is not set, any undefined result MUST be evaluated to zero.
+If this attribute is set, any undefined result MUST be evaluated as the value.
 
 ### 4.2.2 Color element
 
@@ -528,6 +529,7 @@ Element **\<color>**
 | transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
 | channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
 | minfeaturesize  | ST_Number      |          |  0.0       | Hint for the minimum size of features. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 To simplify parsing, producers MUST define a \<vector3dfield>-element prior to referencing it via the vector3dfieldid in a \<color>-element.
 
@@ -550,6 +552,10 @@ Name of the function ouput to be used as color. The output must be of type vecto
 **minfeaturesize**:
 
 The minimum size of features to be considered in the color. This is used as a hint for the consumer to determine the resolution of the color estimation. It might also be used to determine the level of super sampling requiered, if the printer cannot reproduce the resolution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+**fallbackvalue**:
+
+If this attribute is set, any undefined result MUST be evaluated as the value.
 
 ## 4.2.3 Composite element
 
@@ -579,6 +585,7 @@ Element **\<materialmapping>**
 | transform      | ST_Matrix3D   |          |         | Transformation of the object coordinate system into the \<function> coordinate system |
 | channel        | xs:QName      | required |         | Name of the function output to be used for the mixing contribution. The output must be a scalar. |
 | minfeaturesize | ST_Number     |          | 0       | Hint for the minimum size of features. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent \<composite>-element.
 
@@ -596,6 +603,10 @@ Name of the function output to be used for the mixing contribution. The output m
 **minfeaturesize**:
 
 The minimum size of features to be considered in the mixing contribution. This is used as a hint for the consumer to determine the resolution of the mixing contribution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+**fallbackvalue**:
+
+If this attribute is set, any undefined result MUST be evaluated as the value.
 
 If the sampled value of a \<function> is `<0` it must be evaluated as "0".
 
@@ -621,6 +632,7 @@ Element **\<property>**
 | channel | xs:QName | required |  | Name of the function output to be used for the property. |
 | name | xs:QName | required | | Contains either the name of the property, defined in a 3MF extension specification, or the name of a vendor-defined property. Either MUST be prefixed with a valid XML namespace name declared on the \<model> element. |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The \<property> element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
 
@@ -704,7 +716,7 @@ _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 
 ## Chapter 2. Function Implicit
 
-The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs. 
+The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs.
 
 When used as input for `<volumedata><boundary><boundary/><volumedata/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
