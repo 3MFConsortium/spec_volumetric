@@ -33,14 +33,29 @@ package DataTypes
 
     Class VectorRef
     {
-        name: string
+        identifer: string
+    }
+
+    Class MatrixRef
+    {
+        identifer: string
+    }
+
+    Class ResourceRef
+    {
+        identifer: string
     }
 
     class Scalar{}
     class Vector{}
+    class Matrix{}
 
     ScalarRef o-- "0..*" Scalar
     VectorRef o-- "0..*" Vector
+    MatrixRef o-- "0..*" Matrix
+    ResourceRef o-- "0..*" Mesh
+    ResourceRef o-- "0..*" Image3D
+    ResourceRef o-- "0..*" Function
 }
 
 package FunctionArguments
@@ -55,8 +70,10 @@ package FunctionArguments
     }
     Input *-- "0..*" Scalar
     Input *-- "0..*" Vector
+    Input *-- "0..*" Matrix
     Output *-- "0..*" ScalarRef
     Output *-- "0..*" VectorRef
+    Output *-- "0..*" MatrixRef
 }
 
 package NodeArguments
@@ -71,8 +88,10 @@ package NodeArguments
     }
     Out *-- "0..*" Scalar
     Out *-- "0..*" Vector
+    Out *-- "0..*" Matrix
     In *-- "0..*" ScalarRef
     In *-- "0..*" VectorRef
+    In *-- "0..*" MatrixRef
 }
 
 package Functions
@@ -134,11 +153,12 @@ package Native
 
     Class FunctionCall extends Node_
     {
+        functionID : ResourceRef
     }
 
-    Class DistanceFromMesh extends Node_
+    Class Mesh extends Node_
     {
-        meshid : resourceID
+        mesh : ResourceRef
     }
     DistanceFromMesh o-- "1" Mesh
 
