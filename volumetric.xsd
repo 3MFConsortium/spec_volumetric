@@ -328,24 +328,26 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Boundary">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
-		<xs:attribute name="meshbboxonly" type="xs:boolean" default="false"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0" />
+		<xs:attribute name="meshbboxonly" type="xs:boolean" default="false" />
+		<xs:attribute name="fallback" type="ST_Number" default="0" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Color">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0" />
+		<xs:attribute name="fallback" type="ST_Number" default="0" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -360,25 +362,27 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_MaterialMapping">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0" />
+		<xs:attribute name="fallback" type="ST_Number" default="0" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Property">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="name" type="xs:QName" use="required"/>
-		<xs:attribute name="required" type="xs:boolean" use="required"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="name" type="xs:QName" use="required" />
+		<xs:attribute name="required" type="xs:boolean" use="required" />
+		<xs:attribute name="minfeaturesize" type="ST_Number" default="0" />
+		<xs:attribute name="fallback" type="ST_Number" default="0" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
