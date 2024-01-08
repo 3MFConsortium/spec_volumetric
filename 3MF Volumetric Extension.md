@@ -515,7 +515,7 @@ If this attribute is set to "true", the boundary is only intersected with the bo
 
 **fallbackvalue**:
 
-If this attribute is set, any undefined result MUST be evaluated as the value.
+Any undefined result MUST be evaluated as the value.
 
 ### 4.2.2 Color element
 
@@ -555,7 +555,7 @@ The minimum size of features to be considered in the color. This is used as a hi
 
 **fallbackvalue**:
 
-If this attribute is set, any undefined result MUST be evaluated as the value.
+Any undefined result MUST be evaluated as the value. The fallback value is specified as a scalar and MUST be applied across the result vector element-wise.
 
 ## 4.2.3 Composite element
 
@@ -572,6 +572,15 @@ The \<composite> element describes a mixing ratio of printer materials at each p
 This element MUST contain at least one \<materialmapping> element, which will encode the relative contribution of a specific basematerial to the material mix.
 
 The number of \<base>-elements in the \<basematerials> element referenced by a \<composite> element MUST equal the number of \<materialmapping>-elements in the \<composite> element. To simplify parsing, producers MUST define the referenced \<basematerials>-element prior to referencing it via the basematerialid in a \<composite>-element.
+
+Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
+
+- If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
+   ```
+   value of channel i / sum(value of all N mixing contributions at point X)
+   ```
+
+The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
 
 ## 4.2.4 Material mapping element
 
@@ -609,15 +618,6 @@ The minimum size of features to be considered in the mixing contribution. This i
 If this attribute is set, any undefined result MUST be evaluated as the value.
 
 If the sampled value of a \<function> is `<0` it must be evaluated as "0".
-
-Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
-
-- If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
-   ```
-   value of channel i / sum(value of all N mixing contributions at point X)
-   ```
-
-The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
 
 ### 4.2.4.1 Property element
 
@@ -726,15 +726,11 @@ Consider an example:
 <v:function id="3" displayname="sphere">
 	<in>
 		<vector identifier="pos" displayname="position"></vector>
+		<scalar identifier="radius" displayname="radius of the sphere"></scalar>
 	</in>
 	<out>
 		<scalarref identifier="shape" displayname="signed distance to the surface" ref="distance_2.result"></scalarref>
 	</out>
-	<constant identifier="radius" displayname="radius of the spehere" tag="group_a" value="1.23456">
-		<out>
-			<scalar identifier="value" displayname="value"></scalar>
-		</out>
-	</constant>
 	<constvec identifier="vector_1" displayname="translation vector" tag="group_a" x="1.23456" y="2.34567" z="3.45678">
 		<out>
 			<vector identifier="vector" displayname="vector"></vector>
@@ -749,7 +745,7 @@ Consider an example:
 			<vector identifier="result" displayname="result"></vector>
 		</out>
 	</subtraction>
-	<length identifier="distance_1" displayname="distance to sphere" tag="group_a">
+	<length identifier="distance_1" displayname="distance to sphere center" tag="group_a">
 		<in>
 			<vectorref identifier="A" displayname="A" ref="translate_1.result"></vectorref>
 		</in>
@@ -757,10 +753,10 @@ Consider an example:
 			<scalar identifier="result" displayname="result"></scalar>
 		</out>
 	</length>
-	<subtraction identifier="distance_2" displayname="distance to sphere" tag="group_a">
+	<subtraction identifier="distance_2" displayname="distance to sphere surface" tag="group_a">
 		<in>
-			<scalarref identifier="B" displayname="B" ref=""></scalarref>
 			<scalarref identifier="A" displayname="A" ref="distance_1.result"></scalarref>
+			<scalarref identifier="B" displayname="B" ref="inputs.radius"></scalarref>
 		</in>
 		<out>
 			<scalar identifier="result" displayname="result"></scalar>
