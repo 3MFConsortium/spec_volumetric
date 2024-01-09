@@ -234,7 +234,7 @@ The filter attribute defines the interpolation method used when a \<functionfrom
 	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
 
 
-- If the interpolation method of an elements of type \<functionfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight closest points coordinates which transforms back to voxel centers in the 3D image resource.
+- If the interpolation method of an elements of type \<functionfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight point coordinates defining a box that contains the arbitrary (u,v,w), which transforms back to voxel centers in the 3D image resource.
 
 _Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
 ![Tilestyle mirror](images/filter.png)
@@ -485,6 +485,7 @@ Element **\<boundary>**
 | transform      | ST_Matrix3D  |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
 | minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
 | meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The boundary element is used to describe the interior and exterior of an object via a levelset function.
 
@@ -512,6 +513,10 @@ The minimum size of features to be considered in the boundary. This is used as a
 
 If this attribute is set to "true", the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh.
 
+**fallbackvalue**:
+
+Any undefined result MUST be evaluated as the value.
+
 ### 4.2.2 Color element
 
 Element **\<color>**
@@ -523,7 +528,8 @@ Element **\<color>**
 || functionid      | ST_ResourceID  | required |         | Model Resource Id of the function providing the color                                                          |
 | transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
 | channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
-| minfeaturesize  | ST_Number      |          |  0       | Hint for the minimum size of features. |
+| minfeaturesize  | ST_Number      |          |  0.0       | Hint for the minimum size of features. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 To simplify parsing, producers MUST define a \<vector3dfield>-element prior to referencing it via the vector3dfieldid in a \<color>-element.
 
@@ -547,6 +553,10 @@ Name of the function ouput to be used as color. The output must be of type vecto
 
 The minimum size of features to be considered in the color. This is used as a hint for the consumer to determine the resolution of the color estimation. It might also be used to determine the level of super sampling requiered, if the printer cannot reproduce the resolution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
 
+**fallbackvalue**:
+
+Any undefined result MUST be evaluated as the value. The fallback value is specified as a scalar and MUST be applied across the result vector element-wise.
+
 ## 4.2.3 Composite element
 
 Element **\<composite>**
@@ -563,6 +573,15 @@ This element MUST contain at least one \<materialmapping> element, which will en
 
 The number of \<base>-elements in the \<basematerials> element referenced by a \<composite> element MUST equal the number of \<materialmapping>-elements in the \<composite> element. To simplify parsing, producers MUST define the referenced \<basematerials>-element prior to referencing it via the basematerialid in a \<composite>-element.
 
+Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
+
+- If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
+   ```
+   value of channel i / sum(value of all N mixing contributions at point X)
+   ```
+
+The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
+
 ## 4.2.4 Material mapping element
 
 Element **\<materialmapping>**
@@ -575,6 +594,7 @@ Element **\<materialmapping>**
 | transform      | ST_Matrix3D   |          |         | Transformation of the object coordinate system into the \<function> coordinate system |
 | channel        | xs:QName      | required |         | Name of the function output to be used for the mixing contribution. The output must be a scalar. |
 | minfeaturesize | ST_Number     |          | 0       | Hint for the minimum size of features. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent \<composite>-element.
 
@@ -593,16 +613,11 @@ Name of the function output to be used for the mixing contribution. The output m
 
 The minimum size of features to be considered in the mixing contribution. This is used as a hint for the consumer to determine the resolution of the mixing contribution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
 
+**fallbackvalue**:
+
+If this attribute is set, any undefined result MUST be evaluated as the value.
+
 If the sampled value of a \<function> is `<0` it must be evaluated as "0".
-
-Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
-
-- If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
-   ```
-   value of channel i / sum(value of all N mixing contributions at point X)
-   ```
-
-The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
 
 ### 4.2.4.1 Property element
 
@@ -617,6 +632,7 @@ Element **\<property>**
 | channel | xs:QName | required |  | Name of the function output to be used for the property. |
 | name | xs:QName | required | | Contains either the name of the property, defined in a 3MF extension specification, or the name of a vendor-defined property. Either MUST be prefixed with a valid XML namespace name declared on the \<model> element. |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The \<property> element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
 
@@ -679,15 +695,20 @@ _Figure 5-1: Illustration of the different coordinate systems and 3MF elements i
 
 ## 5.3. Limitations
 
-This speciication is limited in scope. Three notoworthy limitations are
+This specification is limited in scope. Three noteworthy limitations are:
 
 1. One cannot overlay a function over a meshless (composite) object, one has to duplicate the volume data elements at the object leaves.
+
+
+2. The fields in this definition are limited to be scalar- (or 1D-vector-) valued and 3D-vector valued. Vectors of other dimensionality must be assembled by the producer / consumer using multiple scalar / 3D-vector fields.
+
+3. It is not possible to assemble a field object that represents the RGB and alpha-channels from images. However one may assamble and blend data from RGBA-images explicitely by extracting the alpha channel into a scalar field and by using the alpha scalar field as a composition mask of two RGB 3d vector fields.
 
 # Part II. Implicit Extension
 
 The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to <functionfromimage3d> for generating volumetric data.
 
-The functions can be integrated with <volumedata><boundary><volumedata/><boundary/>, where they are evaluated at every point across the mesh or its bounding box. Created via a connected node set, these functions link inputs and outputs, and allow interaction with other resources.
+The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property,boundary, color), where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
 
 ## Chapter 1. Overview of Implicit Additions
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
@@ -695,9 +716,9 @@ _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 
 ## Chapter 2. Function Implicit
 
-The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alenative to <functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs. 
+The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs.
 
-When used as input for `<volumedata><boundary><volumedata/><boundary/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
+When used as input for `<volumedata><boundary><boundary/><volumedata/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
 Consider an example:
 
@@ -705,15 +726,11 @@ Consider an example:
 <v:function id="3" displayname="sphere">
 	<in>
 		<vector identifier="pos" displayname="position"></vector>
+		<scalar identifier="radius" displayname="radius of the sphere"></scalar>
 	</in>
 	<out>
 		<scalarref identifier="shape" displayname="signed distance to the surface" ref="distance_2.result"></scalarref>
 	</out>
-	<constant identifier="radius" displayname="radius of the spehere" tag="group_a" value="1.23456">
-		<out>
-			<scalar identifier="value" displayname="value"></scalar>
-		</out>
-	</constant>
 	<constvec identifier="vector_1" displayname="translation vector" tag="group_a" x="1.23456" y="2.34567" z="3.45678">
 		<out>
 			<vector identifier="vector" displayname="vector"></vector>
@@ -728,7 +745,7 @@ Consider an example:
 			<vector identifier="result" displayname="result"></vector>
 		</out>
 	</subtraction>
-	<length identifier="distance_1" displayname="distance to sphere" tag="group_a">
+	<length identifier="distance_1" displayname="distance to sphere center" tag="group_a">
 		<in>
 			<vectorref identifier="A" displayname="A" ref="translate_1.result"></vectorref>
 		</in>
@@ -736,10 +753,10 @@ Consider an example:
 			<scalar identifier="result" displayname="result"></scalar>
 		</out>
 	</length>
-	<subtraction identifier="distance_2" displayname="distance to sphere" tag="group_a">
+	<subtraction identifier="distance_2" displayname="distance to sphere surface" tag="group_a">
 		<in>
-			<scalarref identifier="B" displayname="B" ref=""></scalarref>
 			<scalarref identifier="A" displayname="A" ref="distance_1.result"></scalarref>
+			<scalarref identifier="B" displayname="B" ref="inputs.radius"></scalarref>
 		</in>
 		<out>
 			<scalar identifier="result" displayname="result"></scalar>
@@ -755,7 +772,7 @@ This flexible architecture allows the user to define almost any mathematical fun
 
 ## Chapter 3. Nodes
 
-A node has an unique identifier and an abritary displayname. A must not have the identifier "inputs" or "outputs".
+A node has an unique identifier and an abritary displayname. A node must not have the identifier "inputs" or "outputs". Identifiers are restricted to alpha-numerical characters.
 
 ## Chapter 4. Native Nodes
 
@@ -997,7 +1014,7 @@ None
 
 | Identifier | Description            | Type     |
 |------------|------------------------|----------|
-| result     | Composed vector        | vector   |
+| result     | Composed vector (x,y,z)       | vector   |
 
 **Example Usage:**
 
@@ -1201,7 +1218,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## multiplication  
-**Description:** Performs the multiplication A x B = result. The inputs must have the identifier "A" and "B", and the output must have the identifier "result". If only one of the inputs is a scalar, the operation is component-wise. 
+**Description:** Performs the multiplication A x B = result. The inputs must have the identifier "A" and "B", and the output must have the identifier "result". All imputs must be of the same type (scalar, vector, matrix).
 
 **Inputs:**  
 
@@ -1221,8 +1238,8 @@ The operation can be used for the following types of inputs and outputs:
 | A         | B        | result       | comment                            |
 |-----------|----------|--------------|------------------------------------|
 | scalar    | scalar   | scalar       |                                  |
-| vector    | vector   | vector       | vector components are multiplied componentwise |
-| matrix    | matrix   | matrix       | matrix elements are multiplied componentwise |
+| vector    | vector   | vector       | vector components are multiplied component-wise |
+| matrix    | matrix   | matrix       | matrix elements are multiplied component-wise |
 
 **Example Usage:**  
 
@@ -1260,7 +1277,7 @@ The operation can be used for the following types of inputs and outputs:
 |----------|------------|---------|-------------------------------------------|
 | scalar   | scalar     | scalar  |                                           |
 | vector   | vector     | vector  | Vector components are subtracted component-wise       |
-| matrix   | matrix     | matrix  | Matrix elements are subtracted componentwise |
+| matrix   | matrix     | matrix  | Matrix elements are subtracted component-wise |
 
 **Example Usage:**
 
@@ -1299,7 +1316,7 @@ The operation can be used for the following types of inputs and outputs:
 |----------|------------|---------|-------------------------------------------|
 | scalar   | scalar     | scalar  |                                           |
 | vector   | vector     | vector  | Vector components are divided component-wise       |
-| matrix   | matrix     | matrix  | Matrix elements are divided componentwise |
+| matrix   | matrix     | matrix  | Matrix elements are divided component-wise |
 
 **Example Usage:**
 
@@ -1511,10 +1528,10 @@ The operation can be used for the following types of inputs and outputs:
 
 The operation can be used for the following types of inputs and outputs:
 
-| A       | result  |
-|---------|---------|
-| scalar  | scalar  |
-| vector  | vector  |
+| A       | result  | comment |
+|---------|---------|---------|
+| scalar  | scalar  |         |
+| vector  | vector  | Sine of each component of the vector |
 
 Example usage:
 
@@ -1567,7 +1584,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## tan
 
-**Description:** Performs the tangent function on the input "A" and writes the result to the output "result".
+**Description:** Computes tan(A) and writes the result to the output "result".
 
 **Inputs:**
 
@@ -1586,7 +1603,7 @@ The operation can be used for the following types of inputs and outputs:
 | A   | result   |
 |-----|----------|
 | scalar   | scalar   |
-| vector   | vector (tangent of each component)  |
+| vector   | Tangent of each component of the vector  |
 
 **Example Usage:**
 
@@ -1639,7 +1656,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## arccos
 
-**Description:** Performs the arccos function on the input "A" and writes the result to the output "result".
+**Description:** Performs an arctan function with a scalar or vector as input and a scalar or vector as output. The input must have the identifier "A", and the output must have the indentifier "result".
 
 **Inputs:**
 
@@ -1658,7 +1675,7 @@ The operation can be used for the following types of inputs and outputs:
 | A         | result | comment                      |
 |-----------|--------|------------------------------|
 | scalar    | scalar | -                            |
-| vector    | vector | Arccos of each component     |
+| vector    | vector | Arccos of each component of the vector |
 
 **Example Usage:**
 
@@ -1713,7 +1730,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## arctan2
 
-**Description:** Performs the arctangent of the inputs "A" and "B" and writes the result to the output "result".
+**Description:** Performs the arctangent of the inputs "A" and "B" and writes the result to the output "result". The inputs can be scalar or vector and the output is scalar or vector.
 
 **Inputs:**
 
@@ -1733,7 +1750,7 @@ The operation can be used for the following types of inputs and outputs:
 | A   | B   | result   | comment   |
 |-----|-----|----------|------------|
 | scalar   | scalar   | scalar   |   |
-| vector   | vector   | vector   | arctan2 applied to each component of the vectors |
+| vector   | vector   | vector   | arctan2 of each component of the vectors |
 
 **Example Usage:**
 
@@ -1866,7 +1883,7 @@ The operation can be used for the following types of inputs and outputs:
 
 
 ## fmod
-**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result".
+**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result". 
 
 **Inputs:**
 | Identifier   | Description                      |
@@ -2347,8 +2364,8 @@ The operation can be used for the following types of inputs and outputs:
 | A       | min     | max     | result                     | 
 |---------|---------|---------|----------------------------|
 | scalar  | scalar  | scalar  | scalar                     | 
-| vector  | vector  | vector  | Vector with clamped values (componentwise) |
-| matrix  | matrix  | matrix  | Matrix with clamped values (componentwise)|
+| vector  | vector  | vector  | Vector with clamped values component-wise |
+| matrix  | matrix  | matrix  | Matrix with clamped values component-wise |
 
 **Example Usage:**
 
@@ -2519,7 +2536,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 ## sign
 
-**Description:** Performs the sign function on the input "A" and writes the result to the output "result".
+**Description:** Performs the sign function on the input "A" and writes the result to the output "result". If the input is less than zero this function returns -1, if the input is greater than zero this function returns 1, and if the input is equal to zero this function returns 0.
 
 **Inputs:**
 
@@ -2620,6 +2637,10 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## Chapter 5. Implicit Evaluation
+
+## 5.1 Undefined Results and Fallback Values
+
+The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a volume data element such as <boundary>. Such undefined results SHALL make the result of the function undefined and the volumetric data element SHOULD be evaluated to the volumetric data element's fallback value.
 
 ## Chapter 6. Notes
 
