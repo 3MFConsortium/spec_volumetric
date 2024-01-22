@@ -1,0 +1,36 @@
+@startuml
+
+class CT_Expression {
+  + ref: ST_ResourceID
+}
+
+class CT_Node {
+  + identifier: ST_Identifier
+  + displayname: xs:string
+  + tag: xs:string
+}
+
+class CT_Scalar {
+  + identifier: ST_Identifier
+}
+
+class CT_Vector {
+  + identifier: ST_Identifier
+}
+
+class CT_Matrix {
+  + identifier: ST_Identifier
+}
+
+class CT_ResourceID {
+  + identifier: ST_Identifier
+}
+
+CT_Expression --> ST_ResourceID
+CT_Node --> ST_Identifier
+CT_Scalar --> ST_Identifier
+CT_Vector --> ST_Identifier
+CT_Matrix --> ST_Identifier
+CT_ResourceID --> ST_Identifier
+
+@enduml
