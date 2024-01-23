@@ -139,7 +139,7 @@ package Native
         displayname: string
     }
 
-    Class Add extends Node_
+    Class Addition extends Node_
     {
     }
 
@@ -160,7 +160,6 @@ package Native
     {
         mesh : ResourceRef
     }
-    DistanceFromMesh o-- "1" Mesh
 
     Node_ *-- "0..1" In
     Node_ *-- "0..1" Out
@@ -176,12 +175,14 @@ package VolumetricData
         functionid : resourceID
         minfeaturesize : double
         meshbboxonly : bool
+        fallbackvalue : double
     }
 
     Class Color
     {
         functionid : resourceID
         minfeaturesize : double
+        fallbackvalue : double
     }
 
     Class Property
@@ -189,6 +190,7 @@ package VolumetricData
         name : string
         functionid : resourceID
         minfeaturesize : double
+        fallbackvalue : double
     }
 
     Class Composite
@@ -199,6 +201,8 @@ package VolumetricData
     Class MaterialMapping
     {
         functionid : resourceID
+        minfeaturesize : double
+        fallbackvalue : double
     }
 
     VolumeData *-- "0..1" Boundary
