@@ -22,20 +22,15 @@
 		</xs:documentation>
 	</xs:annotation>
 
-	<xs:simpleType name="ST_Matrix4x4">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			String containing 16 space seperated floating numbers.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<xs:pattern
-				value="^(-?\d+(\.\d+)?((e|E)[+-]?\d+)?)((\s+-?\d+(\.\d+)?((e|E)[+-]?\d+)?) {15})$" />
-		</xs:restriction>
-	</xs:simpleType>
-
+	<!-- Complex Types -->
+	<xs:complexType name="CT_Resources">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element ref="implicitfunction" minOccurs="0" maxOccurs="unbounded" />
+		</xs:sequence>
+		<xs:anyAttribute namespace="##other" processContents="lax" />
+	</xs:complexType>
+	
 	<!-- node is the base type for all nodes in the implicit function tree.	-->
 	<xs:complexType name="CT_Node">
 		<xs:annotation>
@@ -2690,5 +2685,22 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
+
+	<!-- Simple Types -->
+	<xs:simpleType name="ST_Matrix4x4">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			String containing 16 space seperated floating numbers.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<xs:pattern
+				value="^(-?\d+(\.\d+)?((e|E)[+-]?\d+)?)((\s+-?\d+(\.\d+)?((e|E)[+-]?\d+)?) {15})$" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Elements -->
 	<xs:element name="implicitfunction" type="CT_ImplicitFunction" />
 </xs:schema>
