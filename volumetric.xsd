@@ -17,8 +17,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		]]>
 		</xs:documentation>
 	</xs:annotation>
+	
 	<!-- Complex Types -->
-
 	<xs:complexType name="CT_Resources">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
@@ -57,80 +57,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="path" type="ST_UriReference" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
-
-	<xs:simpleType name="ST_Identifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for referencing a node or a node output.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<xs:pattern value="[a-zA-Z0-9_]+" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="ST_NodeOutputIdentifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a node output of the form "nodename.outputname".
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<!-- pattern allowing refs of the form "nodename.outputname" -->
-			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<!-- Identifer for a scalar output -->
-	<xs:simpleType name="ST_ScalarID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a scalar output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifer for a vector output -->
-	<xs:simpleType name="ST_VectorID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a vector output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifier for a Matrix-->
-	<xs:simpleType name="ST_MatrixID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a 4x4 Matrix
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<xs:simpleType name="ST_ResourceOutputID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier of an output providing a resource id
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
 
 	<xs:complexType name="CT_Ref">
 		<xs:annotation>
@@ -444,6 +370,80 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:whiteSpace value="collapse"/>
 			<xs:pattern value="((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ST_Identifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for referencing a node or a node output.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<xs:pattern value="[a-zA-Z0-9_]+" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="ST_NodeOutputIdentifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a node output of the form "nodename.outputname".
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<!-- pattern allowing refs of the form "nodename.outputname" -->
+			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- Identifer for a scalar output -->
+	<xs:simpleType name="ST_ScalarID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a scalar output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+	
+	<!-- Identifer for a vector output -->
+	<xs:simpleType name="ST_VectorID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a vector output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+	
+	<!-- Identifier for a Matrix-->
+	<xs:simpleType name="ST_MatrixID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a 4x4 Matrix
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+	
+	<xs:simpleType name="ST_ResourceOutputID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier of an output providing a resource id
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
 
 	<!-- Elements -->
