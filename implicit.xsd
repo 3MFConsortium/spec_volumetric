@@ -24,10 +24,10 @@
 
 	<!-- Complex Types -->
 	<xs:complexType name="CT_Resources">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="implicitfunction" minOccurs="0" maxOccurs="unbounded" />
-		</xs:sequence>
+		<xs:choice minOccurs="0" maxOccurs="unbounded">
+			<xs:any namespace="##other" processContents="lax" />
+			<xs:element ref="implicitfunction" />
+		</xs:choice>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 	
@@ -71,8 +71,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -82,9 +82,15 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -97,14 +103,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:choice>
+							<xs:choice  minOccurs="1" maxOccurs="1">
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -262,7 +268,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
@@ -279,7 +285,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -304,7 +310,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
@@ -319,7 +325,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -346,7 +352,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
@@ -363,7 +369,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -405,7 +411,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
@@ -435,7 +441,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -464,7 +470,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
@@ -482,7 +488,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -511,7 +517,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
@@ -529,7 +535,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -561,8 +567,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -572,9 +578,15 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -594,7 +606,7 @@
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -625,8 +637,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -636,9 +648,15 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -651,14 +669,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:choice>
+							<xs:choice minOccurs="1" maxOccurs="1">
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -689,8 +707,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -700,9 +718,15 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -715,14 +739,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:choice>
+							<xs:choice minOccurs="1" maxOccurs="1">
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -751,8 +775,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -762,6 +786,7 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
@@ -780,7 +805,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -809,8 +834,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -820,6 +845,7 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
@@ -838,7 +864,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -866,8 +892,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -876,10 +902,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:choice>
+							<xs:all>
 								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:choice>
+							</xs:all>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -896,7 +922,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -922,7 +948,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -951,7 +977,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -977,7 +1003,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1006,7 +1032,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1035,7 +1061,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1045,10 +1071,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1060,13 +1086,13 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1095,7 +1121,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1105,10 +1131,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1120,13 +1146,13 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1155,7 +1181,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1165,10 +1191,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1180,13 +1206,13 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1215,7 +1241,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1225,10 +1251,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1240,13 +1266,13 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1275,7 +1301,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1285,10 +1311,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1300,13 +1326,13 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1335,7 +1361,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1345,10 +1371,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1360,13 +1386,13 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1397,8 +1423,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="2" maxOccurs="2">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -1407,10 +1433,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1422,13 +1452,13 @@
 									]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1460,7 +1490,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1470,11 +1500,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1486,14 +1522,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1524,7 +1560,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1534,11 +1570,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1550,14 +1592,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1587,7 +1629,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1597,11 +1639,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1613,14 +1661,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1651,7 +1699,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1661,11 +1709,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1677,14 +1731,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1715,7 +1769,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1725,11 +1779,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1741,14 +1801,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1778,7 +1838,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1788,11 +1848,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1804,14 +1870,14 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1826,7 +1892,7 @@
 			The distance is positive if the point is outside the mesh and negative if the point is inside the mesh.
 									
 			Example:
-			<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
+			<mesh identifier="signedDistanceToMesh1" displayname="Signed Distance to Mesh 1">
 				<in>
 					<vectorref identifier="pos" ref="inputs.pos"/>
 					<resourceref identifier="mesh" ref="resourceidnode.value"/>
@@ -1840,7 +1906,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1850,10 +1916,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:all>
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 								<xs:element name="resourceref" type="vol:ST_ResourceID" />
-							</xs:sequence>
+							</xs:all>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1870,8 +1936,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
-				<xs:attribute name="objectid" type="vol:ST_ResourceID" use="required" />
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1886,7 +1951,7 @@
 			The distance is positive if the point is outside the mesh and negative if the point is inside the mesh.
 									
 			Example:
-			<unsignedmesh identifier="UnsigendDistanceToMesh1" displayname="Unsigned Distance to Mesh 1" objectid="1" >
+			<unsignedmesh identifier="UnsigendDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
 				<in>
 					<vectorref identifier="pos" ref="inputs.pos"/>
 					<resourceref identifier="mesh" ref="resourceidnode.value"/>
@@ -1900,7 +1965,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1910,10 +1975,10 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:all>
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 								<xs:element name="resourceref" type="vol:ST_ResourceID" />
-							</xs:sequence>
+							</xs:all>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -1930,8 +1995,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
-				<xs:attribute name="objectid" type="vol:ST_ResourceID" use="required" />
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1959,7 +2023,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -1988,7 +2052,7 @@
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -1997,7 +2061,7 @@
 	<xs:complexType name="CT_BaseOneParameterFunc">
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -2007,11 +2071,11 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -2023,14 +2087,14 @@
 									]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2265,7 +2329,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -2275,11 +2339,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -2291,14 +2361,14 @@
 									]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
-							</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2332,7 +2402,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
+				<xs:all>
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
@@ -2342,10 +2412,17 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-							</xs:sequence>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="4" maxOccurs="4" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="4" maxOccurs="4" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="4" maxOccurs="4" />
+								</xs:sequence>
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -2357,13 +2434,14 @@
 									]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
+							<xs:choice>
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
-							</xs:sequence>
+								<xs:element name="matrix" type="vol:CT_Matrix" />
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -2637,8 +2715,8 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="CT_Node">
-				<xs:sequence>
-					<xs:element name="in" minOccurs="1" maxOccurs="unbounded">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:annotation>
 								<xs:documentation>
@@ -2647,17 +2725,12 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="0"
-									maxOccurs="unbounded" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="0"
-									maxOccurs="unbounded" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="0"
-									maxOccurs="unbounded" />
-								<xs:element name="resourceref" type="vol:CT_ResourceRef"
-									minOccurs="1"
-									maxOccurs="1" />
-							</xs:sequence>
+							<xs:choice minOccurs="1" maxOccurs="unbounded">
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:element name="resourceref" type="vol:CT_ResourceRef" />
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
@@ -2669,19 +2742,15 @@
 									]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" minOccurs="0"
-									maxOccurs="unbounded" />
-								<xs:element name="vector" type="vol:CT_Vector" minOccurs="0"
-									maxOccurs="unbounded" />
-								<xs:element name="matrix" type="vol:CT_Matrix" minOccurs="0"
-									maxOccurs="unbounded" />
-								<xs:element name="resourceid" type="vol:CT_ResourceID" minOccurs="0"
-									maxOccurs="unbounded" />
-							</xs:sequence>
+							<xs:choice minOccurs="1" maxOccurs="unbounded">
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="resourceid" type="vol:CT_ResourceID" />
+							</xs:choice>
 						</xs:complexType>
 					</xs:element>
-				</xs:sequence>
+				</xs:all>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
