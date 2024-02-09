@@ -2638,7 +2638,15 @@ The operation can be used for the following types of inputs and outputs:
 
 ## Chapter 5. Implicit Evaluation
 
-## 5.1 Undefined Results and Fallback Values
+## 5.1 Valid Graphs
+
+The native nodes provided are used to create abitrary graphs. In order for these graphs to be evaluatable they must meet the following criteria and any graph that fails to meet this criteria MUST be rejected.
+- Nodes that compose a Function form a subgraph that must be acyclic and directed.
+- References between Functions that form the graph MUST be acyclic and directed.
+- A Function MUST NOT reference itself.
+- Inputs must only reference outputs of the same DataType.
+
+## 5.2 Undefined Results and Fallback Values
 
 The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a volume data element such as <boundary>. Such undefined results SHALL make the result of the function undefined and the volumetric data element SHOULD be evaluated to the volumetric data element's fallback value.
 
