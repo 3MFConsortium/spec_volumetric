@@ -2637,8 +2637,7 @@
 		<xs:complexContent>
 			<xs:extension base="vol:CT_Function">
 				<xs:choice minOccurs="0" maxOccurs="unbounded">
-					<!-- nodes -->
-					<xs:element ref="vol:functionfromimage3d"/>					
+					<!-- nodes -->				
 					<xs:element name="addition" type="CT_Addition" />
 					<xs:element name="subtraction" type="CT_Subtraction" />
 					<xs:element name="multiplication" type="CT_Multiplication" />
