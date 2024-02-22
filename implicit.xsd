@@ -24,7 +24,7 @@
 
 	<!-- Complex Types -->
 	<xs:complexType name="CT_Resources">
-		<xs:choice minOccurs="0" maxOccurs="unbounded">
+		<xs:choice minOccurs="0" maxOccurs="2147483647">
 			<xs:any namespace="##other" processContents="lax" />
 			<xs:element ref="implicitfunction" />
 		</xs:choice>
@@ -2636,7 +2636,7 @@
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="vol:CT_Function">
-				<xs:choice minOccurs="0" maxOccurs="unbounded">
+				<xs:choice minOccurs="0" maxOccurs="2147483647">
 					<!-- nodes -->				
 					<xs:element name="addition" type="CT_Addition" />
 					<xs:element name="subtraction" type="CT_Subtraction" />
@@ -2725,7 +2725,7 @@
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:choice minOccurs="1" maxOccurs="unbounded">
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
 								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
 								<xs:element name="vectorref" type="vol:CT_VectorRef" />
 								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
@@ -2742,7 +2742,7 @@
 									]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:choice minOccurs="1" maxOccurs="unbounded">
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
 								<xs:element name="scalar" type="vol:CT_Scalar" />
 								<xs:element name="vector" type="vol:CT_Vector" />
 								<xs:element name="matrix" type="vol:CT_Matrix" />
