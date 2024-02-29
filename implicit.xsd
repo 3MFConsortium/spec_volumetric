@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://schemas.microsoft.com/3dmanufacturing/implicit/2023/12"
+<xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
 	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all"
-	xmlns="http://schemas.microsoft.com/3dmanufacturing/implicit/2023/12"
+	xmlns="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:vol="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01">
-	<xs:import namespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
+	xmlns:vol="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01">
+	<xs:import namespace="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01"
 		schemaLocation="volumetric.xsd" />
 
 	<xs:annotation>
