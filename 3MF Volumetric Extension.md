@@ -627,13 +627,18 @@ Element **\<boundaryShape>**
 | Name           | Type         | Use      | Default | Annotation                                                           |
 | -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
 | functionid     | ST_ResourceID| required |         | ResourceID of the \<function> that provides the boundary as a levelset. |
-| channel      | xs:QName  |          |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
-| transform      | ST_Matrix3D  |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
+| channel      | xs:QName  | required |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
+| transform      | ST_Matrix3D  |          | Identity | Transformation of the object coordinate system into the \<function> coordinate system. |
 | minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
+| meshid     | ST_ResourceID| required |         | ResourceID of the \<mesh> that is used to define the evaluation domain of the BoundaryShape.|
 | meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
 | fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+| volumeid     | ST_ResourceID |		   |         | ResourceID of a \<volumedata>-Resource to apply on the object |
+
 
 The BoundaryShape element is used to describe the interior and exterior of an object via a levelset function.
+
+If meshbboxonly is set to true, the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh, otherwise the boundary is intersected with the mesh.
 
 To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<BoundaryShape>-element.
 
