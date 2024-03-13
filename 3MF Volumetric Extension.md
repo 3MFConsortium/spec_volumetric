@@ -612,15 +612,15 @@ Producers of 3MF files MUST mark all volumetric \<property>-elements required to
 
 ### 4.3 Boundary Shape
 
-A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<boundaryShape>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
+A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<boundaryshape>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
 
-The child-element of the \<BoundaryShape> element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
+The child-element of the \<boundaryshape> element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
 
-Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any boundaryshape element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<BoundaryShape> element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
+Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any boundaryshape element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<boundaryshape> element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
 
 ### 4.3.1 BoundaryShape element
 
-Element **\<boundaryShape>**
+Element **\<boundaryshape>**
 
 ![boundary XML structure](images/element_boundary.png)
 
@@ -640,7 +640,7 @@ The BoundaryShape element is used to describe the interior and exterior of an ob
 
 If meshbboxonly is set to true, the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh, otherwise the boundary is intersected with the mesh.
 
-To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<BoundaryShape>-element.
+To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<boundaryshape>-element.
 
 **functionid**:
 
