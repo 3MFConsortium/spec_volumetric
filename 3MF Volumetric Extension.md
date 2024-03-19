@@ -808,7 +808,8 @@ Overview of native nodes
 | [min](#min)                | minimum value operation                    |
 | [max](#max)                | maximum value operation                    |
 | [abs](#abs)                | absolute value operation                   |
-| [fmod](#fmod)              | floating-point modulus operation           |
+| [fmod](#fmod)              | Remainder of floating point division       |
+| [mod](#mod)                | Modulo operation           				  |
 | [pow](#pow)                | power function operation                   |
 | [sqrt](#sqrt)              | square root function operation             |
 | [exp](#exp)                | exponential function operation             |
@@ -1883,7 +1884,10 @@ The operation can be used for the following types of inputs and outputs:
 
 
 ## fmod
-**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result". 
+**Description:** Computes the remainder of the divison of the inputs "A" / "B" and writes the result to the output "result", as known from C++ fmod.
+result = A - B * trunc(A/B) 
+The result will have the same sign as A.
+
 
 **Inputs:**
 | Identifier   | Description                      |
@@ -1915,6 +1919,42 @@ The operation can be used for the following types of inputs and outputs:
     </out>
 </fmod>
 ```
+
+## mod
+**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result" as know from GLSL mod. 
+result = A - B * floor(A/B)
+
+**Inputs:**
+| Identifier   | Description                      |
+|--------------|----------------------------------|
+| A            | The dividend                     |
+| B            | The divisor                      |
+
+**Outputs:**
+| Identifier   | Description                   |
+|--------------|-------------------------------|
+| result       | The remainder of A divided by B|
+
+The operation can be used for the following types of inputs and outputs:
+| A         | B         | result  | comment                           |
+|-----------|-----------|---------|-----------------------------------|
+| scalar    | scalar    | scalar  |                                   |
+| vector    | vector    | vector  | modulo operation of each component of the vectors |
+| matrix    | matrix    | matrix  | modulo operation of each component of the matrices|
+
+**Example Usage:**
+```xml 
+<mod identifier="mod1" displayname="mod 1">
+    <in>
+        <scalarref identifier="A" ref="constant1.c1"/>
+        <scalarref identifier="B" ref="inputs.radius"/>
+    </in>
+    <out>
+        <scalar identifier="result"/>
+    </out>
+<mod>
+```
+
 
 ## pow
 
