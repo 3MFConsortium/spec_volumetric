@@ -1,5 +1,105 @@
 @startuml name
 title 3MF Volumetric & Implicit
+'left to right direction
+top to bottom direction
+
+package Resources
+{
+    Class Object
+    Class Mesh extends Object
+
+    Class LevelSet extends Object
+    {
+        functionid : resourceID
+        channel : string
+        transform : Matrix
+        minfeaturesize : double
+        meshbboxonly : bool
+        fallbackvalue : double
+        solidthreshold : double
+        meshid : resourceID
+        volumeid : resourceID
+    }
+    Class VolumeData
+    Mesh *-- VolumeData
+    LevelSet *-- VolumeData
+
+    package Functions
+    {
+        Class Function
+        {
+            id: resourceID
+            displayname: string
+        }
+
+        Function *-- "1" Input
+        Function *-- "1" Output
+
+        Class FunctionFromImage3d extends Function
+        {
+            image3did : resourceID
+            valueoffset: double
+            valuescale: double
+            filter : string
+            tilestyleu : string
+            tilestylev : string
+            tilestylew : string
+        }
+        FunctionFromImage3d o-- "1" Image3D
+
+        Class FunctionImplicit extends Function
+        {
+            xmlns: implicit
+        }
+        FunctionImplicit *-- "0..*" Node_
+
+        Class PrivateExtensionFunction extends Function
+        {
+            xmlns: XYZ
+        }
+    }
+    package VolumetricData
+    {
+        Class Color
+        {
+            functionid : resourceID
+            minfeaturesize : double
+            fallbackvalue : double
+        }
+
+        Class Property
+        {
+            name : string
+            functionid : resourceID
+            minfeaturesize : double
+            fallbackvalue : double
+        }
+
+        Class Composite
+        {
+            basematerialid : resourceID
+        }
+
+        Class MaterialMapping
+        {
+            functionid : resourceID
+            minfeaturesize : double
+            fallbackvalue : double
+        }
+
+        VolumeData *-- "0..1" Color
+        VolumeData *-- "0..*" Property
+        VolumeData *-- "0..1" Composite
+        Composite *-- "1..*" MaterialMapping
+
+        Color o-- "1" Function
+        Property o-- "1" Function
+        MaterialMapping o-- "1" Function
+    }
+
+}
+
+
 
 package Image3D
 {
@@ -8,7 +108,7 @@ package Image3D
         id : resourceID
         name : string
     }
-    
+
     Class ImageStack extends Image3D
     {
         rowcount : int
@@ -94,40 +194,7 @@ package NodeArguments
     In *-- "0..*" MatrixRef
 }
 
-package Functions
-{
-    Class Function
-    {
-        id: resourceID
-        displayname: string
-    }
 
-    Function *-- "1" Input
-    Function *-- "1" Output
-
-    Class FunctionFromImage3d extends Function
-    {
-        image3did : resourceID
-        valueoffset: double
-        valuescale: double
-        filter : string
-        tilestyleu : string
-        tilestylev : string
-        tilestylew : string
-    }
-    FunctionFromImage3d o-- "1" Image3D
-
-    Class FunctionImplicit extends Function
-    {
-        xmlns: implicit
-    }
-    FunctionImplicit *-- "0..*" Node_
-
-    Class PrivateExtensionFunction extends Function
-    {
-        xmlns: XYZ
-    }
-}
 
 package Native
 {
@@ -205,20 +272,4 @@ package VolumetricData
     Property o-- "1" Function
     MaterialMapping o-- "1" Function
 }
-
-Class LevelSet
-{
-    functionid : resourceID
-    channel : string
-    transform : matrix
-    minfeaturesize : double
-    meshbboxonly : boolean
-    fallbackvalue : double
-    meshid : resourceID
-    volumeid : resourceID
-}
-
-Class Mesh
-Mesh *-- VolumeData
-LevelSet *-- VolumeData
 @enduml
