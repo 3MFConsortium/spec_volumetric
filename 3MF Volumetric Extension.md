@@ -432,7 +432,7 @@ Element **\<volumedata>**
 The \<volumedata> defines the volumetric properties in the interior of a \<shape> element.
 
 The child-element of the \<volumedata> element reference a function, that has to match the signature requirements of the child element. 
-Volumedata MUST only be referenced by an object type "mesh" or "boundaryshape" unless explicitly allowed by shapes defined in other extensions. This ensures that the \<volumedata> applies to a volume.
+Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the \<volumedata> applies to a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
 
 The \<volumedata> element can contain up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
@@ -612,15 +612,15 @@ Producers of 3MF files MUST mark all volumetric \<property>-elements required to
 
 ### 4.3 Boundary Shape
 
-A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<boundaryshape>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
+A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<levelset>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
 
-The child-element of the \<boundaryshape> element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
+The child-element of the \<levelset> element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
 
-Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any boundaryshape element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<boundaryshape> element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
+Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any levelset element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<levelset> element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
 
-### 4.3.1 BoundaryShape element
+### 4.3.1 LevelSet element
 
-Element **\<boundaryshape>**
+Element **\<levelset>**
 
 ![boundary XML structure](images/element_boundary.png)
 
@@ -630,17 +630,17 @@ Element **\<boundaryshape>**
 | channel      | xs:QName  | required |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
 | transform      | ST_Matrix3D  |          | Identity | Transformation of the object coordinate system into the \<function> coordinate system. |
 | minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
-| meshid     | ST_ResourceID| required |         | ResourceID of the \<mesh> that is used to define the evaluation domain of the BoundaryShape.|
+| meshid     | ST_ResourceID| required |         | ResourceID of the \<mesh> that is used to define the evaluation domain of the LevelSet.|
 | meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
 | fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 | volumeid     | ST_ResourceID |		   |         | ResourceID of a \<volumedata>-Resource to apply on the object |
 
 
-The BoundaryShape element is used to describe the interior and exterior of an object via a levelset function.
+The LevelSet element is used to describe the interior and exterior of an object via a levelset function.
 
 If meshbboxonly is set to true, the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh, otherwise the boundary is intersected with the mesh.
 
-To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<boundaryshape>-element.
+To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<levelset>-element.
 
 **functionid**:
 
@@ -670,7 +670,7 @@ Any undefined result MUST be evaluated as the value provided.
 
 **VolumeDetermination**
 
-_Figure 5-1: a) BoundaryShape A with a Mesh clipping surface. b) Mesh object B (rectangle) with \<volumedata> child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows \<volumedata> child element X in object A, and \<volumedata> child element Y in object B. The table lays out how these \<volumedata> child elements are sampled at positions p1 to p4._
+_Figure 5-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (rectangle) with \<volumedata> child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows \<volumedata> child element X in object A, and \<volumedata> child element Y in object B. The table lays out how these \<volumedata> child elements are sampled at positions p1 to p4._
 ![Illustration of overlapping meshes with \<volumedata> child elements](images/overlap_properties.png)
 
 

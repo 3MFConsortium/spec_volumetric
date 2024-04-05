@@ -32,7 +32,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:complexType name="CT_Object">
 		<xs:sequence>
 			<xs:choice>
-				<xs:element ref="boundaryshape"/>
+				<xs:element ref="levelset"/>
 			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
@@ -256,7 +256,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_BoundaryShape">
+	<xs:complexType name="CT_LevelSet">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
@@ -470,5 +470,5 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="color" type="CT_Color"/>
 	<xs:element name="property" type="CT_Property"/>
 	<xs:element name="mesh" type="CT_Mesh"/>
-	<xs:element name="boundaryshape" type="CT_BoundaryShape"/>
+	<xs:element name="levelset" type="CT_LevelSet"/>
 </xs:schema>
