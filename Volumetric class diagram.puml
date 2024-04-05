@@ -169,15 +169,6 @@ package VolumetricData
 {
     Class VolumeData
 
-    Class Boundary
-    {
-        solidthreshold : double
-        functionid : resourceID
-        minfeaturesize : double
-        meshbboxonly : bool
-        fallbackvalue : double
-    }
-
     Class Color
     {
         functionid : resourceID
@@ -205,18 +196,29 @@ package VolumetricData
         fallbackvalue : double
     }
 
-    VolumeData *-- "0..1" Boundary
     VolumeData *-- "0..1" Color
     VolumeData *-- "0..*" Property
     VolumeData *-- "0..1" Composite
     Composite *-- "1..*" MaterialMapping
 
-    Boundary o-- "1" Function
     Color o-- "1" Function
     Property o-- "1" Function
     MaterialMapping o-- "1" Function
 }
 
+Class LevelSet
+{
+    functionid : resourceID
+    channel : string
+    transform : matrix
+    minfeaturesize : double
+    meshbboxonly : boolean
+    fallbackvalue : double
+    meshid : resourceID
+    volumeid : resourceID
+}
+
 Class Mesh
 Mesh *-- VolumeData
+LevelSet *-- VolumeData
 @enduml
