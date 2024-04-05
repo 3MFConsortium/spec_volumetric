@@ -110,7 +110,7 @@ The central idea of this extension is to enrich the geometry notion of 3MF with 
 
 This extension is meant to be an exact specification of geometric, appearance-related, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
 
-A producer using the boundary shape of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
+A producer using the level set of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
 # Chapter 2. DataTypes
 
@@ -610,33 +610,33 @@ If a physical unit is necessary, the namespace owner MUST define a unique and un
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
 
-### 4.3 Boundary Shape
+### 4.3 Level Set
 
 A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<levelset>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
 
-The child-element of the \<levelset> element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
+The child-element of the \<levelset>-element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
 
-Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any levelset element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<levelset> element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
+Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any levelset element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<levelset>-element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
 
 ### 4.3.1 LevelSet element
 
 Element **\<levelset>**
 
-![boundary XML structure](images/element_boundary.png)
+![levelset XML structure](images/element_boundary.png)
 
 | Name           | Type         | Use      | Default | Annotation                                                           |
 | -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
-| functionid     | ST_ResourceID| required |         | ResourceID of the \<function> that provides the boundary as a levelset. |
+| functionid     | ST_ResourceID| required |         | ResourceID of the \<function> that provides the boundary as a level set. |
 | channel      | xs:QName  | required |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
 | transform      | ST_Matrix3D  |          | Identity | Transformation of the object coordinate system into the \<function> coordinate system. |
 | minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
-| meshid     | ST_ResourceID| required |         | ResourceID of the \<mesh> that is used to define the evaluation domain of the LevelSet.|
-| meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
+| meshid     | ST_ResourceID| required |         | ResourceID of the \<mesh> that is used to define the evaluation domain of the level set.|
+| meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the level set. |
 | fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 | volumeid     | ST_ResourceID |		   |         | ResourceID of a \<volumedata>-Resource to apply on the object |
 
 
-The LevelSet element is used to describe the interior and exterior of an object via a levelset function.
+The  \<levelset>-element is used to describe the interior and exterior of an object via a levelset function.
 
 If meshbboxonly is set to true, the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh, otherwise the boundary is intersected with the mesh.
 
@@ -644,7 +644,7 @@ To simplify parsing, producers MUST define a \<function>>-element prior to refer
 
 **functionid**:
 
-ResourceID of the \<function> that provides the boundary as a levelset. The function MUST have an input of type vector with the name "pos" and an output of type scalar that matches the name given as the channel attribute of the \<boundary> element.
+ResourceID of the \<function> that provides the boundary as a levelset. The function MUST have an input of type vector with the name "pos" and an output of type scalar that matches the name given as the channel attribute of the \<levelset> element.
 
 **channel**:
 Defines which function output channel is used as the levelset function. The channel MUST be of type scalar.
@@ -727,7 +727,7 @@ _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 
 The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs.
 
-When used as input for `<volumedata><boundary><boundary/><volumedata/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
+When used as input for `<levelset>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
 Consider an example:
 
@@ -2657,7 +2657,7 @@ The native nodes provided are used to create abitrary graphs. In order for these
 
 ## 5.2 Undefined Results and Fallback Values
 
-The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a volume data element such as <boundary>. Such undefined results SHALL make the result of the function undefined and the volumetric data element SHOULD be evaluated to the volumetric data element's fallback value.
+The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a <levelset> object or a a volume data element such as <color>. Such undefined results make the result of the function undefined and the volumetric data element MUST be evaluated to the volumetric data element's fallback value.
 
 ## Chapter 6. Notes
 
