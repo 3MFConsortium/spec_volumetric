@@ -110,7 +110,7 @@ The central idea of this extension is to enrich the geometry notion of 3MF with 
 
 This extension is meant to be an exact specification of geometric, appearance-related, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
 
-A producer using the boundary element of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other specification elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
+A producer using the level set of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
 # Chapter 2. DataTypes
 
@@ -161,7 +161,7 @@ References to functions are only used for the implicit extension.
 ## 2.5 ResourceReference
 Element \<resourceref>
 
-References to resources are only used for the implicit extension.
+References to resources are used for the volumeData element and for the implicit extension to create a function reference.
 
 ![Function XML Structure](images/element_resourceReference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
@@ -414,13 +414,13 @@ Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as 
 
 # Chapter 4. Volumetric Data
 
-## 4.1. Volumetric Data extension to Mesh
+## 4.1. Volumetric Data extension to Resources
  
-Element **\<mesh>**
+Element **\<Resource>**
 
 ![mesh XML structure](images/element_mesh.png)
 
-The volumetric data \<volumedata> element is a new OPTIONAL element which extends the root triangular mesh representation (i.e. the \<mesh> element).
+The volumetric data \<volumedata> element is a new OPTIONAL element which extends is a type of resource to be used by a Shape (i.e. the \<shape> element).
 
 
 ## 4.2. Volumetric Data
@@ -429,30 +429,24 @@ Element **\<volumedata>**
 
 ![volumedata XML structure](images/element_volumedata.png)
 
-The \<volumedata> defines the volumetric properties in the interior of a \<mesh> element.
+The \<volumedata> defines the volumetric properties in the interior of a \<shape> element.
 
 The child-element of the \<volumedata> element reference a function, that has to match the signature requirements of the child element. 
-Volumedata MUST only be used in a mesh of object type "model" or "solidsupport". This ensures that the \<mesh> defines a volume.
+Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the \<volumedata> applies to a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
 
-The \<volumedata> element can contain up to one \<boundary> child element, up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
+The \<volumedata> element can contain up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
 
-The child elements modify the enclosing \<mesh> in two fundamentally different ways:
-1. the child \<boundary> element (if it exists) determines the geometry of the \<mesh> object.
-2. the other child elements modify color, material composition and other arbitrary properties of the \<mesh> object.
+The child elements modify the enclosing \<shape> by specifying color, material composition and other arbitrary properties of the \<shape> object.
 
 To rationalize how this specification modifies the definition of geometry within a 3MF model, the concept of a "clipping surface" of a mesh with a \<volumedata> element is introduced.
-The clipping surface is defined as follows:
-1. If no \<boundary> element exists, the clipping surface is defined by the surface of the enclosing \<mesh> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
-2. If the \<boundary> element exists, the clipping surface is defined by the intersection of the geometry from 1. and the interior of the levelset-channel used in the \<boundary> element.
+The clipping surface is defined by the surface of the enclosing \<shape> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
 
 __Note__
-At least some closed mesh is required to enclose any volumedata element, for example a simple box that represents the bounding box of the geometry encoded in the \<boundary>-element. An empty mesh would not represent infinite space.
-
-Volumetric content is always clipped to the clipping surface of the mesh that embeds it.
+Volumetric content is always clipped to the clipping surface of the shape that embeds it.
 If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, the surface property has precedence in the following sense:
 The consumer MUST define a surface layer with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property MUST be applied everywhere within the object.
 
@@ -468,56 +462,7 @@ Conflicting properties must be handled as follows:
 __Note__: In the case where objects with different \<volumedata> child elements overlap, only the \<volumedata> child elements from last object can be used.
 This makes sure that \<volumedata> child elements of an overlapped object do not determine the value of any \<volumedata> child elements of an overlapping object. Figure 5-1 illustrates this behavior.
 
-_Figure 5-1: a) Mesh object A (circle) with \<volumedata> child element X. b) Mesh object B (rectangle) with \<volumedata> child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows \<volumedata> child element X in object A, and \<volumedata> child element Y in object B. The table lays out how these \<volumedata> child elements are sampled at positions p1 to p4._
-![Illustration of overlapping meshes with \<volumedata> child elements](images/overlap_properties.png)
-
-
-### 4.2.1 Boundary element
-
-Element **\<boundary>**
-
-![boundary XML structure](images/element_boundary.png)
-
-| Name           | Type         | Use      | Default | Annotation                                                           |
-| -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
-| functionid     | ST_ResourceID| required |         | ResourceID of the \<function> that provides the boundary as a levelset. |
-| channel      | xs:QName  |          |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
-| transform      | ST_Matrix3D  |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
-| minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
-| meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the boundary. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
-
-The boundary element is used to describe the interior and exterior of an object via a levelset function.
-
-To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<boundary>-element.
-
-**functionid**:
-
-ResourceID of the \<function> that provides the boundary as a levelset. The function MUST have an input of type vector with the name "pos" and an output of type scalar that matches the name given as the channel attribute of the \<boundary> element.
-
-**channel**:
-Defines which function output channel is used as the levelset function. The channel MUST be of type scalar.
-
-**transform**:
-
-The transformation of the object coordinate system into the scalar field coordinate system.
-If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
-See Figure 6-1 for an illustration of this transform in the sampling process.
-
-
-**minfeaturesize**:
-
-The minimum size of features to be considered in the boundary. This is used as a hint for the consumer to determine the resolution of the boundary. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
-
-**meshbboxonly**:
-
-If this attribute is set to "true", the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh.
-
-**fallbackvalue**:
-
-Any undefined result MUST be evaluated as the value.
-
-### 4.2.2 Color element
+### 4.2.1 Color element
 
 Element **\<color>**
 
@@ -557,7 +502,7 @@ The minimum size of features to be considered in the color. This is used as a hi
 
 Any undefined result MUST be evaluated as the value. The fallback value is specified as a scalar and MUST be applied across the result vector element-wise.
 
-## 4.2.3 Composite element
+## 4.2.2 Composite element
 
 Element **\<composite>**
 
@@ -582,7 +527,7 @@ Producers MUST NOT create files where the sum of all values in its child \<mater
 
 The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
 
-## 4.2.4 Material mapping element
+## 4.2.3 Material mapping element
 
 Element **\<materialmapping>**
 
@@ -619,7 +564,7 @@ If this attribute is set, any undefined result MUST be evaluated as the value.
 
 If the sampled value of a \<function> is `<0` it must be evaluated as "0".
 
-### 4.2.4.1 Property element
+### 4.2.4 Property element
 
 Element **\<property>**
 
@@ -664,6 +609,70 @@ If a physical unit is necessary, the namespace owner MUST define a unique and un
 
 If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
+
+### 4.3 Level Set
+
+A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<levelset>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
+
+The child-element of the \<levelset>-element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
+
+Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any levelset element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<levelset>-element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
+
+### 4.3.1 LevelSet element
+
+Element **\<levelset>**
+
+![levelset XML structure](images/element_boundary.png)
+
+| Name           | Type         | Use      | Default | Annotation                                                           |
+| -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
+| functionid     | ST_ResourceID| required |         | ResourceID of the \<function> that provides the boundary as a level set. |
+| channel      | xs:QName  | required |         | Name of the output of the function to be used for the levelset. The output must be a scalar |
+| transform      | ST_Matrix3D  |          | Identity | Transformation of the object coordinate system into the \<function> coordinate system. |
+| minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
+| meshid     | ST_ResourceID| required |         | ResourceID of the \<mesh> that is used to define the evaluation domain of the level set.|
+| meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the level set. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+| volumeid     | ST_ResourceID |		   |         | ResourceID of a \<volumedata>-Resource to apply on the object |
+
+
+The  \<levelset>-element is used to describe the interior and exterior of an object via a levelset function.
+
+If meshbboxonly is set to true, the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh, otherwise the boundary is intersected with the mesh.
+
+To simplify parsing, producers MUST define a \<function>>-element prior to referencing it via the functionid-attribute in a \<levelset>-element.
+
+**functionid**:
+
+ResourceID of the \<function> that provides the boundary as a levelset. The function MUST have an input of type vector with the name "pos" and an output of type scalar that matches the name given as the channel attribute of the \<levelset> element.
+
+**channel**:
+Defines which function output channel is used as the levelset function. The channel MUST be of type scalar.
+
+**transform**:
+
+The transformation of the object coordinate system into the scalar field coordinate system.
+If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
+See Figure 6-1 for an illustration of this transform in the sampling process.
+
+
+**minfeaturesize**:
+
+The minimum size of features to be considered in the boundary. This is used as a hint for the consumer to determine the resolution of the boundary. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+**meshbboxonly**:
+
+If this attribute is set to "true", the boundary is only intersected with the bounding box of the mesh. This allows the consumer to evaluate the boundary without computing the intersection with the mesh.
+
+**fallbackvalue**:
+
+Any undefined result MUST be evaluated as the value provided.
+
+**VolumeDetermination**
+
+_Figure 5-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (rectangle) with \<volumedata> child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows \<volumedata> child element X in object A, and \<volumedata> child element Y in object B. The table lays out how these \<volumedata> child elements are sampled at positions p1 to p4._
+![Illustration of overlapping meshes with \<volumedata> child elements](images/overlap_properties.png)
+
 
 # Chapter 5. Notes
 
@@ -718,7 +727,7 @@ _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 
 The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs.
 
-When used as input for `<volumedata><boundary><boundary/><volumedata/>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
+When used as input for `<levelset>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
 Consider an example:
 
@@ -2688,7 +2697,7 @@ The native nodes provided are used to create abitrary graphs. In order for these
 
 ## 5.2 Undefined Results and Fallback Values
 
-The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a volume data element such as <boundary>. Such undefined results SHALL make the result of the function undefined and the volumetric data element SHOULD be evaluated to the volumetric data element's fallback value.
+The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a <levelset> object or a a volume data element such as <color>. Such undefined results make the result of the function undefined and the volumetric data element MUST be evaluated to the volumetric data element's fallback value.
 
 ## Chapter 6. Notes
 
@@ -2702,8 +2711,8 @@ See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/
 ## Appendix B. 3MF XSD Schema for the Volumetric Extension
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.microsoft.com/3dmanufacturing/volumetric/2022/01"
+<xs:schema xmlns="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01"
 	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all">
 
 	<xs:annotation>
@@ -2720,15 +2729,24 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		]]>
 		</xs:documentation>
 	</xs:annotation>
+	
 	<!-- Complex Types -->
-
 	<xs:complexType name="CT_Resources">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element ref="volumedata" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="function" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_Object">
+		<xs:sequence>
+			<xs:choice>
+				<xs:element ref="levelset"/>
+			</xs:choice>
+		</xs:sequence>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Image3D">
@@ -2760,80 +2778,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="path" type="ST_UriReference" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
-
-	<xs:simpleType name="ST_Identifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for referencing a node or a node output.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<xs:pattern value="[a-zA-Z0-9_]+" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="ST_NodeOutputIdentifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a node output of the form "nodename.outputname".
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<!-- pattern allowing refs of the form "nodename.outputname" -->
-			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<!-- Identifer for a scalar output -->
-	<xs:simpleType name="ST_ScalarID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a scalar output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifer for a vector output -->
-	<xs:simpleType name="ST_VectorID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a vector output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifier for a Matrix-->
-	<xs:simpleType name="ST_MatrixID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a 4x4 Matrix
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<xs:simpleType name="ST_ResourceOutputID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier of an output providing a resource id
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
 
 	<xs:complexType name="CT_Ref">
 		<xs:annotation>
@@ -2949,106 +2893,105 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Function">
 		<xs:sequence>
-			<xs:choice>
-				<xs:element ref="functionfromimage3d"/>
-				<xs:any namespace="##other" processContents="lax"/>
-			</xs:choice>
-			<xs:element name="in" minOccurs="1" maxOccurs="unbounded">
+			<xs:element name="in">
 				<xs:complexType>
-						<xs:annotation>
-							<xs:documentation>
-								<![CDATA[
-						Inputs to the function.
-						]]>
-							</xs:documentation>
-						</xs:annotation>
-						<xs:sequence>
-							<xs:element name="scalar" type="CT_Scalar" />
-							<xs:element name="vector" type="CT_Vector" />
-							<xs:element name="matrix" type="CT_Matrix" />
-							<xs:element name="resourceid" type="CT_ResourceID" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-
-				<xs:element name="out" minOccurs="1" maxOccurs="1">
-					<xs:complexType>
-						<xs:annotation>
-							<xs:documentation>
-								<![CDATA[
-						References to the outputs of the function.
-						]]>
-							</xs:documentation>
-						</xs:annotation>
-						<xs:sequence>
-							<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
-								maxOccurs="unbounded" />
-							<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
-								maxOccurs="unbounded" />
-							<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0"
-								maxOccurs="unbounded" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
+					<xs:annotation>
+						<xs:documentation>
+							<![CDATA[
+					Inputs to the function.
+					]]>
+						</xs:documentation>
+					</xs:annotation>
+					<xs:choice minOccurs="0" maxOccurs="2147483647">
+						<xs:element name="scalar" type="CT_Scalar" />
+						<xs:element name="vector" type="CT_Vector" />
+						<xs:element name="matrix" type="CT_Matrix" />
+						<xs:element name="resourceid" type="CT_ResourceID" />
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="out">
+				<xs:complexType>
+					<xs:annotation>
+						<xs:documentation>
+							<![CDATA[
+					References to the outputs of the function.
+					]]>
+						</xs:documentation>
+					</xs:annotation>
+					<xs:choice minOccurs="0" maxOccurs="2147483647">
+						<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
+							maxOccurs="2147483647" />
+						<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
+							maxOccurs="2147483647" />
+						<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0"
+							maxOccurs="2147483647" />
+					</xs:choice>
+				</xs:complexType>
+			</xs:element>
+			<xs:any namespace="##other" processContents="lax" />
 		</xs:sequence>
-		<xs:attribute name="id" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="displayname" type="xs:string"/>
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
+		<xs:attribute name="id" type="ST_ResourceID" use="required" />
+		<xs:attribute name="displayname" type="xs:string" />
+		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
 	<xs:complexType name="CT_FunctionFromImage3D">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" 
+				maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="image3did" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="ST_ChannelName" use="required"/>
-		<xs:attribute name="filter" type="ST_Filter" default="linear"/>
-		<xs:attribute name="valueoffset" type="ST_Number" default="0.0"/>
-		<xs:attribute name="valuescale" type="ST_Number" default="1.0"/>
-		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap"/>
-		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap"/>
-		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap"/>
+		<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
+		<xs:attribute name="filter" type="ST_Filter" default="linear" />
+		<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
+		<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
+		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap" />
+		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap" />
+		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap" />
+		<xs:anyAttribute namespace="##other" processContents="lax" />
+	</xs:complexType>
+	
+	<xs:complexType name="CT_VolumeData">
+		<xs:sequence>
+			<xs:element ref="composite" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="color" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="property" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/> 
+		</xs:sequence>
+		<xs:attribute name="id" type="ST_ResourceID" use="required" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 	
 	<xs:complexType name="CT_Mesh">
-		<xs:sequence>
-			<xs:element ref="volumedata" minOccurs="0" maxOccurs="1"/>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
-		</xs:sequence>
-	</xs:complexType>
-
-	<xs:complexType name="CT_VolumeData">
-		<xs:sequence>
-				<xs:element ref="boundary" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="composite" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="color" minOccurs="0" maxOccurs="1"/>
-				<xs:element ref="property" minOccurs="0" maxOccurs="2147483647"/>
-				<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/> 
-		</xs:sequence>
+		<xs:attribute name="volumeid" type="ST_ResourceID" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_Boundary">
+	<xs:complexType name="CT_LevelSet">
 		<xs:sequence>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
-		<xs:attribute name="meshbboxonly" type="xs:boolean" default="false"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="ST_PositiveNumber" default="0" />
+		<xs:attribute name="meshbboxonly" type="xs:boolean" default="false" />
+		<xs:attribute name="fallbackvalue" type="ST_Number" default="0" />
+		<xs:attribute name="meshid" type="ST_ResourceID" use="required"/>
+		<xs:attribute name="volumeid" type="ST_ResourceID" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Color">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="ST_PositiveNumber" default="0" />
+		<xs:attribute name="fallbackvalue" type="ST_Number" default="0" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -3063,25 +3006,27 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_MaterialMapping">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="ST_PositiveNumber" default="0" />
+		<xs:attribute name="fallbackvalue" type="ST_Number" default="0" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Property">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required"/>
-		<xs:attribute name="channel" type="xs:QName" use="required"/>
-		<xs:attribute name="transform" type="ST_Matrix3D"/>
-		<xs:attribute name="name" type="xs:QName" use="required"/>
-		<xs:attribute name="required" type="xs:boolean" use="required"/>
-		<xs:attribute name="minfeaturesize" type="ST_Number" default="0"/>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="name" type="xs:QName" use="required" />
+		<xs:attribute name="required" type="xs:boolean" use="required" />
+		<xs:attribute name="minfeaturesize" type="ST_PositiveNumber" default="0" />
+		<xs:attribute name="fallbackvalue" type="ST_Number" default="0" />
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
@@ -3129,6 +3074,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:pattern value="((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
 	</xs:simpleType>
+	<xs:simpleType name="ST_PositiveNumber">
+		<xs:restriction base="xs:double">
+			<xs:whiteSpace value="collapse"/>
+			<xs:pattern value="((\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
+		</xs:restriction>
+	</xs:simpleType>
 	<xs:simpleType name="ST_Method">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="min"/>
@@ -3145,6 +3096,80 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="ST_Identifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for referencing a node or a node output.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<xs:pattern value="[a-zA-Z0-9_]+" />
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="ST_NodeOutputIdentifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a node output of the form "nodename.outputname".
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<!-- pattern allowing refs of the form "nodename.outputname" -->
+			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Identifer for a scalar output -->
+	<xs:simpleType name="ST_ScalarID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a scalar output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<!-- Identifer for a vector output -->
+	<xs:simpleType name="ST_VectorID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a vector output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<!-- Identifier for a Matrix-->
+	<xs:simpleType name="ST_MatrixID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a 4x4 Matrix
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+	
+	<xs:simpleType name="ST_ResourceOutputID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier of an output providing a resource id
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
 	<!-- Elements -->
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="imagestack" type="CT_ImageStack"/>
@@ -3152,13 +3177,14 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="function" type="CT_Function"/>
 	<xs:element name="functionfromimage3d" type="CT_FunctionFromImage3D"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
-	<xs:element name="boundary" type="CT_Boundary"/>
 	<xs:element name="composite" type="CT_Composite"/>
 	<xs:element name="materialmapping" type="CT_MaterialMapping"/>
 	<xs:element name="color" type="CT_Color"/>
 	<xs:element name="property" type="CT_Property"/>
 	<xs:element name="mesh" type="CT_Mesh"/>
+	<xs:element name="levelset" type="CT_LevelSet"/>
 </xs:schema>
+
 
 
 ```

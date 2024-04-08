@@ -8,7 +8,7 @@ package Resources
     Class Object
     Class Mesh extends Object
 
-    Class BoundaryShape extends Object
+    Class LevelSet extends Object
     {
         functionid : resourceID
         channel : string
@@ -22,7 +22,7 @@ package Resources
     }
     Class VolumeData
     Mesh *-- VolumeData
-    BoundaryShape *-- VolumeData
+    LevelSet *-- VolumeData
 
     package Functions
     {
@@ -232,4 +232,44 @@ package Native
     Node_ *-- "0..1" Out
 }
 
+package VolumetricData
+{
+    Class VolumeData
+
+    Class Color
+    {
+        functionid : resourceID
+        minfeaturesize : double
+        fallbackvalue : double
+    }
+
+    Class Property
+    {
+        name : string
+        functionid : resourceID
+        minfeaturesize : double
+        fallbackvalue : double
+    }
+
+    Class Composite
+    {
+        basematerialid : resourceID
+    }
+
+    Class MaterialMapping
+    {
+        functionid : resourceID
+        minfeaturesize : double
+        fallbackvalue : double
+    }
+
+    VolumeData *-- "0..1" Color
+    VolumeData *-- "0..*" Property
+    VolumeData *-- "0..1" Composite
+    Composite *-- "1..*" MaterialMapping
+
+    Color o-- "1" Function
+    Property o-- "1" Function
+    MaterialMapping o-- "1" Function
+}
 @enduml
