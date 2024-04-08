@@ -8,7 +8,7 @@ on: [pull_request]
 name: Build
 jobs:
   build-linux:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     env:
       SPECNAME: "3MF Volumetric Extension"
     steps:
