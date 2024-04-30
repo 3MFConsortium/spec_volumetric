@@ -143,7 +143,7 @@ Element \<vectorref>
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
 | displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  
+| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  	 |
 
 
 ## 2.4 MatrixReference
