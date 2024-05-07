@@ -272,9 +272,7 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="3" maxOccurs="3" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -363,9 +361,7 @@
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="scalar" type="vol:CT_Scalar" minOccurs="3" maxOccurs="3" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -415,22 +411,7 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="16" maxOccurs="16" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -474,10 +455,7 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="4" maxOccurs="4" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -521,10 +499,7 @@
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="4" maxOccurs="4" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
