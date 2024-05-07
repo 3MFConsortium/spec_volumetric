@@ -217,6 +217,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 					</xs:choice>
 				</xs:complexType>
 			</xs:element>
+			<xs:element ref="functionfromimage3d" minOccurs="0" maxOccurs="1"/>
 			<xs:any namespace="##other" processContents="lax" />
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required" />

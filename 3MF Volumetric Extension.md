@@ -2929,6 +2929,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 					</xs:choice>
 				</xs:complexType>
 			</xs:element>
+			<xs:element ref="functionfromimage3d" minOccurs="0" maxOccurs="1"/>
 			<xs:any namespace="##other" processContents="lax" />
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required" />
@@ -3184,9 +3185,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="mesh" type="CT_Mesh"/>
 	<xs:element name="levelset" type="CT_LevelSet"/>
 </xs:schema>
-
-
-
 ```
 
 _sheet0.png_
