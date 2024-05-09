@@ -2736,7 +2736,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="volumedata" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647" />
-			<xs:element ref="function" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element ref="functionfromimage3d" minOccurs="0" maxOccurs="2147483647" />
 		</xs:sequence>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
@@ -2938,19 +2938,19 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	</xs:complexType>
 
 	<xs:complexType name="CT_FunctionFromImage3D">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" 
-				maxOccurs="2147483647" />
-		</xs:sequence>
-		<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
-		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
-		<xs:attribute name="filter" type="ST_Filter" default="linear" />
-		<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
-		<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
-		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap" />
-		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap" />
-		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap" />
-		<xs:anyAttribute namespace="##other" processContents="lax" />
+		<xs:complexContent>
+			<xs:extension base="CT_Function">
+				<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
+				<xs:attribute name="channel" type="ST_ChannelName" use="required" />
+				<xs:attribute name="filter" type="ST_Filter" default="linear" />
+				<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
+				<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
+				<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap" />
+				<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap" />
+				<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap" />
+				<xs:anyAttribute namespace="##other" processContents="lax" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 	
 	<xs:complexType name="CT_VolumeData">
@@ -3081,15 +3081,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:pattern value="((\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="ST_Method">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="min"/>
-			<xs:enumeration value="max"/>
-			<xs:enumeration value="multiply"/>
-			<xs:enumeration value="weightedsum"/>
-			<xs:enumeration value="mask"/>
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="ST_Matrix3D">
 		<xs:restriction base="xs:string">
 			<xs:whiteSpace value="collapse"/>
@@ -3175,7 +3166,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="imagestack" type="CT_ImageStack"/>
 	<xs:element name="imagesheet" type="CT_ImageSheet"/>
-	<xs:element name="function" type="CT_Function"/>
 	<xs:element name="functionfromimage3d" type="CT_FunctionFromImage3D"/>
 	<xs:element name="volumedata" type="CT_VolumeData"/>
 	<xs:element name="composite" type="CT_Composite"/>
