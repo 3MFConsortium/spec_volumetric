@@ -2680,7 +2680,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a function with an arbitrary number of inputs and outputs. The inputs and outputs are defined by the user.
+			Node for a function with an arbitrary number of inputs and outputs. The inputs and outputs are defined by the user.
 			
 			Example:
 			<implicitfunction identifier="sphere" displayname="Sphere">
