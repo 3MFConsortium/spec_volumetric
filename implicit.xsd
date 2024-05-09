@@ -2,8 +2,7 @@
 <xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
 	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all"
 	xmlns="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
-	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:vol="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01">
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 	<xs:annotation>
 		<xs:documentation>
@@ -2806,8 +2805,8 @@
 					<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
 					<xs:element name="length" type="CT_Length" />
 					<xs:element name="resourceid" type="CT_ConstResourceID" />
+					<xs:any namespace="##other" processContents="lax" />
 				</xs:choice>
-				<xs:any namespace="##other" processContents="lax" />
 			</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required" />
 		<xs:attribute name="displayname" type="xs:string" />
