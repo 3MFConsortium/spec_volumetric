@@ -143,8 +143,8 @@ Element \<vectorref>
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
 | displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  
-                              |
+| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  	 |
+
 
 ## 2.4 MatrixReference
 Element \<matrixref>
@@ -183,7 +183,7 @@ Element **\<function>**
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 
-Volumetric data is created with functions that are evaluatable for at given model position. Each \<function> element is assumed to represent a method which can be evaluated within the model being described. Functions have input arguments and output arguments, each argument MUST be one of the supported datatypes enumerated in Chapter 2.
+Volumetric data is created with functions that are evaluatable at a given model position. Each \<function> element is assumed to represent a method which can be evaluated within the model being described. Functions have input arguments and output arguments, each argument MUST be one of the supported datatypes enumerated in Chapter 2.
 
 \<function> is a container for one of three distinct function types: FunctionFromImage3d, PrivateExtensionFunction, FunctionImplicit. The only function type that MUST be supported for the volumetric extension is FunctionFromImage3D which requires an Image3d resource.
 
@@ -678,7 +678,7 @@ _Figure 5-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (recta
 
 ## 5.1. Evaluation Graph
 
-The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
+The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement which guarentees that it is evaluatable.
 
 It is RECOMMENDED that calculations during evaluation of the graph are performed in at least single-precision floating-point arithmethic, according to IEEE 754.
 
@@ -717,7 +717,7 @@ This specification is limited in scope. Three noteworthy limitations are:
 
 The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to <functionfromimage3d> for generating volumetric data.
 
-The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property,boundary, color), where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
+The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property, color) and levelset, where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
 
 ## Chapter 1. Overview of Implicit Additions
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
@@ -2697,7 +2697,7 @@ The native nodes provided are used to create abitrary graphs. In order for these
 
 ## 5.2 Undefined Results and Fallback Values
 
-The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a <levelset> object or a a volume data element such as <color>. Such undefined results make the result of the function undefined and the volumetric data element MUST be evaluated to the volumetric data element's fallback value.
+The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a \<levelset> object or a a volume data element such as \<color>. Such undefined results make the result of the function undefined and the volumetric data element MUST be evaluated to the volumetric data element's fallback value.
 
 ## Chapter 6. Notes
 
