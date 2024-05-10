@@ -2581,7 +2581,11 @@
 					<vector	identifier="coordinates" displayname="Coordinates"/>
 					<scalar identifier="radius" displayname="radius"/>
 				</in>
-					
+				
+				<out>
+					<vectoref identifier="distance" ref="sub1.difference">
+				</out>
+
 				<length identifier="length1" displayname="length1">
 					<in>
 						<vectorref identifier="coordinates" ref="inputs.coordinates"/>
@@ -2600,11 +2604,7 @@
 						<scalar identifier="difference" displayname="difference"></scalar>
 					</out>
 				</subtraction>
-				
-				<outputs>
-					<vectoref identifier="distance" ref="sub1.difference">
-				</outputs>
-			</function>
+			</implicitfunction>
 
 			]]>
 			</xs:documentation>
