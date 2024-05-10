@@ -181,7 +181,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 
 	<xs:complexType name="CT_Function">
 		<xs:sequence>
-			<xs:element name="in">
+			<xs:element name="in" minOccurs="0" maxOccurs="1">
 				<xs:complexType>
 					<xs:annotation>
 						<xs:documentation>
@@ -190,7 +190,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 					]]>
 						</xs:documentation>
 					</xs:annotation>
-					<xs:choice minOccurs="0" maxOccurs="2147483647">
+					<xs:choice minOccurs="1" maxOccurs="2147483647">
 						<xs:element name="scalar" type="CT_Scalar" />
 						<xs:element name="vector" type="CT_Vector" />
 						<xs:element name="matrix" type="CT_Matrix" />
@@ -207,7 +207,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 					]]>
 						</xs:documentation>
 					</xs:annotation>
-					<xs:choice minOccurs="0" maxOccurs="2147483647">
+					<xs:choice minOccurs="1" maxOccurs="2147483647">
 						<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
 							maxOccurs="2147483647" />
 						<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
