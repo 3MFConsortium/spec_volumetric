@@ -102,8 +102,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			]]>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
 		<xs:attribute name="ref" type="ST_VectorID" use="required" />
+	</xs:extension>
+</xs:complexContent>
 	</xs:complexType>
 
 	<xs:complexType name="CT_MatrixRef">
