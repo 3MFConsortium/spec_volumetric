@@ -128,7 +128,7 @@ The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier
 ## 2.2 ScalarReference
 Element \<scalarref>
 
-![Scalar XML Structure](images/element_scalarReference.png)
+![Scalar XML Structure](images/element_scalarreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this scalar resource.                          |
@@ -138,7 +138,7 @@ Element \<scalarref>
 ## 2.3 VectorReference
 Element \<vectorref>
 
-![Vector XML Structure](images/element_vectorReference.png)
+![Vector XML Structure](images/element_vectorreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
@@ -150,7 +150,7 @@ Element \<matrixref>
 
 References to functions are only used for the implicit extension.
 
-![Vector XML Structure](images/element_matrixReference.png)
+![Vector XML Structure](images/element_matrixreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this matrix resource.                          |
