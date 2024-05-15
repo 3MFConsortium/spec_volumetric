@@ -32,7 +32,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:complexType name="CT_Object">
 		<xs:sequence>
 			<xs:choice>
-				<xs:element ref="levelset"/>
+				<xs:element ref="levelset" />
 			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
@@ -102,8 +102,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			]]>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_VectorID" use="required" />
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_VectorID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<xs:complexType name="CT_MatrixRef">
@@ -114,8 +117,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			]]>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_MatrixID" use="required" />
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_MatrixID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<xs:complexType name="CT_ResourceRef">
@@ -126,8 +132,11 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			]]>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<!-- Scalar output value -->
@@ -451,6 +460,10 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	</xs:simpleType>
 
 	<!-- Elements -->
+	<xs:element name="scalarref" type="CT_ScalarRef"/>
+	<xs:element name="vectorref" type="CT_VectorRef"/>
+	<xs:element name="matrixref" type="CT_MatrixRef"/>
+	<xs:element name="resourceref" type="CT_ResourceRef"/>
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="imagestack" type="CT_ImageStack"/>
 	<xs:element name="imagesheet" type="CT_ImageSheet"/>

@@ -128,7 +128,7 @@ The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier
 ## 2.2 ScalarReference
 Element \<scalarref>
 
-![Scalar XML Structure](images/element_scalarReference.png)
+![Scalar XML Structure](images/element_scalarreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this scalar resource.                          |
@@ -138,20 +138,19 @@ Element \<scalarref>
 ## 2.3 VectorReference
 Element \<vectorref>
 
-![Vector XML Structure](images/element_vectorReference.png)
+![Vector XML Structure](images/element_vectorreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
-| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  
-                              |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation. |
+| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".   |
 
 ## 2.4 MatrixReference
 Element \<matrixref>
 
 References to functions are only used for the implicit extension.
 
-![Vector XML Structure](images/element_matrixReference.png)
+![Vector XML Structure](images/element_matrixreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this matrix resource.                          |
@@ -163,7 +162,7 @@ Element \<resourceref>
 
 References to resources are used for the volumeData element and for the implicit extension to create a function reference.
 
-![Function XML Structure](images/element_resourceReference.png)
+![Function XML Structure](images/element_resourcereference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this function resource.                          |
@@ -174,9 +173,9 @@ References to resources are used for the volumeData element and for the implicit
 # Chapter 3. Functions and Function Types
 
 ## 3.1 Functions
-Element **\<function>**
+Complex Type **CT_Function**
 
-![Function XML Structure](images/element_function.png)
+![Function XML Structure](images/CT_Function.png)
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
@@ -298,17 +297,17 @@ Element **\<PrivateExtensionFunction>
 
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
-## 3.4 FunctionImplicit
-Element **\<function>
+## 3.4 ImplicitFunction
+Element **\<implicitfunction>
 
-![FunctionImplicit XML](images/element_functionImplict.png)
+![ImplicitFunction XML](images/element_implicitfunction.png)
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 | xmlns | ST\_namespace | required | implict | Specifies the namespace of the function. |
 
-FunctionImplicit is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
+ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
 
 # Chapter 4. 3D Image
 
@@ -622,7 +621,7 @@ Since fields can be evaluated in an unbounded way, a closed mesh is required to 
 
 Element **\<levelset>**
 
-![levelset XML structure](images/element_boundary.png)
+![levelset XML structure](images/element_levelset.png)
 
 | Name           | Type         | Use      | Default | Annotation                                                           |
 | -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |

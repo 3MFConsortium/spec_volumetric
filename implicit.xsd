@@ -1718,6 +1718,76 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- fmod(A,B) -->
+	<xs:complexType name="CT_Mod">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a mod function. While fmod is the 'C' fmod, mod has the same behaviour as the glsl mod function. The input must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- fmod(scalar,scalar) = scalar
+			- fmod(vector,vector) = vector (fmod of each component of the vectors)
+			- fmod(matrix,matrix) = matrix (fmod of each component of the matrices)
+						
+			Example:
+			<fmod identifier="mod1" displayname="mod 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</fmod>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the mod function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							mod of the inputs
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice>
+								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="matrix" type="vol:CT_Matrix" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- pow(base,exponent) -->
 	<xs:complexType name="CT_Pow">
 		<xs:annotation>
@@ -2663,6 +2733,7 @@
 					<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
 					<xs:element name="length" type="CT_Length" />
 					<xs:element name="resourceid" type="CT_ConstResourceID" />
+					<xs:element name="mod" type="CT_Mod" />
 				</xs:choice>
 			</xs:extension>
 		</xs:complexContent>
