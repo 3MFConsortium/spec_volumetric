@@ -67,82 +67,8 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
-	<xs:complexType name="CT_Ref">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Base for reference types
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="displayname" type="xs:string" use="optional" />
-	</xs:complexType>
-
-	<xs:complexType name="CT_ScalarRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a scalar output.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="CT_Ref">
-				<xs:attribute name="ref" type="ST_ScalarID" use="required" />
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
-	<xs:complexType name="CT_VectorRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a vector output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="CT_Ref">
-				<xs:attribute name="ref" type="ST_VectorID" use="required" />
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
-	<xs:complexType name="CT_MatrixRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a 4x4 Matrix
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="CT_Ref">
-				<xs:attribute name="ref" type="ST_MatrixID" use="required" />
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
-	<xs:complexType name="CT_Output">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-					References to the outputs of the function.
-					]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:choice minOccurs="1" maxOccurs="2147483647">
-			<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0" maxOccurs="2147483647" />
-			<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0" maxOccurs="2147483647" />
-			<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0" maxOccurs="2147483647" />
-			<xs:any namespace="##other" processContents="lax" />
-		</xs:choice>
-	</xs:complexType>
-	
 	<xs:complexType name="CT_FunctionFromImage3D">
 		<xs:sequence>
-			<xs:element name="out" type="CT_Output" />
 			<xs:any namespace="##other" processContents="lax" />
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required" />
@@ -280,6 +206,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:pattern value="((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
 	</xs:simpleType>
+	
 	<xs:simpleType name="ST_PositiveNumber">
 		<xs:restriction base="xs:double">
 			<xs:whiteSpace value="collapse"/>
@@ -293,84 +220,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="ST_Identifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for referencing a node or a node output.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<xs:pattern value="[a-zA-Z0-9_]+" />
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="ST_NodeOutputIdentifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a node output of the form "nodename.outputname".
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<!-- pattern allowing refs of the form "nodename.outputname" -->
-			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<!-- Identifer for a scalar output -->
-	<xs:simpleType name="ST_ScalarID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a scalar output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifer for a vector output -->
-	<xs:simpleType name="ST_VectorID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a vector output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifier for a Matrix-->
-	<xs:simpleType name="ST_MatrixID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a 4x4 Matrix
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-	
-	<xs:simpleType name="ST_ResourceOutputID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier of an output providing a resource id
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
 	<!-- Elements -->
-	<xs:element name="scalarref" type="CT_ScalarRef"/>
-	<xs:element name="vectorref" type="CT_VectorRef"/>
-	<xs:element name="matrixref" type="CT_MatrixRef"/>
 	<xs:element name="image3d" type="CT_Image3D"/>
 	<xs:element name="imagestack" type="CT_ImageStack"/>
 	<xs:element name="imagesheet" type="CT_ImageSheet"/>
