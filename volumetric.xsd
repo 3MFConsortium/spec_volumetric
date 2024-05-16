@@ -118,127 +118,38 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:attribute name="ref" type="ST_MatrixID" use="required" />
 	</xs:complexType>
 
-	<xs:complexType name="CT_ResourceRef">
+	<xs:complexType name="CT_Output">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Reference to a resource
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
-	</xs:complexType>
-
-	<!-- Scalar output value -->
-	<xs:complexType name="CT_Scalar">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Scalar output value
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-
-	<!-- Vector output value -->
-	<xs:complexType name="CT_Vector">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				Vector output value
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-	<!-- Matrix output value -->
-	<xs:complexType name="CT_Matrix">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				Matrix output value
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-	<!-- ResourceId output -->
-	<xs:complexType name="CT_ResourceID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				ResourceId output
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="CT_Function">
-		<xs:sequence>
-			<xs:element name="in" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-					<xs:annotation>
-						<xs:documentation>
-							<![CDATA[
-					Inputs to the function.
-					]]>
-						</xs:documentation>
-					</xs:annotation>
-					<xs:choice minOccurs="1" maxOccurs="2147483647">
-						<xs:element name="scalar" type="CT_Scalar" />
-						<xs:element name="vector" type="CT_Vector" />
-						<xs:element name="matrix" type="CT_Matrix" />
-						<xs:element name="resourceid" type="CT_ResourceID" />
-					</xs:choice>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="out">
-				<xs:complexType>
-					<xs:annotation>
-						<xs:documentation>
-							<![CDATA[
 					References to the outputs of the function.
 					]]>
-						</xs:documentation>
-					</xs:annotation>
-					<xs:choice minOccurs="1" maxOccurs="2147483647">
-						<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
-							maxOccurs="2147483647" />
-						<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
-							maxOccurs="2147483647" />
-						<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0"
-							maxOccurs="2147483647" />
-					</xs:choice>
-				</xs:complexType>
-			</xs:element>
-			<xs:element ref="functionfromimage3d" minOccurs="0" maxOccurs="1"/>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="1" maxOccurs="2147483647">
+			<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0" maxOccurs="2147483647" />
+			<xs:any namespace="##other" processContents="lax" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="CT_FunctionFromImage3D">
+		<xs:sequence>
+			<xs:element name="out" type="CT_Output" />
 			<xs:any namespace="##other" processContents="lax" />
 		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required" />
 		<xs:attribute name="displayname" type="xs:string" />
+		<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
+		<xs:attribute name="filter" type="ST_Filter" default="linear" />
+		<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
+		<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
+		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap" />
+		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap" />
+		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap" />
 		<xs:anyAttribute namespace="##other" processContents="lax" />
-	</xs:complexType>
-
-	<xs:complexType name="CT_FunctionFromImage3D">
-		<xs:complexContent>
-			<xs:extension base="CT_Function">
-				<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
-				<xs:attribute name="channel" type="ST_ChannelName" use="required" />
-				<xs:attribute name="filter" type="ST_Filter" default="linear" />
-				<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
-				<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
-				<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap" />
-				<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap" />
-				<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap" />
-				<xs:anyAttribute namespace="##other" processContents="lax" />
-			</xs:extension>
-		</xs:complexContent>
 	</xs:complexType>
 	
 	<xs:complexType name="CT_VolumeData">
