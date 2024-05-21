@@ -67,21 +67,28 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
-	<xs:complexType name="CT_FunctionFromImage3D">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" />
-		</xs:sequence>
+	<xs:complexType name="CT_Function">
 		<xs:attribute name="id" type="ST_ResourceID" use="required" />
 		<xs:attribute name="displayname" type="xs:string" />
-		<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
-		<xs:attribute name="channel" type="ST_ChannelName" use="required" />
-		<xs:attribute name="filter" type="ST_Filter" default="linear" />
-		<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
-		<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
-		<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap" />
-		<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap" />
-		<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap" />
 		<xs:anyAttribute namespace="##other" processContents="lax" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_FunctionFromImage3D">
+		<xs:complexContent>
+			<xs:extension base="CT_Function">
+				<xs:attribute name="id" type="ST_ResourceID" use="required" />
+				<xs:attribute name="displayname" type="xs:string" />
+				<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
+				<xs:attribute name="channel" type="ST_ChannelName" use="required" />
+				<xs:attribute name="filter" type="ST_Filter" default="linear" />
+				<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
+				<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
+				<xs:attribute name="tilestyleu" type="ST_TileStyle" default="wrap" />
+				<xs:attribute name="tilestylev" type="ST_TileStyle" default="wrap" />
+				<xs:attribute name="tilestylew" type="ST_TileStyle" default="wrap" />
+				<xs:anyAttribute namespace="##other" processContents="lax" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 	
 	<xs:complexType name="CT_VolumeData">
