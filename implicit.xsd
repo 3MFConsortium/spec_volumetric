@@ -2719,7 +2719,7 @@
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="CT_Ref">
 		<xs:annotation>
 			<xs:documentation>
@@ -2731,7 +2731,7 @@
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
 		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
-	
+
 	<xs:complexType name="CT_ScalarRef">
 		<xs:annotation>
 			<xs:documentation>
@@ -2746,7 +2746,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="CT_VectorRef">
 		<xs:annotation>
 			<xs:documentation>
@@ -2761,7 +2761,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="CT_MatrixRef">
 		<xs:annotation>
 			<xs:documentation>
@@ -2776,7 +2776,7 @@
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
-	
+
 	<xs:complexType name="CT_ResourceRef">
 		<xs:annotation>
 			<xs:documentation>
@@ -2927,7 +2927,7 @@
 				<xs:sequence>
 					<xs:element name="in" type="CT_Input" />
 					<xs:choice>
-						<xs:group ref="BasicNodeTypes" minOccurs="0" maxOccurs="2147483647"/>
+						<xs:group ref="BasicNodeTypes" minOccurs="0" maxOccurs="2147483647" />
 					</xs:choice>
 					<xs:element name="out" type="CT_Output" />
 					<xs:any namespace="##other" processContents="lax" />
@@ -2969,10 +2969,10 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice minOccurs="1" maxOccurs="2147483647">
-								<xs:element name="scalarref" type="CT_ScalarRef"/>
-								<xs:element name="vectorref" type="CT_VectorRef"/>
-								<xs:element name="matrixref" type="CT_MatrixRef"/>
-								<xs:element name="resourceref" type="CT_ResourceRef"/>
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="matrixref" type="CT_MatrixRef" />
+								<xs:element name="resourceref" type="CT_ResourceRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -2986,10 +2986,10 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice minOccurs="1" maxOccurs="2147483647">
-								<xs:element name="scalar" type="CT_Scalar"/>
-								<xs:element name="vector" type="CT_Vector"/>
-								<xs:element name="matrix" type="CT_Matrix"/>
-								<xs:element name="resourceid" type="CT_ResourceID"/>
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
+								<xs:element name="resourceid" type="CT_ResourceID" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3001,10 +3001,10 @@
 	<!-- Simple Types -->
 	<xs:simpleType name="ST_ResourceID">
 		<xs:restriction base="xs:positiveInteger">
-			<xs:maxExclusive value="2147483648"/>
+			<xs:maxExclusive value="2147483648" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="ST_Matrix4x4">
 		<xs:annotation>
 			<xs:documentation>
@@ -3015,7 +3015,7 @@
 		</xs:annotation>
 		<xs:restriction base="xs:QName">
 			<xs:pattern
-				value="^(-?\d+(\.\d+)?((e|E)[+-]?\d+)?)((\s+-?\d+(\.\d+)?((e|E)[+-]?\d+)?) {15})$"/>
+				value="^(-?\d+(\.\d+)?((e|E)[+-]?\d+)?)((\s+-?\d+(\.\d+)?((e|E)[+-]?\d+)?) {15})$" />
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -3031,7 +3031,7 @@
 			<xs:pattern value="[a-zA-Z0-9_]+" />
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="ST_NodeOutputIdentifier">
 		<xs:annotation>
 			<xs:documentation>
@@ -3081,7 +3081,7 @@
 		</xs:annotation>
 		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="ST_ResourceOutputID">
 		<xs:annotation>
 			<xs:documentation>
@@ -3094,5 +3094,68 @@
 	</xs:simpleType>
 
 	<!-- Elements -->
-	<xs:element name="implicitfunction" type="CT_ImplicitFunction"/>
+	<xs:element name="implicitfunction" type="CT_ImplicitFunction" />
+	<xs:element name="scalar" type="CT_Scalar" />
+	<xs:element name="vector" type="CT_Vector" />
+	<xs:element name="matrix" type="CT_Matrix" />
+	<xs:element name="resourceid" type="CT_ResourceID" />
+
+	<xs:element name="scalarref" type="CT_ScalarRef" />
+	<xs:element name="vectorref" type="CT_VectorRef" />
+	<xs:element name="matrixref" type="CT_MatrixRef" />
+	<xs:element name="resourceref" type="CT_ResourceRef" />
+
+	<xs:element name="addition" type="CT_Addition" />
+	<xs:element name="subtraction" type="CT_Subtraction" />
+	<xs:element name="multiplication" type="CT_Multiplication" />
+	<xs:element name="division" type="CT_Division" />
+	<xs:element name="constant" type="CT_ConstantScalar" />
+	<xs:element name="constvec" type="CT_ConstantVector" />
+	<xs:element name="constmat" type="CT_ConstantMatrix" />
+	<xs:element name="composevector" type="CT_ComposeVector" />
+	<xs:element name="vectorfromscalar" type="CT_VectorFromScalar" />
+	<xs:element name="decomposevector" type="CT_DecomposeVector" />
+	<xs:element name="composematrix" type="CT_ComposeMatrix" />
+	<xs:element name="matrixfromcolumns" type="CT_MatrixFromColumns" />
+	<xs:element name="matrixfromrows" type="CT_MatrixFromRows" />
+	<xs:element name="dot" type="CT_DotProduct" />
+	<xs:element name="cross" type="CT_CrossProduct" />
+	<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication" />
+	<xs:element name="transpose" type="CT_Transpose" />
+	<xs:element name="inverse" type="CT_Inverse" />
+	<xs:element name="sin" type="CT_Sinus" />
+	<xs:element name="cos" type="CT_Cosinus" />
+	<xs:element name="tan" type="CT_Tan" />
+	<xs:element name="arcsin" type="CT_Arcsin" />
+	<xs:element name="arccos" type="CT_Arccos" />
+	<xs:element name="arctan" type="CT_Arctan" />
+	<xs:element name="arctan2" type="CT_Arctan2" />
+	<xs:element name="min" type="CT_Min" />
+	<xs:element name="max" type="CT_Max" />
+	<xs:element name="abs" type="CT_Abs" />
+	<xs:element name="fmod" type="CT_Fmod" />
+	<xs:element name="pow" type="CT_Pow" />
+	<xs:element name="sqrt" type="CT_Sqrt" />
+	<xs:element name="exp" type="CT_Exp" />
+	<xs:element name="log" type="CT_Log" />
+	<xs:element name="log2" type="CT_Log2" />
+	<xs:element name="log10" type="CT_Log10" />
+	<xs:element name="select" type="CT_Select" />
+	<xs:element name="clamp" type="CT_Clamp" />
+	<xs:element name="cosh" type="CT_Cosh" />
+	<xs:element name="sinh" type="CT_Sinh" />
+	<xs:element name="tanh" type="CT_Tanh" />
+	<xs:element name="round" type="CT_Round" />
+	<xs:element name="ceil" type="CT_Ceil" />
+	<xs:element name="floor" type="CT_Floor" />
+	<xs:element name="sign" type="CT_Sign" />
+	<xs:element name="fract" type="CT_Fract" />
+	<xs:element name="functioncall" type="CT_FunctionCall" />
+	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
+	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
+	<xs:element name="length" type="CT_Length" />
+	<xs:element name="constresourceid" type="CT_ConstResourceID" />
+	<xs:element name="mod" type="CT_Mod" />
+
+
 </xs:schema>

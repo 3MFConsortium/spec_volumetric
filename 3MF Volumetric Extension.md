@@ -978,7 +978,7 @@ None
 </constmat>
 ```
 
-# resourceid
+# constresourceid
 
 **Description:** Defines a model resource id as a constant value.
 
@@ -1001,11 +1001,11 @@ None
 **Example Usage:**
 
 ```xml
-<resourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
+<constresourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
     <out>
         <resourceid identifier="value"/>
     </out>
-</resourceid>
+</constresourceid>
 ```
 
 ## composevector
