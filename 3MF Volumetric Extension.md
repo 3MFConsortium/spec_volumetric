@@ -3397,7 +3397,7 @@ _sheet0.png_
 	</xs:complexType>
 
 
-	<!-- CT_ResourceID -->
+	<!-- CT_ConstResourceID -->
 	<xs:complexType name="CT_ConstResourceID">
 		<xs:annotation>
 			<xs:documentation>
