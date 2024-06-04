@@ -838,7 +838,7 @@ Overview of native nodes
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
 | [length](#length)          | length operation                           |
-| [resourceid](#resourceid)  | constant resource ID                       |
+| [constresourceid](#constresourceid)  | constant resource ID                       |
 
 
 ## addition
@@ -977,7 +977,7 @@ None
 </constmat>
 ```
 
-# resourceid
+# constresourceid
 
 **Description:** Defines a model resource id as a constant value.
 
@@ -1000,11 +1000,11 @@ None
 **Example Usage:**
 
 ```xml
-<resourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
+<constresourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
     <out>
         <resourceid identifier="value"/>
     </out>
-</resourceid>
+</constresourceid>
 ```
 
 ## composevector

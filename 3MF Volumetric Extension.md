@@ -128,7 +128,7 @@ The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier
 ## 2.2 ScalarReference
 Element \<scalarref>
 
-![Scalar XML Structure](images/element_scalarReference.png)
+![Scalar XML Structure](images/element_scalarreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this scalar resource.                          |
@@ -138,20 +138,19 @@ Element \<scalarref>
 ## 2.3 VectorReference
 Element \<vectorref>
 
-![Vector XML Structure](images/element_vectorReference.png)
+![Vector XML Structure](images/element_vectorreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
-| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  	 |
-
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation. |
+| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".   |
 
 ## 2.4 MatrixReference
 Element \<matrixref>
 
 References to functions are only used for the implicit extension.
 
-![Vector XML Structure](images/element_matrixReference.png)
+![Vector XML Structure](images/element_matrixreference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this matrix resource.                          |
@@ -163,7 +162,7 @@ Element \<resourceref>
 
 References to resources are used for the volumeData element and for the implicit extension to create a function reference.
 
-![Function XML Structure](images/element_resourceReference.png)
+![Function XML Structure](images/element_resourcereference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this function resource.                          |
@@ -174,16 +173,16 @@ References to resources are used for the volumeData element and for the implicit
 # Chapter 3. Functions and Function Types
 
 ## 3.1 Functions
-Element **\<function>**
+Complex Type **CT_Function**
 
-![Function XML Structure](images/element_function.png)
+![Function XML Structure](images/CT_Function.png)
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 
-Volumetric data is created with functions that are evaluatable at a given model position. Each \<function> element is assumed to represent a method which can be evaluated within the model being described. Functions have input arguments and output arguments, each argument MUST be one of the supported datatypes enumerated in Chapter 2.
+Volumetric data is created with functions that are evaluatable for at given model position. Each \<function> element is assumed to represent a method which can be evaluated within the model being described. Functions have input arguments and output arguments, each argument MUST be one of the supported datatypes enumerated in Chapter 2.
 
 \<function> is a container for one of three distinct function types: FunctionFromImage3d, PrivateExtensionFunction, FunctionImplicit. The only function type that MUST be supported for the volumetric extension is FunctionFromImage3D which requires an Image3d resource.
 
@@ -298,17 +297,17 @@ Element **\<PrivateExtensionFunction>
 
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
-## 3.4 FunctionImplicit
-Element **\<function>
+## 3.4 ImplicitFunction
+Element **\<implicitfunction>
 
-![FunctionImplicit XML](images/element_functionImplict.png)
+![ImplicitFunction XML](images/element_implicitfunction.png)
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 | xmlns | ST\_namespace | required | implict | Specifies the namespace of the function. |
 
-FunctionImplicit is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
+ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
 
 # Chapter 4. 3D Image
 
@@ -622,7 +621,7 @@ Since fields can be evaluated in an unbounded way, a closed mesh is required to 
 
 Element **\<levelset>**
 
-![levelset XML structure](images/element_boundary.png)
+![levelset XML structure](images/element_levelset.png)
 
 | Name           | Type         | Use      | Default | Annotation                                                           |
 | -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
@@ -678,7 +677,7 @@ _Figure 5-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (recta
 
 ## 5.1. Evaluation Graph
 
-The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement which guarentees that it is evaluatable.
+The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
 
 It is RECOMMENDED that calculations during evaluation of the graph are performed in at least single-precision floating-point arithmethic, according to IEEE 754.
 
@@ -717,7 +716,7 @@ This specification is limited in scope. Three noteworthy limitations are:
 
 The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to <functionfromimage3d> for generating volumetric data.
 
-The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property, color) and levelset, where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
+The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property,boundary, color), where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
 
 ## Chapter 1. Overview of Implicit Additions
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
@@ -839,7 +838,7 @@ Overview of native nodes
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
 | [length](#length)          | length operation                           |
-| [resourceid](#resourceid)  | constant resource ID                       |
+| [constresourceid](#constresourceid)  | constant resource ID                       |
 
 
 ## addition
@@ -978,7 +977,7 @@ None
 </constmat>
 ```
 
-# resourceid
+# constresourceid
 
 **Description:** Defines a model resource id as a constant value.
 
@@ -1001,11 +1000,11 @@ None
 **Example Usage:**
 
 ```xml
-<resourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
+<constresourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
     <out>
         <resourceid identifier="value"/>
     </out>
-</resourceid>
+</constresourceid>
 ```
 
 ## composevector
@@ -2697,7 +2696,7 @@ The native nodes provided are used to create abitrary graphs. In order for these
 
 ## 5.2 Undefined Results and Fallback Values
 
-The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a \<levelset> object or a a volume data element such as \<color>. Such undefined results make the result of the function undefined and the volumetric data element MUST be evaluated to the volumetric data element's fallback value.
+The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a <levelset> object or a a volume data element such as <color>. Such undefined results make the result of the function undefined and the volumetric data element MUST be evaluated to the volumetric data element's fallback value.
 
 ## Chapter 6. Notes
 
@@ -2744,7 +2743,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:complexType name="CT_Object">
 		<xs:sequence>
 			<xs:choice>
-				<xs:element ref="levelset"/>
+				<xs:element ref="levelset" />
 			</xs:choice>
 		</xs:sequence>
 	</xs:complexType>
@@ -2779,159 +2778,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
-	<xs:complexType name="CT_Ref">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Base for reference types
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="displayname" type="xs:string" use="optional" />
-	</xs:complexType>
-
-	<xs:complexType name="CT_ScalarRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a scalar output.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="CT_Ref">
-				<xs:attribute name="ref" type="ST_ScalarID" use="required" />
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
-	<xs:complexType name="CT_VectorRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a vector output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_VectorID" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="CT_MatrixRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a 4x4 Matrix
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_MatrixID" use="required" />
-	</xs:complexType>
-
-	<xs:complexType name="CT_ResourceRef">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Reference to a resource
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
-	</xs:complexType>
-
-	<!-- Scalar output value -->
-	<xs:complexType name="CT_Scalar">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Scalar output value
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-
-	<!-- Vector output value -->
-	<xs:complexType name="CT_Vector">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				Vector output value
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-	<!-- Matrix output value -->
-	<xs:complexType name="CT_Matrix">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				Matrix output value
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
-	<!-- ResourceId output -->
-	<xs:complexType name="CT_ResourceID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-				ResourceId output
-				]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-	</xs:complexType>
-
 	<xs:complexType name="CT_Function">
-		<xs:sequence>
-			<xs:element name="in" minOccurs="0" maxOccurs="1">
-				<xs:complexType>
-					<xs:annotation>
-						<xs:documentation>
-							<![CDATA[
-					Inputs to the function.
-					]]>
-						</xs:documentation>
-					</xs:annotation>
-					<xs:choice minOccurs="1" maxOccurs="2147483647">
-						<xs:element name="scalar" type="CT_Scalar" />
-						<xs:element name="vector" type="CT_Vector" />
-						<xs:element name="matrix" type="CT_Matrix" />
-						<xs:element name="resourceid" type="CT_ResourceID" />
-					</xs:choice>
-				</xs:complexType>
-			</xs:element>
-			<xs:element name="out">
-				<xs:complexType>
-					<xs:annotation>
-						<xs:documentation>
-							<![CDATA[
-					References to the outputs of the function.
-					]]>
-						</xs:documentation>
-					</xs:annotation>
-					<xs:choice minOccurs="1" maxOccurs="2147483647">
-						<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0"
-							maxOccurs="2147483647" />
-						<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0"
-							maxOccurs="2147483647" />
-						<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0"
-							maxOccurs="2147483647" />
-					</xs:choice>
-				</xs:complexType>
-			</xs:element>
-			<xs:element ref="functionfromimage3d" minOccurs="0" maxOccurs="1"/>
-			<xs:any namespace="##other" processContents="lax" />
-		</xs:sequence>
 		<xs:attribute name="id" type="ST_ResourceID" use="required" />
 		<xs:attribute name="displayname" type="xs:string" />
 		<xs:anyAttribute namespace="##other" processContents="lax" />
@@ -3075,6 +2922,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:pattern value="((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
 	</xs:simpleType>
+	
 	<xs:simpleType name="ST_PositiveNumber">
 		<xs:restriction base="xs:double">
 			<xs:whiteSpace value="collapse"/>
@@ -3086,80 +2934,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:whiteSpace value="collapse"/>
 			<xs:pattern value="((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?) ((\-|\+)?(([0-9]+(\.[0-9]+)?)|(\.[0-9]+))((e|E)(\-|\+)?[0-9]+)?)"/>
 		</xs:restriction>
-	</xs:simpleType>
-
-	<xs:simpleType name="ST_Identifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for referencing a node or a node output.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<xs:pattern value="[a-zA-Z0-9_]+" />
-		</xs:restriction>
-	</xs:simpleType>
-	
-	<xs:simpleType name="ST_NodeOutputIdentifier">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a node output of the form "nodename.outputname".
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="xs:QName">
-			<!-- pattern allowing refs of the form "nodename.outputname" -->
-			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
-		</xs:restriction>
-	</xs:simpleType>
-
-	<!-- Identifer for a scalar output -->
-	<xs:simpleType name="ST_ScalarID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a scalar output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifer for a vector output -->
-	<xs:simpleType name="ST_VectorID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifer for a vector output
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-
-	<!-- Identifier for a Matrix-->
-	<xs:simpleType name="ST_MatrixID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier for a 4x4 Matrix
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
-	</xs:simpleType>
-	
-	<xs:simpleType name="ST_ResourceOutputID">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Identifier of an output providing a resource id
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
 
 	<!-- Elements -->
@@ -3213,7 +2987,7 @@ _sheet0.png_
 		</xs:choice>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
-	
+
 	<!-- node is the base type for all nodes in the implicit function tree.	-->
 	<xs:complexType name="CT_Node">
 		<xs:annotation>
@@ -3223,7 +2997,7 @@ _sheet0.png_
 				]]>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="identifier" type="vol:ST_Identifier" use="required" />
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
 		<xs:attribute name="displayname" type="xs:string" use="optional" />
 		<xs:attribute name="tag" type="xs:string" use="optional" />
 	</xs:complexType>
@@ -3266,13 +3040,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -3286,10 +3063,10 @@ _sheet0.png_
 							]]>
 								</xs:documentation>
 							</xs:annotation>
-							<xs:choice  minOccurs="1" maxOccurs="1">
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+							<xs:choice minOccurs="1" maxOccurs="1">
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3319,7 +3096,7 @@ _sheet0.png_
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="scalar" type="CT_Scalar" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3349,7 +3126,7 @@ _sheet0.png_
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3386,7 +3163,7 @@ _sheet0.png_
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3418,12 +3195,12 @@ _sheet0.png_
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="value" type="vol:CT_ResourceID" />
+								<xs:element name="value" type="CT_ResourceID" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 				</xs:sequence>
-				<xs:attribute name="value" type="vol:ST_ResourceID" use="required" />
+				<xs:attribute name="value" type="ST_ResourceID" use="required" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -3455,14 +3232,15 @@ _sheet0.png_
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="3" maxOccurs="3" />
+								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="3"
+									maxOccurs="3" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3495,14 +3273,14 @@ _sheet0.png_
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3537,14 +3315,15 @@ _sheet0.png_
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" minOccurs="3" maxOccurs="3" />
+								<xs:element name="scalar" type="CT_Scalar" minOccurs="3"
+									maxOccurs="3" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3594,14 +3373,15 @@ _sheet0.png_
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="16" maxOccurs="16" />
+								<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="16"
+									maxOccurs="16" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3638,14 +3418,15 @@ _sheet0.png_
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="4" maxOccurs="4" />
+								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="4"
+									maxOccurs="4" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3682,14 +3463,15 @@ _sheet0.png_
 					<xs:element name="in" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="4" maxOccurs="4" />
+								<xs:element name="vectorref" type="CT_VectorRef" minOccurs="4"
+									maxOccurs="4" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
 					<xs:element name="out" minOccurs="1" maxOccurs="1">
 						<xs:complexType>
 							<xs:sequence>
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3737,13 +3519,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -3758,9 +3543,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3807,13 +3592,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -3828,9 +3616,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice minOccurs="1" maxOccurs="1">
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3877,13 +3665,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -3898,9 +3689,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice minOccurs="1" maxOccurs="1">
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3944,8 +3735,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -3959,7 +3750,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="scalar" type="CT_Scalar" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4003,8 +3794,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4018,7 +3809,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4061,8 +3852,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:all>
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="matrixref" type="CT_MatrixRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:all>
 						</xs:complexType>
 					</xs:element>
@@ -4076,7 +3867,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4117,7 +3908,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:element name="matrixref" type="CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4131,7 +3922,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4172,7 +3963,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:element name="matrixref" type="CT_MatrixRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4186,7 +3977,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -4230,8 +4021,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4245,8 +4036,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4290,8 +4081,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4305,8 +4096,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4350,8 +4141,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4365,8 +4156,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4410,8 +4201,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4425,8 +4216,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4470,8 +4261,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4485,8 +4276,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4530,8 +4321,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4545,8 +4336,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4593,10 +4384,12 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -4611,8 +4404,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4660,13 +4453,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -4681,9 +4477,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4730,13 +4526,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -4751,9 +4550,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4799,13 +4598,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -4820,9 +4622,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4869,13 +4671,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -4890,9 +4695,82 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- fmod(A,B) -->
+	<xs:complexType name="CT_Mod">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Derived node for a mod function. While fmod is the 'C' fmod, mod has the same behaviour as the glsl mod function. The input must have the identifier "A" and "B",
+			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
+			- fmod(scalar,scalar) = scalar
+			- fmod(vector,vector) = vector (fmod of each component of the vectors)
+			- fmod(matrix,matrix) = matrix (fmod of each component of the matrices)
+						
+			Example:
+			<fmod identifier="mod1" displayname="mod 1">
+				<in>
+					<vectorref identifier="A" ref="inputs.vector1"/>
+					<vectorref identifier="B" ref="inputs.vector2"/>
+				</in>
+				<out>
+					<vector identifier="result"/>
+				</out>
+			</fmod>
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							Inputs to the mod function.
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice>
+								<xs:sequence>
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+								<xs:sequence>
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
+								</xs:sequence>
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+							mod of the inputs
+							]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice>
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4939,13 +4817,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -4960,9 +4841,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5008,13 +4889,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -5029,9 +4913,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5075,8 +4959,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:all>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="resourceref" type="vol:ST_ResourceID" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="resourceref" type="ST_ResourceID" />
 							</xs:all>
 						</xs:complexType>
 					</xs:element>
@@ -5090,7 +4974,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="scalar" type="CT_Scalar" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -5134,8 +5018,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:all>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="resourceref" type="vol:ST_ResourceID" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="resourceref" type="ST_ResourceID" />
 							</xs:all>
 						</xs:complexType>
 					</xs:element>
@@ -5149,7 +5033,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="scalar" type="CT_Scalar" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -5192,7 +5076,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -5206,7 +5090,7 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:sequence>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
+								<xs:element name="scalar" type="CT_Scalar" />
 							</xs:sequence>
 						</xs:complexType>
 					</xs:element>
@@ -5230,9 +5114,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="matrixref" type="CT_MatrixRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5246,9 +5130,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5281,8 +5165,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5310,8 +5193,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5340,8 +5222,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5369,8 +5250,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5398,8 +5278,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5427,8 +5306,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5456,8 +5334,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5499,13 +5376,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="2" maxOccurs="2" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="2" maxOccurs="2" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -5520,9 +5400,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5572,13 +5452,16 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element name="scalarref" type="vol:CT_ScalarRef" minOccurs="4" maxOccurs="4" />
+									<xs:element name="scalarref" type="CT_ScalarRef"
+										minOccurs="4" maxOccurs="4" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="vectorref" type="vol:CT_VectorRef" minOccurs="4" maxOccurs="4" />
+									<xs:element name="vectorref" type="CT_VectorRef"
+										minOccurs="4" maxOccurs="4" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element name="matrixref" type="vol:CT_MatrixRef" minOccurs="4" maxOccurs="4" />
+									<xs:element name="matrixref" type="CT_MatrixRef"
+										minOccurs="4" maxOccurs="4" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
@@ -5593,9 +5476,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5628,8 +5511,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5658,8 +5540,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5687,8 +5568,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5716,8 +5596,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
-			</xs:extension>
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
@@ -5745,18 +5624,226 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:complexContent>
-			<xs:extension base="CT_BaseOneParameterFunc">
+			<xs:extension base="CT_BaseOneParameterFunc"> </xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<!-- Scalar input value -->
+	<xs:complexType name="CT_Scalar">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Scalar output value
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+
+	<!-- Vector input value -->
+	<xs:complexType name="CT_Vector">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				Vector output value
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<!-- Matrix input value -->
+	<xs:complexType name="CT_Matrix">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				Matrix output value
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<!-- ResourceId input -->
+	<xs:complexType name="CT_ResourceID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+				ResourceId output
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_Ref">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Base for reference types
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_ScalarRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a scalar output.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_ScalarID" use="required" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
 
+	<xs:complexType name="CT_VectorRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a vector output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_VectorID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="CT_MatrixRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a 4x4 Matrix
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_MatrixID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="CT_ResourceRef">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Reference to a resource
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
+	</xs:complexType>
+
+	<xs:complexType name="CT_Input">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+		Inputs to the function.
+		]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="0" maxOccurs="2147483647">
+			<xs:element name="scalar" type="CT_Scalar" />
+			<xs:element name="vector" type="CT_Vector" />
+			<xs:element name="matrix" type="CT_Matrix" />
+			<xs:element name="resourceid" type="CT_ResourceID" />
+			<xs:any namespace="##other" processContents="lax" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:complexType name="CT_Output">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+					References to the outputs of the function.
+					]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:choice minOccurs="1" maxOccurs="2147483647">
+			<xs:element name="scalarref" type="CT_ScalarRef" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element name="vectorref" type="CT_VectorRef" minOccurs="0" maxOccurs="2147483647" />
+			<xs:element name="matrixref" type="CT_MatrixRef" minOccurs="0" maxOccurs="2147483647" />
+			<xs:any namespace="##other" processContents="lax" />
+		</xs:choice>
+	</xs:complexType>
+
+	<xs:group name="BasicNodeTypes">
+		<xs:choice>
+			<!-- nodes -->
+			<xs:element name="addition" type="CT_Addition" />
+			<xs:element name="subtraction" type="CT_Subtraction" />
+			<xs:element name="multiplication" type="CT_Multiplication" />
+			<xs:element name="division" type="CT_Division" />
+			<xs:element name="constant" type="CT_ConstantScalar" />
+			<xs:element name="constvec" type="CT_ConstantVector" />
+			<xs:element name="constmat" type="CT_ConstantMatrix" />
+			<xs:element name="composevector" type="CT_ComposeVector" />
+			<xs:element name="vectorfromscalar" type="CT_VectorFromScalar" />
+			<xs:element name="decomposevector" type="CT_DecomposeVector" />
+			<xs:element name="composematrix" type="CT_ComposeMatrix" />
+			<xs:element name="matrixfromcolumns" type="CT_MatrixFromColumns" />
+			<xs:element name="matrixfromrows" type="CT_MatrixFromRows" />
+			<xs:element name="dot" type="CT_DotProduct" />
+			<xs:element name="cross" type="CT_CrossProduct" />
+			<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication" />
+			<xs:element name="transpose" type="CT_Transpose" />
+			<xs:element name="inverse" type="CT_Inverse" />
+			<xs:element name="sin" type="CT_Sinus" />
+			<xs:element name="cos" type="CT_Cosinus" />
+			<xs:element name="tan" type="CT_Tan" />
+			<xs:element name="arcsin" type="CT_Arcsin" />
+			<xs:element name="arccos" type="CT_Arccos" />
+			<xs:element name="arctan" type="CT_Arctan" />
+			<xs:element name="arctan2" type="CT_Arctan2" />
+			<xs:element name="min" type="CT_Min" />
+			<xs:element name="max" type="CT_Max" />
+			<xs:element name="abs" type="CT_Abs" />
+			<xs:element name="fmod" type="CT_Fmod" />
+			<xs:element name="pow" type="CT_Pow" />
+			<xs:element name="sqrt" type="CT_Sqrt" />
+			<xs:element name="exp" type="CT_Exp" />
+			<xs:element name="log" type="CT_Log" />
+			<xs:element name="log2" type="CT_Log2" />
+			<xs:element name="log10" type="CT_Log10" />
+			<xs:element name="select" type="CT_Select" />
+			<xs:element name="clamp" type="CT_Clamp" />
+			<xs:element name="cosh" type="CT_Cosh" />
+			<xs:element name="sinh" type="CT_Sinh" />
+			<xs:element name="tanh" type="CT_Tanh" />
+			<xs:element name="round" type="CT_Round" />
+			<xs:element name="ceil" type="CT_Ceil" />
+			<xs:element name="floor" type="CT_Floor" />
+			<xs:element name="sign" type="CT_Sign" />
+			<xs:element name="fract" type="CT_Fract" />
+			<xs:element name="functioncall" type="CT_FunctionCall" />
+			<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
+			<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
+			<xs:element name="length" type="CT_Length" />
+			<xs:element name="resourceid" type="CT_ConstResourceID" />
+			<xs:element name="mod" type="CT_Mod" />
+			<xs:any namespace="##other" processContents="lax" />
+		</xs:choice>
+	</xs:group>
 
 	<!-- implicit function -->
 	<xs:complexType name="CT_ImplicitFunction">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a function with an arbitrary number of inputs and outputs. The inputs and outputs are defined by the user.
+			Implicit function with an arbitrary number of inputs and outputs. The inputs and outputs are defined by the user.
+			No forward references allowed.
 			
 			Example:
 			<implicitfunction identifier="sphere" displayname="Sphere">
@@ -5764,11 +5851,7 @@ _sheet0.png_
 					<vector	identifier="coordinates" displayname="Coordinates"/>
 					<scalar identifier="radius" displayname="radius"/>
 				</in>
-				
-				<out>
-					<vectoref identifier="distance" ref="sub1.difference">
-				</out>
-
+						
 				<length identifier="length1" displayname="length1">
 					<in>
 						<vectorref identifier="coordinates" ref="inputs.coordinates"/>
@@ -5776,7 +5859,7 @@ _sheet0.png_
 					<out>
 						<scalar identifier="value" displayname="length"></scalar>
 					</out>
-				</length>
+				</length>	
 				
 				<subtraction identifier="sub1" displayname="subtraction">
 					<in>
@@ -5786,7 +5869,11 @@ _sheet0.png_
 					<out>
 						<scalar identifier="difference" displayname="difference"></scalar>
 					</out>
-				</subtraction>
+				</subtraction>								
+				<out>
+					<vectoref identifier="distance" ref="sub1.difference">
+				</out>
+
 			</implicitfunction>
 
 			]]>
@@ -5794,59 +5881,14 @@ _sheet0.png_
 		</xs:annotation>
 		<xs:complexContent>
 			<xs:extension base="vol:CT_Function">
-				<xs:choice minOccurs="0" maxOccurs="2147483647">
-					<!-- nodes -->				
-					<xs:element name="addition" type="CT_Addition" />
-					<xs:element name="subtraction" type="CT_Subtraction" />
-					<xs:element name="multiplication" type="CT_Multiplication" />
-					<xs:element name="division" type="CT_Division" />
-					<xs:element name="constant" type="CT_ConstantScalar" />
-					<xs:element name="constvec" type="CT_ConstantVector" />
-					<xs:element name="constmat" type="CT_ConstantMatrix" />
-					<xs:element name="composevector" type="CT_ComposeVector" />
-					<xs:element name="vectorfromscalar" type="CT_VectorFromScalar" />
-					<xs:element name="decomposevector" type="CT_DecomposeVector" />
-					<xs:element name="composematrix" type="CT_ComposeMatrix" />
-					<xs:element name="matrixfromcolumns" type="CT_MatrixFromColumns" />
-					<xs:element name="matrixfromrows" type="CT_MatrixFromRows" />
-					<xs:element name="dot" type="CT_DotProduct" />
-					<xs:element name="cross" type="CT_CrossProduct" />
-					<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication" />
-					<xs:element name="transpose" type="CT_Transpose" />
-					<xs:element name="inverse" type="CT_Inverse" />
-					<xs:element name="sin" type="CT_Sinus" />
-					<xs:element name="cos" type="CT_Cosinus" />
-					<xs:element name="tan" type="CT_Tan" />
-					<xs:element name="arcsin" type="CT_Arcsin" />
-					<xs:element name="arccos" type="CT_Arccos" />
-					<xs:element name="arctan" type="CT_Arctan" />
-					<xs:element name="arctan2" type="CT_Arctan2" />
-					<xs:element name="min" type="CT_Min" />
-					<xs:element name="max" type="CT_Max" />
-					<xs:element name="abs" type="CT_Abs" />
-					<xs:element name="fmod" type="CT_Fmod" />
-					<xs:element name="pow" type="CT_Pow" />
-					<xs:element name="sqrt" type="CT_Sqrt" />
-					<xs:element name="exp" type="CT_Exp" />
-					<xs:element name="log" type="CT_Log" />
-					<xs:element name="log2" type="CT_Log2" />
-					<xs:element name="log10" type="CT_Log10" />
-					<xs:element name="select" type="CT_Select" />
-					<xs:element name="clamp" type="CT_Clamp" />
-					<xs:element name="cosh" type="CT_Cosh" />
-					<xs:element name="sinh" type="CT_Sinh" />
-					<xs:element name="tanh" type="CT_Tanh" />
-					<xs:element name="round" type="CT_Round" />
-					<xs:element name="ceil" type="CT_Ceil" />
-					<xs:element name="floor" type="CT_Floor" />
-					<xs:element name="sign" type="CT_Sign" />
-					<xs:element name="fract" type="CT_Fract" />
-					<xs:element name="functioncall" type="CT_FunctionCall" />
-					<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
-					<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
-					<xs:element name="length" type="CT_Length" />
-					<xs:element name="resourceid" type="CT_ConstResourceID" />
-				</xs:choice>
+				<xs:sequence>
+					<xs:element name="in" type="CT_Input" />
+					<xs:choice>
+						<xs:group ref="BasicNodeTypes" minOccurs="0" maxOccurs="2147483647" />
+					</xs:choice>
+					<xs:element name="out" type="CT_Output" />
+					<xs:any namespace="##other" processContents="lax" />
+				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
@@ -5884,10 +5926,10 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice minOccurs="1" maxOccurs="2147483647">
-								<xs:element name="scalarref" type="vol:CT_ScalarRef" />
-								<xs:element name="vectorref" type="vol:CT_VectorRef" />
-								<xs:element name="matrixref" type="vol:CT_MatrixRef" />
-								<xs:element name="resourceref" type="vol:CT_ResourceRef" />
+								<xs:element name="scalarref" type="CT_ScalarRef" />
+								<xs:element name="vectorref" type="CT_VectorRef" />
+								<xs:element name="matrixref" type="CT_MatrixRef" />
+								<xs:element name="resourceref" type="CT_ResourceRef" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5901,10 +5943,10 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice minOccurs="1" maxOccurs="2147483647">
-								<xs:element name="scalar" type="vol:CT_Scalar" />
-								<xs:element name="vector" type="vol:CT_Vector" />
-								<xs:element name="matrix" type="vol:CT_Matrix" />
-								<xs:element name="resourceid" type="vol:CT_ResourceID" />
+								<xs:element name="scalar" type="CT_Scalar" />
+								<xs:element name="vector" type="CT_Vector" />
+								<xs:element name="matrix" type="CT_Matrix" />
+								<xs:element name="resourceid" type="CT_ResourceID" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5914,6 +5956,12 @@ _sheet0.png_
 	</xs:complexType>
 
 	<!-- Simple Types -->
+	<xs:simpleType name="ST_ResourceID">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxExclusive value="2147483648" />
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="ST_Matrix4x4">
 		<xs:annotation>
 			<xs:documentation>
@@ -5928,10 +5976,146 @@ _sheet0.png_
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="ST_Identifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for referencing a node or a node output.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<xs:pattern value="[a-zA-Z0-9_]+" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ST_NodeOutputIdentifier">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a node output of the form "nodename.outputname".
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:QName">
+			<!-- pattern allowing refs of the form "nodename.outputname" -->
+			<xs:pattern value="[a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)?" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Identifer for a scalar output -->
+	<xs:simpleType name="ST_ScalarID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a scalar output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<!-- Identifer for a vector output -->
+	<xs:simpleType name="ST_VectorID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifer for a vector output
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<!-- Identifier for a Matrix-->
+	<xs:simpleType name="ST_MatrixID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier for a 4x4 Matrix
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
+	<xs:simpleType name="ST_ResourceOutputID">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Identifier of an output providing a resource id
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="ST_NodeOutputIdentifier" />
+	</xs:simpleType>
+
 	<!-- Elements -->
 	<xs:element name="implicitfunction" type="CT_ImplicitFunction" />
-</xs:schema>
-```
+	<xs:element name="scalar" type="CT_Scalar" />
+	<xs:element name="vector" type="CT_Vector" />
+	<xs:element name="matrix" type="CT_Matrix" />
+	<xs:element name="resourceid" type="CT_ResourceID" />
+
+	<xs:element name="scalarref" type="CT_ScalarRef" />
+	<xs:element name="vectorref" type="CT_VectorRef" />
+	<xs:element name="matrixref" type="CT_MatrixRef" />
+	<xs:element name="resourceref" type="CT_ResourceRef" />
+
+	<xs:element name="addition" type="CT_Addition" />
+	<xs:element name="subtraction" type="CT_Subtraction" />
+	<xs:element name="multiplication" type="CT_Multiplication" />
+	<xs:element name="division" type="CT_Division" />
+	<xs:element name="constant" type="CT_ConstantScalar" />
+	<xs:element name="constvec" type="CT_ConstantVector" />
+	<xs:element name="constmat" type="CT_ConstantMatrix" />
+	<xs:element name="composevector" type="CT_ComposeVector" />
+	<xs:element name="vectorfromscalar" type="CT_VectorFromScalar" />
+	<xs:element name="decomposevector" type="CT_DecomposeVector" />
+	<xs:element name="composematrix" type="CT_ComposeMatrix" />
+	<xs:element name="matrixfromcolumns" type="CT_MatrixFromColumns" />
+	<xs:element name="matrixfromrows" type="CT_MatrixFromRows" />
+	<xs:element name="dot" type="CT_DotProduct" />
+	<xs:element name="cross" type="CT_CrossProduct" />
+	<xs:element name="matvecmultiplication" type="CT_MatrixVectorMultiplication" />
+	<xs:element name="transpose" type="CT_Transpose" />
+	<xs:element name="inverse" type="CT_Inverse" />
+	<xs:element name="sin" type="CT_Sinus" />
+	<xs:element name="cos" type="CT_Cosinus" />
+	<xs:element name="tan" type="CT_Tan" />
+	<xs:element name="arcsin" type="CT_Arcsin" />
+	<xs:element name="arccos" type="CT_Arccos" />
+	<xs:element name="arctan" type="CT_Arctan" />
+	<xs:element name="arctan2" type="CT_Arctan2" />
+	<xs:element name="min" type="CT_Min" />
+	<xs:element name="max" type="CT_Max" />
+	<xs:element name="abs" type="CT_Abs" />
+	<xs:element name="fmod" type="CT_Fmod" />
+	<xs:element name="pow" type="CT_Pow" />
+	<xs:element name="sqrt" type="CT_Sqrt" />
+	<xs:element name="exp" type="CT_Exp" />
+	<xs:element name="log" type="CT_Log" />
+	<xs:element name="log2" type="CT_Log2" />
+	<xs:element name="log10" type="CT_Log10" />
+	<xs:element name="select" type="CT_Select" />
+	<xs:element name="clamp" type="CT_Clamp" />
+	<xs:element name="cosh" type="CT_Cosh" />
+	<xs:element name="sinh" type="CT_Sinh" />
+	<xs:element name="tanh" type="CT_Tanh" />
+	<xs:element name="round" type="CT_Round" />
+	<xs:element name="ceil" type="CT_Ceil" />
+	<xs:element name="floor" type="CT_Floor" />
+	<xs:element name="sign" type="CT_Sign" />
+	<xs:element name="fract" type="CT_Fract" />
+	<xs:element name="functioncall" type="CT_FunctionCall" />
+	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
+	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
+	<xs:element name="length" type="CT_Length" />
+	<xs:element name="constresourceid" type="CT_ConstResourceID" />
+	<xs:element name="mod" type="CT_Mod" />
+
+
+</xs:schema>```
 
 _sheet1.png_
 ![sheet1.png](images/sheet1.png)
