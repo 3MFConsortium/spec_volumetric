@@ -2798,10 +2798,10 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:choice minOccurs="0" maxOccurs="2147483647">
-			<xs:element ref="scalar" />
-			<xs:element ref="vector" />
-			<xs:element ref="matrix" />
-			<xs:element ref="resourceid" />
+			<xs:element ref="scalar"/>
+			<xs:element ref="vector"/>
+			<xs:element ref="matrix"/>
+			<xs:element ref="resourceid"/>
 			<xs:any namespace="##other" processContents="lax" />
 		</xs:choice>
 	</xs:complexType>
@@ -2837,7 +2837,7 @@
 			<xs:element ref="decomposevector" />
 			<xs:element ref="composematrix" />
 			<xs:element ref="matrixfromcolumns" />
-			<xs:element ref="matrixfromrows"  />
+			<xs:element ref="matrixfromrows" />
 			<xs:element ref="dot" />
 			<xs:element ref="cross" />
 			<xs:element ref="matvecmultiplication" />
