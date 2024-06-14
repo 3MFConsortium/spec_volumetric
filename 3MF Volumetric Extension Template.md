@@ -731,7 +731,7 @@ When used as input for `<levelset>`, the functions are evaluated at each point w
 Consider an example:
 
 ```xml
-<v:function id="3" displayname="sphere">
+<i:implicitfunction id="3" displayname="sphere">
 	<in>
 		<vector identifier="pos" displayname="position"></vector>
 		<scalar identifier="radius" displayname="radius of the sphere"></scalar>
@@ -770,7 +770,7 @@ Consider an example:
 			<scalar identifier="result" displayname="result"></scalar>
 		</out>
 	</subtraction>
-</v:function>
+</i:implicitfunction>
 ```
 In this example, the _function_ representing a sphere takes two inputs, 'pos' and 'radius'. It showcases the flexibility of defining various mathematical operations like length computation and subtraction through nested nodes within the function. The result of these computations can be accessed through the 'outputs' member.
 
