@@ -298,7 +298,7 @@ Element **\<PrivateExtensionFunction>
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
 ## 3.4 ImplicitFunction
-Element **\<implicitfunction>
+Element **\<i:implicitfunction>
 
 ![ImplicitFunction XML](images/element_implicitfunction.png)
 | Name   | Type   | Use | Default | Annotation |
@@ -307,7 +307,7 @@ Element **\<implicitfunction>
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 | xmlns | ST\_namespace | required | implict | Specifies the namespace of the function. |
 
-ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
+ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification in the  _implicit_ namespace. The function requires an input DataType and an output DataType. 
 
 # Chapter 4. 3D Image
 
