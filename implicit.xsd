@@ -2926,8 +2926,8 @@
 			<xs:extension base="vol:CT_Function">
 				<xs:sequence>
 					<xs:element name="in" type="CT_Input" />
-					<xs:choice>
-						<xs:group ref="BasicNodeTypes" minOccurs="0" maxOccurs="2147483647" />
+					<xs:choice minOccurs="0" maxOccurs="2147483647">
+						<xs:group ref="BasicNodeTypes"  />
 					</xs:choice>
 					<xs:element name="out" type="CT_Output" />
 					<xs:any namespace="##other" processContents="lax" />
