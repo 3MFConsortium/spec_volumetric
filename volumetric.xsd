@@ -77,7 +77,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:complexContent>
 			<xs:extension base="CT_Function">
 				<xs:attribute name="image3did" type="ST_ResourceID" use="required" />
-				<xs:attribute name="channel" type="ST_ChannelName" use="required" />
 				<xs:attribute name="filter" type="ST_Filter" default="linear" />
 				<xs:attribute name="valueoffset" type="ST_Number" default="0.0" />
 				<xs:attribute name="valuescale" type="ST_Number" default="1.0" />
