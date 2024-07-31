@@ -24,8 +24,9 @@
   * [Chapter 2. DataTypes](#chapter-2-datatypes)
   * [Chapter 3. Functions](#chapter-3-functions-and-function-types)
   * [Chapter 4. 3D Image](#chapter-4-3d-image)
-  * [Chapter 5. Volumetric Data](#chapter-4-volumetric-data)
-  * [Chapter 6. Notes](#chapter-6-notes)
+  * [Chapter 5. LevelSet](#chapter-5-levelset)
+  * [Chapter 6. Volumetric Data](#chapter-6-volumetric-data)
+  * [Chapter 7. Notes](#chapter-6-notes)
 - [Part II. Implicit Extension](#3mf-volumetric-implicit-extensions)
   * [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
   * [Chapter 2. Function Implicit](#chapter-2-function-implicit)
@@ -410,214 +411,14 @@ Each \<imagesheet> element has one required attribute. The path property determi
 __Note__:
 Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of \<image3d> and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different data format for a voxel grid as child under \<image3d> would not affect the remaining parts of this specification.
 
-
-# Chapter 4. Volumetric Data
-
-## 4.1. Volumetric Data extension to Resources
- 
-Element **\<Resource>**
-
-![mesh XML structure](images/element_mesh.png)
-
-The volumetric data \<volumedata> element is a new OPTIONAL element which extends is a type of resource to be used by a Shape (i.e. the \<shape> element).
-
-
-## 4.2. Volumetric Data
-
-Element **\<volumedata>**
-
-![volumedata XML structure](images/element_volumedata.png)
-
-The \<volumedata> defines the volumetric properties in the interior of a \<shape> element.
-
-The child-element of the \<volumedata> element reference a function, that has to match the signature requirements of the child element. 
-Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the \<volumedata> applies to a volume.
-Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
-
-The \<volumedata> element can contain up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
-
-The child elements modify the enclosing \<shape> by specifying color, material composition and other arbitrary properties of the \<shape> object.
-
-To rationalize how this specification modifies the definition of geometry within a 3MF model, the concept of a "clipping surface" of a mesh with a \<volumedata> element is introduced.
-The clipping surface is defined by the surface of the enclosing \<shape> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
-
-This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
-
-
-__Note__
-Volumetric content is always clipped to the clipping surface of the shape that embeds it.
-If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, the surface property has precedence in the following sense:
-The consumer MUST define a surface layer with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property MUST be applied everywhere within the object.
-
-__Note__
-Defining conflicting surface- and volumetric properties can be very powerful, e.g. if one wants to add a high resolution surface texture over a lower resolution volumetric color. However, producers MUST be aware that the thickness of this surface layer can vary between consumers depending on the manufacturing technology they employ.
-
-The properties at surface regions that are not explicitly specified are instead given by the volumetric properties.
-
-Conflicting properties must be handled as follows:
-1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on physical grounds (e.g. non-conducting copper).
-2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
-
-__Note__: In the case where objects with different \<volumedata> child elements overlap, only the \<volumedata> child elements from last object can be used.
-This makes sure that \<volumedata> child elements of an overlapped object do not determine the value of any \<volumedata> child elements of an overlapping object. Figure 5-1 illustrates this behavior.
-
-### 4.2.1 Color element
-
-Element **\<color>**
-
-![color XML structure](images/element_color.png)
-
-| Name            | Type           | Use      | Default | Annotation                                                |
-| --------------- | -------------- | -------- | ------- | --------------------------------------------------------- |
-|| functionid      | ST_ResourceID  | required |         | Model Resource Id of the function providing the color                                                          |
-| transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
-| channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
-| minfeaturesize  | ST_Number      |          |  0.0       | Hint for the minimum size of features. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
-
-To simplify parsing, producers MUST define a \<vector3dfield>-element prior to referencing it via the vector3dfieldid in a \<color>-element.
-
-The \<color> element is used to define the color of the object.
-The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
-
-The vector components `x`, `y` and `z` of the 3D vector field are interpreted as the "R", "G" and "B" channels of the color of the enclosing meshobject, respectively. If either channel evaluates to a value \<0 or \>1 it has to be truncated at 0 or 1, respectively.
-
-This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
-
-**transform**:
-
-The transformation of the object coordinate system into the coordinate system of the function (e.g. noramlized coordinates for functionFromImage3D).
-If this \<color>>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the 3D vector field must be sampled at position `(x',y',z') = T*(x,y,z)`.
-
-**channel**
-
-Name of the function ouput to be used as color. The output must be of type vector.
-
-**minfeaturesize**:
-
-The minimum size of features to be considered in the color. This is used as a hint for the consumer to determine the resolution of the color estimation. It might also be used to determine the level of super sampling requiered, if the printer cannot reproduce the resolution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
-
-**fallbackvalue**:
-
-Any undefined result MUST be evaluated as the value. The fallback value is specified as a scalar and MUST be applied across the result vector element-wise.
-
-## 4.2.2 Composite element
-
-Element **\<composite>**
-
-![composite XML structure](images/element_composite.png)
-
-| Name   | Type | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| basematerialid | ST\_ResourceID | required | | ResourceID of the \<basematerials> element that holds the \<base>-elements referenced in the child \<materialmapping>-elements. |
-
-The \<composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
-
-This element MUST contain at least one \<materialmapping> element, which will encode the relative contribution of a specific basematerial to the material mix.
-
-The number of \<base>-elements in the \<basematerials> element referenced by a \<composite> element MUST equal the number of \<materialmapping>-elements in the \<composite> element. To simplify parsing, producers MUST define the referenced \<basematerials>-element prior to referencing it via the basematerialid in a \<composite>-element.
-
-Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
-
-- If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
-   ```
-   value of channel i / sum(value of all N mixing contributions at point X)
-   ```
-
-The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
-
-## 4.2.3 Material mapping element
-
-Element **\<materialmapping>**
-
-![materialmapping XML structure](images/element_materialmapping.png)
-
-| Name           | Type          | Use      | Default | Annotation                                                |
-| -------------- | ------------- | -------- | ------- | --------------------------------------------------------- |
-| functionid  | ST_ResourceID | required |         | ResourceID of the \<function> providing the mixing contribution value for a material in the \<basematerial>-element. |
-| transform      | ST_Matrix3D   |          |         | Transformation of the object coordinate system into the \<function> coordinate system |
-| channel        | xs:QName      | required |         | Name of the function output to be used for the mixing contribution. The output must be a scalar. |
-| minfeaturesize | ST_Number     |          | 0       | Hint for the minimum size of features. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
-
-The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent \<composite>-element.
-
-To simplify parsing, producers MUST define the referenced \<function>-element prior to referencing it via the functionid in a \<materialmapping>-element.
-
-**transform**:
-
-The transformation of the object coordinate system into the scalar field coordinate system.
-If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
-
-**channel**:
-
-Name of the function output to be used for the mixing contribution. The output must be a scalar. The value is clamped to the range [0,1].
-
-**minfeaturesize**:
-
-The minimum size of features to be considered in the mixing contribution. This is used as a hint for the consumer to determine the resolution of the mixing contribution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
-
-**fallbackvalue**:
-
-If this attribute is set, any undefined result MUST be evaluated as the value.
-
-If the sampled value of a \<function> is `<0` it must be evaluated as "0".
-
-### 4.2.4 Property element
-
-Element **\<property>**
-
-![property XML structure](images/element_property.png)
-
-| Name   | Type   | Use | Default | Annotation |
-| --- | --- | --- | --- | --- |
-| functionid | ST\_ResourceID | required | | ResourceID of the \<function> that provides the value of this property |
-| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<function> coordinate system |
-| channel | xs:QName | required |  | Name of the function output to be used for the property. |
-| name | xs:QName | required | | Contains either the name of the property, defined in a 3MF extension specification, or the name of a vendor-defined property. Either MUST be prefixed with a valid XML namespace name declared on the \<model> element. |
-| required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
-
-The \<property> element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
-
-To simplify parsing, producers MUST define the referenced \<function>-element prior to referencing it via the functionid in a \<property>-element.
-
-**transform**:
-
-The transformation of the object coordinate system into the \<function> coordinate system.
-If a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<function> must be sampled at position `(x',y',z') = T*(x,y,z)`.
-
-**channel**:
-
-Name of the function output to be used for the property. Note that the type of the output determines the type of the property.
-
-This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
-A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called "http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05".
-The specifications of private namespaces (that are not ratified by the 3MF Consortium) MUST be negotiated between producer and consumer of a 3MF file.
-
-The names of \<property>-elements MUST be unique within a \<volumedata>. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
-The interpretation of the value MUST be defined by the owner of the namespace. 
-	
-__Note__:
-The producer of a 3MF file is responsible for assembling the values in the \<property> (and the referenced \<function> such that sampling it in the print-bed coordinate system as a e.g. physical property, is sensible. This requirement is particularly important if the accumulated transformation `T0` between print-bed coordinates and local object coordinates is not a rigid body transformation.
-(The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component, and Figure 6.2 in this document).
-
-If the interpretation of a property might result in a conflict with the standard volumedata-elements (boundary, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
-
-If a physical unit is necessary, the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
-
-If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
-Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
-
-### 4.3 Level Set
+# Chapter 5 LevelSet
+### 5.1.1 LevelSet element
 
 A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<levelset>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
 
 The child-element of the \<levelset>-element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
 
 Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any levelset element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the \<meshid>-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the \<meshbboxonly>-element to true and the \<levelset>-element must be evaluated within the extents of the mesh referenced by the \<meshid>-element.
-
-### 4.3.1 LevelSet element
 
 Element **\<levelset>**
 
@@ -673,35 +474,233 @@ _Figure 5-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (recta
 ![Illustration of overlapping meshes with \<volumedata> child elements](images/overlap_properties.png)
 
 
-# Chapter 5. Notes
+# Chapter 6. Volumetric Data
 
-## 5.1. Evaluation Graph
+## 6.1. Volumetric Data extension to Resources
+ 
+Element **\<Resource>**
+
+![mesh XML structure](images/element_mesh.png)
+
+The volumetric data \<volumedata> element is a new OPTIONAL element which extends is a type of resource to be used by a Shape (i.e. the \<shape> element).
+
+
+## 6.2. Volumetric Data
+
+Element **\<volumedata>**
+
+![volumedata XML structure](images/element_volumedata.png)
+
+The \<volumedata> defines the volumetric properties in the interior of a \<shape> element.
+
+The child-element of the \<volumedata> element reference a function, that has to match the signature requirements of the child element. 
+Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the \<volumedata> applies to a volume.
+Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
+
+The \<volumedata> element can contain up to one \<composite> child element, up to one \<color> element, and up to 2^31-1 of \<property> elements.
+
+The child elements modify the enclosing \<shape> by specifying color, material composition and other arbitrary properties of the \<shape> object.
+
+To rationalize how this specification modifies the definition of geometry within a 3MF model, the concept of a "clipping surface" of a mesh with a \<volumedata> element is introduced.
+The clipping surface is defined by the surface of the enclosing \<shape> element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
+
+This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
+
+
+__Note__
+Volumetric content is always clipped to the clipping surface of the shape that embeds it.
+If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, the surface property has precedence in the following sense:
+The consumer MUST define a surface layer with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property MUST be applied everywhere within the object.
+
+__Note__
+Defining conflicting surface- and volumetric properties can be very powerful, e.g. if one wants to add a high resolution surface texture over a lower resolution volumetric color. However, producers MUST be aware that the thickness of this surface layer can vary between consumers depending on the manufacturing technology they employ.
+
+The properties at surface regions that are not explicitly specified are instead given by the volumetric properties.
+
+Conflicting properties must be handled as follows:
+1. Producers MUST not define colors, materials or properties via child elements of the \<volumedata> element that are impossible on physical grounds (e.g. non-conducting copper).
+2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
+
+__Note__: In the case where objects with different \<volumedata> child elements overlap, only the \<volumedata> child elements from last object can be used.
+This makes sure that \<volumedata> child elements of an overlapped object do not determine the value of any \<volumedata> child elements of an overlapping object. Figure 5-1 illustrates this behavior.
+
+### 6.2.1 Color element
+
+Element **\<color>**
+
+![color XML structure](images/element_color.png)
+
+| Name            | Type           | Use      | Default | Annotation                                                |
+| --------------- | -------------- | -------- | ------- | --------------------------------------------------------- |
+|| functionid      | ST_ResourceID  | required |         | Model Resource Id of the function providing the color                                                          |
+| transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the \<function> coordinate system. |
+| channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
+| minfeaturesize  | ST_Number      |          |  0.0       | Hint for the minimum size of features. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+
+To simplify parsing, producers MUST define a \<vector3dfield>-element prior to referencing it via the vector3dfieldid in a \<color>-element.
+
+The \<color> element is used to define the color of the object.
+The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
+
+The vector components `x`, `y` and `z` of the 3D vector field are interpreted as the "R", "G" and "B" channels of the color of the enclosing meshobject, respectively. If either channel evaluates to a value \<0 or \>1 it has to be truncated at 0 or 1, respectively.
+
+This specification does not capture well the properties for semi-transparent, diffusive materials. This specification is useful for defining parts with non transparent, opaque materials, e.g. for indicating wear and tear, sectioning the models and printing with non transparent materials.
+
+**transform**:
+
+The transformation of the object coordinate system into the coordinate system of the function (e.g. noramlized coordinates for functionFromImage3D).
+If this \<color>>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the 3D vector field must be sampled at position `(x',y',z') = T*(x,y,z)`.
+
+**channel**
+
+Name of the function ouput to be used as color. The output must be of type vector.
+
+**minfeaturesize**:
+
+The minimum size of features to be considered in the color. This is used as a hint for the consumer to determine the resolution of the color estimation. It might also be used to determine the level of super sampling requiered, if the printer cannot reproduce the resolution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+**fallbackvalue**:
+
+Any undefined result MUST be evaluated as the value. The fallback value is specified as a scalar and MUST be applied across the result vector element-wise.
+
+## 6.2.2 Composite element
+
+Element **\<composite>**
+
+![composite XML structure](images/element_composite.png)
+
+| Name   | Type | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| basematerialid | ST\_ResourceID | required | | ResourceID of the \<basematerials> element that holds the \<base>-elements referenced in the child \<materialmapping>-elements. |
+
+The \<composite> element describes a mixing ratio of printer materials at each position in space. The CONSUMER can determine the halftoning, mixing or dithering strategy that can be used to achieve these mixtures.
+
+This element MUST contain at least one \<materialmapping> element, which will encode the relative contribution of a specific basematerial to the material mix.
+
+The number of \<base>-elements in the \<basematerials> element referenced by a \<composite> element MUST equal the number of \<materialmapping>-elements in the \<composite> element. To simplify parsing, producers MUST define the referenced \<basematerials>-element prior to referencing it via the basematerialid in a \<composite>-element.
+
+Producers MUST NOT create files where the sum of all values in its child \<materialmapping>-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
+
+- If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
+   ```
+   value of channel i / sum(value of all N mixing contributions at point X)
+   ```
+
+The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the \<base>- elements in the \<basematerials>-element of the core specification.
+
+## 6.2.3 Material mapping element
+
+Element **\<materialmapping>**
+
+![materialmapping XML structure](images/element_materialmapping.png)
+
+| Name           | Type          | Use      | Default | Annotation                                                |
+| -------------- | ------------- | -------- | ------- | --------------------------------------------------------- |
+| functionid  | ST_ResourceID | required |         | ResourceID of the \<function> providing the mixing contribution value for a material in the \<basematerial>-element. |
+| transform      | ST_Matrix3D   |          |         | Transformation of the object coordinate system into the \<function> coordinate system |
+| channel        | xs:QName      | required |         | Name of the function output to be used for the mixing contribution. The output must be a scalar. |
+| minfeaturesize | ST_Number     |          | 0       | Hint for the minimum size of features. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+
+The \<materialmapping> element defines the relative contribution of a specific material to the mixing of materials in it's parent \<composite>-element.
+
+To simplify parsing, producers MUST define the referenced \<function>-element prior to referencing it via the functionid in a \<materialmapping>-element.
+
+**transform**:
+
+The transformation of the object coordinate system into the scalar field coordinate system.
+If any channel of a \<materialmapping> is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
+
+**channel**:
+
+Name of the function output to be used for the mixing contribution. The output must be a scalar. The value is clamped to the range [0,1].
+
+**minfeaturesize**:
+
+The minimum size of features to be considered in the mixing contribution. This is used as a hint for the consumer to determine the resolution of the mixing contribution. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+**fallbackvalue**:
+
+If this attribute is set, any undefined result MUST be evaluated as the value.
+
+If the sampled value of a \<function> is `<0` it must be evaluated as "0".
+
+### 6.2.4 Property element
+
+Element **\<property>**
+
+![property XML structure](images/element_property.png)
+
+| Name   | Type   | Use | Default | Annotation |
+| --- | --- | --- | --- | --- |
+| functionid | ST\_ResourceID | required | | ResourceID of the \<function> that provides the value of this property |
+| transform | ST\_Matrix3D | | | Transformation of the object coordinate system into the \<function> coordinate system |
+| channel | xs:QName | required |  | Name of the function output to be used for the property. |
+| name | xs:QName | required | | Contains either the name of the property, defined in a 3MF extension specification, or the name of a vendor-defined property. Either MUST be prefixed with a valid XML namespace name declared on the \<model> element. |
+| required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
+| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+
+The \<property> element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
+
+To simplify parsing, producers MUST define the referenced \<function>-element prior to referencing it via the functionid in a \<property>-element.
+
+**transform**:
+
+The transformation of the object coordinate system into the \<function> coordinate system.
+If a \<property>-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced \<function> must be sampled at position `(x',y',z') = T*(x,y,z)`.
+
+**channel**:
+
+Name of the function output to be used for the property. Note that the type of the output determines the type of the property.
+
+This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
+A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called "http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05".
+The specifications of private namespaces (that are not ratified by the 3MF Consortium) MUST be negotiated between producer and consumer of a 3MF file.
+
+The names of \<property>-elements MUST be unique within a \<volumedata>. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
+The interpretation of the value MUST be defined by the owner of the namespace. 
+	
+__Note__:
+The producer of a 3MF file is responsible for assembling the values in the \<property> (and the referenced \<function> such that sampling it in the print-bed coordinate system as a e.g. physical property, is sensible. This requirement is particularly important if the accumulated transformation `T0` between print-bed coordinates and local object coordinates is not a rigid body transformation.
+(The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component, and Figure 6.2 in this document).
+
+If the interpretation of a property might result in a conflict with the standard volumedata-elements (boundary, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
+
+If a physical unit is necessary, the namespace owner MUST define a unique and unambiguous physical unit system for the namespace. The unit system SHOULD be metric.
+
+If a \<property> is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
+Producers of 3MF files MUST mark all volumetric \<property>-elements required to represent the design intent of a model as `required`.
+
+# Chapter 7. Notes
+
+## 7.1. Evaluation Graph
 
 The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
 
 It is RECOMMENDED that calculations during evaluation of the graph are performed in at least single-precision floating-point arithmethic, according to IEEE 754.
 
-## 5.2. Evaluation Process
+## 7.2. Evaluation Process
 
 Equipped with the language elements of this specification, one can recapitulate the core concepts with an overview of the sampling process.
 
-Figure 5-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
+Figure 7-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a \<volumedata> element (in this case \<color>) is sampled in the object coordinate space.
 
-Figure 5-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
+Figure 7-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
 
-Figure 5-1 b) shows the \<functionfromimage3d> underlying the color of the object. The sampling point is represented in the coordinate system of the \<functionfromimage3d>. The transformation `T1` from object coordinate space to \<functionfromimage3d> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<functionfromimage3d> context.
+Figure 7-1 b) shows the \<functionfromimage3d> underlying the color of the object. The sampling point is represented in the coordinate system of the \<functionfromimage3d>. The transformation `T1` from object coordinate space to \<functionfromimage3d> coordinate system is given by the `transform`-element in the \<color>-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the \<functionfromimage3d> context.
 The color value sampled in this illustration directly originates from a \<functionfromimage3d> element.
 
-Figure 5-1 c) Shows the \<functionfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<functionfromimage3d> coordinate system and UVW space is given according to the `transform`-attribute of the \<functionfromimage3d> element.
+Figure 7-1 c) Shows the \<functionfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between \<functionfromimage3d> coordinate system and UVW space is given according to the `transform`-attribute of the \<functionfromimage3d> element.
 
-Figure 5-1 d) Shows the UVW coordinate space of the \<image3d>-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying \<imagestack>-element map.
+Figure 7-1 d) Shows the UVW coordinate space of the \<image3d>-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying \<imagestack>-element map.
 
-Figure 5-1 e) illustrates where the sampling point (+) ends up in the voxel index space of the \<imagestack>. The mapping of UVW to voxel indices in the \<imagestack>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
+Figure 7-1 e) illustrates where the sampling point (+) ends up in the voxel index space of the \<imagestack>. The mapping of UVW to voxel indices in the \<imagestack>-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 5-1: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<functionfromimage3d>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<functionfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
+_Figure 7-1: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the \<functionfromimage3d>. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the \<functionfromimage3d> again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
-## 5.3. Limitations
+## 7.3. Limitations
 
 This specification is limited in scope. Three noteworthy limitations are:
 
