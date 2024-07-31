@@ -2675,7 +2675,7 @@ The operation can be used for the following types of inputs and outputs:
 ```xml
 <functionCall identifier="functionCall1" displayname="Function Call 1">
 	<in>
-		<reourceref identifier="functionID" ref="resourceidnode.value"/>
+		<resourceref identifier="functionID" ref="resourceidnode.value"/>
 	</in>
 	<out>
 		<scalar identifier="result"/>
