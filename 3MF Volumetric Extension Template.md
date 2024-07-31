@@ -2058,7 +2058,7 @@ The operation can be used for the following types of inputs and outputs:
 
 **Example Usage:**
 ```xml
-<mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
+<i:mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
 	<in>
 		<vectorref identifier="pos" ref="inputs.pos"/>
 	 	<resourceref identifier="mesh" ref="reosurceidnode.value"/>
@@ -2066,7 +2066,7 @@ The operation can be used for the following types of inputs and outputs:
 	<out>
 		<scalar identifier="distance"/>
 	</out>
-</mesh>
+</i:mesh>
 ```
 
 ## unsignedmesh
