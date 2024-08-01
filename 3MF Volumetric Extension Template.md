@@ -104,7 +104,7 @@ See [the standard 3MF Software Conformance documentation](https://github.com/3MF
 _Figure 1-1: Overview of model XML structure of 3MF with volumetric additions_
 ![Overview of model XML structure of 3MF with volumetric additions](images/overview-of-additions.png)
 
-This document describes new elements, each of which is OPTIONAL for producers, but MUST be supported by consumers that specify support for this volumetric extension of 3MF.
+This document describes new elements, each of which is OPTIONAL for producers. The levelset shape, which defines the geometry MUST be supported by the consumer and the \<volumedata> element can be OPTIONAL for the consumer to support.
 
 The central idea of this extension is to enrich the geometry notion of 3MF with volumetric elements that can represent spatially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
 
@@ -128,7 +128,7 @@ The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier
 ## 2.2 ScalarReference
 Element \<scalarref>
 
-![Scalar XML Structure](images/element_scalarreference.png)
+![Scalar XML Structure](images/element_scalarReference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this scalar resource.                          |
@@ -138,19 +138,20 @@ Element \<scalarref>
 ## 2.3 VectorReference
 Element \<vectorref>
 
-![Vector XML Structure](images/element_vectorreference.png)
+![Vector XML Structure](images/element_vectorReference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
-| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation. |
-| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".   |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".  
+                              |
 
 ## 2.4 MatrixReference
 Element \<matrixref>
 
 References to functions are only used for the implicit extension.
 
-![Vector XML Structure](images/element_matrixreference.png)
+![Vector XML Structure](images/element_matrixReference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this matrix resource.                          |
@@ -162,7 +163,7 @@ Element \<resourceref>
 
 References to resources are used for the volumeData element and for the implicit extension to create a function reference.
 
-![Function XML Structure](images/element_resourcereference.png)
+![Function XML Structure](images/element_resourceReference.png)
 | Name      | Type             | Use      | Default | Annotation                                                                 |
 | --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
 | identifier| ST_Identifier    | required |         | Specifies an identifier for this function resource.                          |
@@ -173,9 +174,9 @@ References to resources are used for the volumeData element and for the implicit
 # Chapter 3. Functions and Function Types
 
 ## 3.1 Functions
-Complex Type **CT_Function**
+Element **\<function>**
 
-![Function XML Structure](images/CT_Function.png)
+![Function XML Structure](images/element_function.png)
 
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
@@ -297,17 +298,17 @@ Element **\<PrivateExtensionFunction>
 
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
-## 3.4 ImplicitFunction
-Element **\<implicitfunction>
+## 3.4 FunctionImplicit
+Element **\<function>
 
-![ImplicitFunction XML](images/element_implicitfunction.png)
+![FunctionImplicit XML](images/element_functionImplict.png)
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 | xmlns | ST\_namespace | required | implict | Specifies the namespace of the function. |
 
-ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
+FunctionImplicit is an OPTIONAL function type to support for the Volumetric specification. The function requires an input DataType and an output DataType. 
 
 # Chapter 4. 3D Image
 
@@ -621,7 +622,7 @@ Since fields can be evaluated in an unbounded way, a closed mesh is required to 
 
 Element **\<levelset>**
 
-![levelset XML structure](images/element_levelset.png)
+![levelset XML structure](images/element_boundary.png)
 
 | Name           | Type         | Use      | Default | Annotation                                                           |
 | -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
@@ -838,7 +839,7 @@ Overview of native nodes
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
 | [length](#length)          | length operation                           |
-| [constresourceid](#constresourceid)  | constant resource ID                       |
+| [resourceid](#resourceid)  | constant resource ID                       |
 
 
 ## addition
@@ -977,7 +978,7 @@ None
 </constmat>
 ```
 
-# constresourceid
+# resourceid
 
 **Description:** Defines a model resource id as a constant value.
 
@@ -1000,11 +1001,11 @@ None
 **Example Usage:**
 
 ```xml
-<constresourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
+<resourceid identifier="resourceid1" displayname="Resource Id 1" value="1">
     <out>
         <resourceid identifier="value"/>
     </out>
-</constresourceid>
+</resourceid>
 ```
 
 ## composevector
