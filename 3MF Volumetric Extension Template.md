@@ -227,16 +227,16 @@ MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavi
 **filter**:
 The filter attribute defines the interpolation method used when a \<functionfromimage3d> is being sampled. This is illustrated in Figure 3-4.
 
-- If the interpolation method of an elements of type \<channelfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
+- If the interpolation method of an element of type \<functionfromimage3d> is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
 
 	_Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
 
 	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
 
 
-- If the interpolation method of an elements of type \<functionfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight point coordinates defining a box that contains the arbitrary (u,v,w), which transforms back to voxel centers in the 3D image resource.
+- If the interpolation method of an element of type \<functionfromimage3d> is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight point coordinates defining a box that contains the arbitrary (u,v,w), which transforms back to voxel centers in the 3D image resource.
 
-_Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The consider that the greyscale channel ("Y") of the image 3d of Figure 2-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
+_Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The greyscale channel ("Y") of the image 3d of Figure 3-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
 ![Tilestyle mirror](images/filter.png)
 
 **`offsetvalue` and `scalevalue`**:
@@ -730,52 +730,50 @@ The _implicit_ namespace enhances the _volumetric extension_ by providing a way 
 When used as input for `<levelset>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
 Consider an example:
+![implicit function of a sphere](images/sphere_graph.png)
 
 ```xml
-
-<i:implicitfunction id="3" displayname="sphere">
-	<i:in>
-		<i:vector identifier="pos" displayname="position"></i:vector>
-		<i:scalar identifier="radius" displayname="radius of the sphere"></i:scalar>
-	</i:in>
-	<i:out>
-		<i:scalarref identifier="shape" displayname="signed distance to the surface" ref="distance_2.result"></i:scalarref>
-	</i:out>
-	<i:constvec identifier="vector_1" displayname="translation vector" tag="group_a" x="1.23456" y="2.34567" z="3.45678">
-		<i:out>
-			<i:vector identifier="vector" displayname="vector"></i:vector>
-		</i:out>
-	</i:constvec>
-	<i:subtraction identifier="translate_1" displayname="Translation" tag="group_a">
-		<i:in>
-			<i:vectorref identifier="B" displayname="B" ref="vector_1.vector"></i:vectorref>
-			<i:vectorref identifier="A" displayname="A" ref="inputs.pos"></i:vectorref>
-		</i:in>
-		<i:out>
-			<i:vector identifier="result" displayname="result"></i:vector>
-		</i:out>
-	</i:subtraction>
-	<i:length identifier="distance_1" displayname="distance to sphere center" tag="group_a">
-		<i:in>
-			<i:vectorref identifier="A" displayname="A" ref="translate_1.result"></i:vectorref>
-		</i:in>
-		<i:out>
-			<i:scalar identifier="result" displayname="result"></i:scalar>
-		</i:out>
-	</i:length>
-	<i:subtraction identifier="distance_2" displayname="distance to sphere surface" tag="group_a">
-		<i:in>
-			<i:scalarref identifier="A" displayname="A" ref="distance_1.result"></i:scalarref>
-			<i:scalarref identifier="B" displayname="B" ref="inputs.radius"></i:scalarref>
-		</i:in>
-		<i:out>
-			<i:scalar identifier="result" displayname="result"></i:scalar>
-		</i:out>
-	</i:subtraction>
-</i:implicitfunction>
+     
+    <i:function id="5" displayname="sphere">
+        <i:in>
+            <i:vector identifier="pos" displayname="pos"></i:vector>
+            <i:scalar identifier="radius" displayname="radius"></i:scalar>
+        </i:in>
+        <i:length identifier="Length_3" displayname="Length_3" tag="">
+            <i:in>
+                <i:vectorref identifier="A" displayname="A" ref="inputs.pos"></i:vectorref>
+            </i:in>
+            <i:out>
+                <i:scalar identifier="result" displayname="result"></i:scalar>
+            </i:out>
+        </i:length>
+        <i:subtraction identifier="Subtraction_4" displayname="Subtraction_4" tag="">
+            <i:in>
+                <i:scalarref identifier="A" displayname="A" ref="Length_3.result"></i:scalarref>
+                <i:scalarref identifier="B" displayname="B" ref="inputs.radius"></i:scalarref>
+            </i:in>
+            <i:out>
+                <i:scalar identifier="result" displayname="result"></i:scalar>
+            </i:out>
+        </i:subtraction>
+        <i:out>
+            <i:scalarref identifier="shape" displayname="shape" ref="Subtraction_4.result"></i:scalarref>
+        </i:out>
+    </i:function>
 
 ```
-In this example, the _function_ representing a sphere takes two inputs, 'pos' and 'radius'. It showcases the flexibility of defining various mathematical operations like length computation and subtraction through nested nodes within the function. The result of these computations can be accessed through the 'outputs' member.
+In this example, the _function_ representing a sphere takes two inputs, a vector 'pos' and a scalar value 'radius'.
+
+Links are defined by back-referencing the output of one node to the input of another node.
+
+The 'length' node computes the length of the input vector 'pos'. The connection to the input vector 'pos' is established through the 'vectorref' element. References have the format [nodename].[outputname]. In the case of funcion arguments the nodename is the resesrved name 'inputs'.
+
+The 'subtraction' node computes the difference between the length of the input vector 'pos' and the scalar value 'radius'. The connection to the length output is established through the 'scalarref' element.
+
+The 'out' element defines the output of the function. The connection to the subtraction output is established through the 'scalarref' element.
+
+It showcases the flexibility of defining various mathematical operations like length computation and subtraction through nested nodes within the function. The result of these computations can be accessed through the <i:out> member.
+
 
 Furthermore, a function can include basic mathematical operations like additions, subtractions, and multiplications to cosines, logarithms or clamping. The operations can use different types like scalars, vectors, and matrices.
 
@@ -2832,4 +2830,4 @@ _sheet1.png_
 
 See also [the standard 3MF References](https://github.com/3MFConsortium/spec_resources/blob/master/references.md).
 
-Copyright 3MF Consortium 2023.
+Copyright 3MF Consortium 2024.
