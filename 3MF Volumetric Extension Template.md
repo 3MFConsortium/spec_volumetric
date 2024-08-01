@@ -2787,6 +2787,32 @@ The operation can be used for the following types of inputs and outputs:
 
 ```
 
+Calling the sphere function from the example in [Chapter 2. Function Implicit](#chapter-2-function-implicit) could look like this:
+
+```xml
+    <i:constant identifier="ConstantScalar_3" displayname="Radius" tag="" value="10">
+        <i:out>
+            <i:scalar identifier="value" displayname="value"></i:scalar>
+        </i:out>
+    </i:constant>
+    <i:constresourceid identifier="FunctionCall_5_functionID" displayname="sphere_functionID" tag="" resourceid="5">
+        <i:out>
+            <i:resourceid identifier="value" displayname="value"></i:resourceid>
+        </i:out>
+    </i:constresourceid>
+    <i:functioncall identifier="FunctionCall_6" displayname="sphere" tag="">
+        <i:in>
+            <i:resourceref identifier="functionID" displayname="functionID" ref="FunctionCall_5_functionID.value"></i:resourceref>
+            <i:vectorref identifier="pos" displayname="pos" ref="Subtraction_5.result"></i:vectorref>
+            <i:scalarref identifier="radius" displayname="radius" ref="ConstantScalar_3.value"></i:scalarref>
+        </i:in>
+        <i:out>
+            <i:scalar identifier="shape" displayname="shape"></i:scalar>
+        </i:out>
+    </i:functioncall>
+```
+The inputs of the sphere function are added as inputs to the function call node. The output of the function call node is the output of the sphere function. A constresourceid node is used to define the functionID of the sphere function. Note that a resourceid could also be used as a function input.
+
 ## Chapter 5. Implicit Evaluation
 
 ## 5.1 Valid Graphs
