@@ -244,7 +244,7 @@ _Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The greyscale cha
 The values `V'` sampled from the \<image3d> are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
 
-A \<functionfromimage3d> is a container for an image3D which is evaluatable. In contrast to implict functions, the inputs and outputs of a functionfromimage3d are fixed and are not defined in the markup, but can be referenced by volumedata elements or as an output of a functionCall-Node in the implicit extension.
+A \<functionfromimage3d> is a container for an image3D which is evaluatable. In contrast to implict functions, the inputs and outputs of a functionfromimage3d are fixed and are not defined in the markup, but can be referenced by \<volumedata> elements or as an output of a functionCall-Node in the implicit extension.
 It has the following input and outputs:
 
 **Inputs:**
