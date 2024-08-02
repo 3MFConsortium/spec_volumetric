@@ -105,9 +105,9 @@ See [the standard 3MF Software Conformance documentation](https://github.com/3MF
 _Figure 1-1: Overview of model XML structure of 3MF with volumetric additions_
 ![Overview of model XML structure of 3MF with volumetric additions](images/overview-of-additions.png)
 
-This document describes new elements, each of which is OPTIONAL for producers, but MUST be supported by consumers that specify support for this volumetric extension of 3MF.
+This document describes new elements, each of which is OPTIONAL for producers. Consumers MUST be able to parse all new elements but only MUST support levelset shape.
 
-The central idea of this extension is to enrich the geometry notion of 3MF with volumetric elements that can represent spatially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
+There are two central ideas of this extension. The first is to provide a new geoemtry representation as an alternative to a mesh using levelsets. The second is to enrich the geometry notion of 3MF with volumetric elements that can represent spatially varying properties which are quite inefficient to handle with a mesh representation, especially in cases where the variation is continuous in space.
 
 This extension is meant to be an exact specification of geometric, appearance-related, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
 
