@@ -2811,7 +2811,7 @@ Calling the sphere function from the example in [Chapter 2. Function Implicit](#
         </i:out>
     </i:functioncall>
 ```
-The inputs of the sphere function are added as inputs to the function call node. The output of the function call node is the output of the sphere function. A constresourceid node is used to define the functionID of the sphere function. Note that a resourceid could also be used as a function input.
+The inputs of the sphere function are added as inputs to the `<i:functioncall>` node. The output of the  `<i:functioncall>` node is the output of the sphere function. A `<i:constresourceid>` node is used to define the functionID of the sphere function. Note that a resourceid can also be used as a function input.
 
 ## Chapter 5. Implicit Evaluation
 
