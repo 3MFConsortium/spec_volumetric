@@ -715,7 +715,7 @@ This specification is limited in scope. Three noteworthy limitations are:
 
 # Part II. Implicit Extension
 
-The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to <functionfromimage3d> for generating volumetric data.
+The implicit namespace extension enriches the volumetric extension by facilitating the use of closed form functions. These provide an alternative to `<functionfromimage3d>` for generating volumetric data.
 
 The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property,boundary, color), where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
 
@@ -766,13 +766,13 @@ In this example, the _function_ representing a sphere takes two inputs, a vector
 
 Links are defined by back-referencing the output of one node to the input of another node.
 
-The 'length' node computes the length of the input vector 'pos'. The connection to the input vector 'pos' is established through the 'vectorref' element. References have the format [nodename].[outputname]. In the case of funcion arguments the nodename is the resesrved name 'inputs'.
+The `<i:length>` node computes the length of the input vector 'pos'. The connection to the input vector 'pos' is established through the `<i:vectorref>` element. References have the format [nodename].[outputname]. In the case of funcion arguments the nodename is the resesrved name 'inputs'.
 
-The 'subtraction' node computes the difference between the length of the input vector 'pos' and the scalar value 'radius'. The connection to the length output is established through the 'scalarref' element.
+The 'subtraction' node computes the difference between the length of the input vector 'pos' and the scalar value 'radius'. The connection to the length output is established through the `<i:scalarref>` element.
 
-The 'out' element defines the output of the function. The connection to the subtraction output is established through the 'scalarref' element.
+The `<i:out>` element defines the output of the function. The connection to the subtraction output is established through the `<i:scalarref>` element.
 
-It showcases the flexibility of defining various mathematical operations like length computation and subtraction through nested nodes within the function. The result of these computations can be accessed through the <i:out> member.
+It showcases the flexibility of defining various mathematical operations like length computation and subtraction through nested nodes within the function. The result of these computations can be accessed through the `<i:out>` member.
 
 
 Furthermore, a function can include basic mathematical operations like additions, subtractions, and multiplications to cosines, logarithms or clamping. The operations can use different types like scalars, vectors, and matrices.
