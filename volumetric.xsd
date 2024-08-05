@@ -196,14 +196,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 			<xs:pattern value="/.*"/>
 		</xs:restriction>
 	</xs:simpleType>
-	<xs:simpleType name="ST_ChannelName">
-		<xs:restriction base="xs:string">
-			<xs:enumeration value="R"/>
-			<xs:enumeration value="G"/>
-			<xs:enumeration value="B"/>
-			<xs:enumeration value="A"/>
-		</xs:restriction>
-	</xs:simpleType>
 	<xs:simpleType name="ST_Number">
 		<xs:restriction base="xs:double">
 			<xs:whiteSpace value="collapse"/>
