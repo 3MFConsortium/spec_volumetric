@@ -18,7 +18,7 @@ if __name__ == '__main__':
     with open(f'{cwd}/3MF Volumetric Extension Template.md', 'r') as file:
         template = file.read()
     
-    implict = None
+    implicit = None
     with open(f'{cwd}/implicit.xsd', 'r') as file:
         implicit = file.read()
     
