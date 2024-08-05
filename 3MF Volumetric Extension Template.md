@@ -83,7 +83,7 @@ This extension MUST be used only with Core specification version 1.3. or higher.
 
 See [the 3MF Core Specification conventions](https://github.com/3MFConsortium/spec_core/blob/1.2.3/3MF%20Core%20Specification.md#document-conventions).
 
-In this extension specification, as an example, the prefix "m" maps to the xml-namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02". See Appendix [E.3 Namespaces](#e3-namespaces).
+In this extension specification, as an example, the prefix "m" maps to the xml-namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02", "v" to "http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01" and "i" to "http://schemas.3mf.io/3dmanufacturing/implicit/2023/12". See Appendix [E.3 Namespaces](#e3-namespaces).
 
 ## Document Conventions
 
