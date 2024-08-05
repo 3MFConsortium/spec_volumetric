@@ -191,7 +191,7 @@ Volumetric data is created with functions that are evaluatable for at given mode
 Element **\<functionFromImage3d>**
 
 ![FunctionFromImage3d XML](images/element_functionformimage3d.png)
-ISO/TC 261 
+
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
