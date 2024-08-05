@@ -2033,7 +2033,7 @@
 				<![CDATA[
 			Node for evaluating the unsigned distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
 			The mesh is defined by a resource identifier. The mesh may be be open and is not required to be watertight. 
-			The distance is positive if the point is outside the mesh and negative if the point is inside the mesh.
+			The distance is always positive.
 									
 			Example:
 			<unsignedmesh identifier="UnsigendDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
