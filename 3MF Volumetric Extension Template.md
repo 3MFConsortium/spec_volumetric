@@ -255,10 +255,12 @@ A `<functionfromimage3d>` has the following input and outputs:
 |------------|-------------|-------------|
 | pos        | vector    | UVW coordinates of the point to be evaluated. Points outside the range from (0, 0, 0) to (1 , 1, 1) will be mapped according to the tile style |
 
+The ouput values are in the range from 0 to 1. Please see [Chapter 4.2](#42-imagestack) for more information on the input pixel layouts.
+
 **Outputs:**
 | Identifier | Type |	Description |
 |------------|-------------|-------------|
-| color      | vector    | Vector containg the rgb values |
+| color      | vector    | Vector containing the rgb values (x=red, y=green, z=blue), alpha is ignored |
 | red		 | scalar    | Scalar containing the red value |
 | green		 | scalar    | Scalar containing the green value |
 | blue		 | scalar    | Scalar containing the blue value |
