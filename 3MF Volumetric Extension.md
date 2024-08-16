@@ -491,7 +491,7 @@ Element **\<Resource>**
 
 ![mesh XML structure](images/element_mesh.png)
 
-The volumetric data `<volumedata>` element is a new OPTIONAL element which extends is a type of resource to be used by a Shape (i.e. the `<shape>` element).
+The volumetric data `<volumedata>` element is a new OPTIONAL element which extends is a type of resource to be used by a Shape (i.e. a `<mesh>` or `<levelset>` element.
 
 
 ## 6.2. Volumetric Data
@@ -505,7 +505,7 @@ Element **\<volumedata>**
 | -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
 | id     | ST_ResourceID| required |         | ResourceID of volume data by which it can be referenced. |
 
-The `<volumedata>` defines the volumetric properties in the interior of a `<shape>` element.
+The `<volumedata>` defines the volumetric properties in the interior of a Shape.
 
 The child-element of the `<volumedata>` element reference a function, that has to match the signature requirements of the child element. 
 Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the `<volumedata>` applies to a volume.
@@ -513,10 +513,10 @@ Moreover, the volumedata-element MUST not be used in a mesh that is referenced a
 
 The `<volumedata>` element can contain up to one `<composite>` child element, up to one `<color>` element, and up to 2^31-1 of `<property>` elements.
 
-The child elements modify the enclosing `<shape>` by specifying color, material composition and other arbitrary properties of the `<shape>` object.
+The child elements modify the enclosing Shape by specifying color, material composition and other arbitrary properties of the Shape object.
 
 To rationalize how this specification modifies the definition of geometry within a 3MF model, the concept of a "clipping surface" of a mesh with a `<volumedata>` element is introduced.
-The clipping surface is defined by the surface of the enclosing `<shape>` element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
+The clipping surface is defined by the surface of the enclosing Shape. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
