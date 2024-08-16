@@ -1,9 +1,8 @@
 #
+
 # 3MF Volumetric & Implicit Extensions
 
 ## Specification & Reference Guide
-
-
 
 | **Version** | 0.8.0 |
 | --- | --- |
@@ -14,38 +13,37 @@
 ## Table of Contents
 
 - [Preface](#preface)
-  * [Introduction](#introduction)
-  * [About this Specification](#about-this-specification)
-  * [Document Conventions](#document-conventions)
-  * [Language Notes](#language-notes)
-  * [Software Conformance](#software-conformance)
+  - [Introduction](#introduction)
+  - [About this Specification](#about-this-specification)
+  - [Document Conventions](#document-conventions)
+  - [Language Notes](#language-notes)
+  - [Software Conformance](#software-conformance)
 - [Part I: Volumetric Extension](#part-i-volumetric-extension)
-  * [Chapter 1. Overview of Volumetric Additions](#chapter-1-overview-of-volumetric-additions)
-  * [Chapter 2. DataTypes](#chapter-2-datatypes)
-  * [Chapter 3. Functions](#chapter-3-functions-and-function-types)
-  * [Chapter 4. 3D Image](#chapter-4-3d-image)
-  * [Chapter 5. LevelSet](#chapter-5-levelset)
-  * [Chapter 6. Volumetric Data](#chapter-6-volumetric-data)
-  * [Chapter 7. Notes](#chapter-6-notes)
+  - [Chapter 1. Overview of Volumetric Additions](#chapter-1-overview-of-volumetric-additions)
+  - [Chapter 2. DataTypes](#chapter-2-datatypes)
+  - [Chapter 3. Functions](#chapter-3-functions-and-function-types)
+  - [Chapter 4. 3D Image](#chapter-4-3d-image)
+  - [Chapter 5. LevelSet](#chapter-5-levelset)
+  - [Chapter 6. Volumetric Data](#chapter-6-volumetric-data)
+  - [Chapter 7. Notes](#chapter-6-notes)
 - [Part II. Implicit Extension](#3mf-volumetric-implicit-extensions)
-  * [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
-  * [Chapter 2. Function Implicit](#chapter-2-function-implicit)
-  * [Chapter 3. Nodes](#chapter-3-nodes)
-  * [Chapter 4. Native Nodes](#chapter-4-native-nodes)
-  * [Chapter 5. Implicit Evaluation](#chapter-5-implicit-evaluation)
-  * [Chapter 6. Notes](#chapter-6-notes)
+  - [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
+  - [Chapter 2. Function Implicit](#chapter-2-function-implicit)
+  - [Chapter 3. Nodes](#chapter-3-nodes)
+  - [Chapter 4. Native Nodes](#chapter-4-native-nodes)
+  - [Chapter 5. Implicit Evaluation](#chapter-5-implicit-evaluation)
+  - [Chapter 6. Notes](#chapter-6-notes)
 - [Part III. Appendices](#part-ii-appendices)
-  * [Appendix A. Glossary](#appendix-a-glossary)
-  * [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
-  * [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
-  * [Appendix D: Example file](#appendix-d-example-file)
+  - [Appendix A. Glossary](#appendix-a-glossary)
+  - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
+  - [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
+  - [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
-
-
 
 # Preface
 
 ## Introduction
+
 Volumetric/Implicit Modeling is an efficient approach to encode geometrical shapes and spatial properties and is based on a volumetric description.
 Traditional, explicit modeling methodologies are based on surfaces (e.g. NURBS, triangular meshes) that describe the boundaries of an object. This is illustrated in Figure 1-1. a) a NURBS surface delimitates a region of space. Figure 1-1 b) shows a triangular mesh that describes the same surface. In each case, the top part of the described object is being shown transparently to allow viewing the "inside" of the described object.
 
@@ -83,7 +81,7 @@ This extension MUST be used only with Core specification version 1.3. or higher.
 
 See [the 3MF Core Specification conventions](https://github.com/3MFConsortium/spec_core/blob/1.2.3/3MF%20Core%20Specification.md#document-conventions).
 
-In this extension specification, as an example, the prefix "m" maps to the xml-namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02", "v" to "http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01" and "i" to "http://schemas.3mf.io/3dmanufacturing/implicit/2023/12". See Appendix [E.3 Namespaces](#e3-namespaces).
+In this extension specification, as an example, the prefix "m" maps to the xml-namespace "<http://schemas.microsoft.com/3dmanufacturing/material/2015/02>", "v" to "<http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01>" and "i" to "<http://schemas.3mf.io/3dmanufacturing/implicit/2023/12>". See Appendix [E.3 Namespaces](#e3-namespaces).
 
 ## Document Conventions
 
@@ -96,7 +94,6 @@ See [the standard 3MF Language Notes documentation](https://github.com/3MFConsor
 ## Software Conformance
 
 See [the standard 3MF Software Conformance documentation](https://github.com/3MFConsortium/spec_resources/blob/master/software_conformance.md).
-
 
 # Part I. Volumetric Extension
 
@@ -115,18 +112,21 @@ A producer using the level set of the volumetric specification MUST mark the ext
 
 # Chapter 2. DataTypes
 
-The volumetric extension of 3MF, defines 4 new datatypes that are used for definition of the outputs of functions for volumetric evaluation. 
+The volumetric extension of 3MF, defines 4 new datatypes that are used for definition of the outputs of functions for volumetric evaluation.
 They allow to reference the output of nodes in a graph for the implicit extension or define the mapping of the output channels for the sampling of an image3d with functionFromImage3D. The References are of the type ST_NodeOutputIdentifier.
 
 ## 2.1 ST_NodeOutputIdentifier
+
 The `ST_NodeOutputIdentifier` is a simple type used to represent an identifier for a node output in the format of "nodename.outputname".
 
 ST_ScalarID, ST_VectorID, ST_MatrixID and ST_ResourceOutputID are derived from ST_NodeOutputIdentifier.
 
 ### Format
+
 The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier must consist of alphanumeric characters and underscores. The dot (.) separates the node name and the output name.
 
 ## 2.2 ScalarReference
+
 Element `<scalarref>`
 
 ![Scalar XML Structure](images/element_scalarreference.png)
@@ -137,6 +137,7 @@ Element `<scalarref>`
 | ref       | ST_ScalarID      | required |         | Reference to the scalar in the form "NodeIdentifier.ScalarIdentifier".  
 
 ## 2.3 VectorReference
+
 Element `<vectorref>`
 
 ![Vector XML Structure](images/element_vectorreference.png)
@@ -147,6 +148,7 @@ Element `<vectorref>`
 | ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".   |
 
 ## 2.4 MatrixReference
+
 Element `<matrixref>`
 
 References to functions are only used for the implicit extension.
@@ -159,6 +161,7 @@ References to functions are only used for the implicit extension.
 | ref       | ST_MatrixID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".                              |
 
 ## 2.5 ResourceReference
+
 Element `<resourceref>`
 
 References to resources are used for the volumeData element and for the implicit extension to create a function reference.
@@ -170,10 +173,10 @@ References to resources are used for the volumeData element and for the implicit
 | displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
 | ref       | ST_ResourceOutputID      | required |         | Reference to the resource output in the form "NodeIdentifier.OutputIdentifier".                              |
 
-
 # Chapter 3. Functions and Function Types
 
 ## 3.1 Functions
+
 Complex Type **CT_Function**
 
 ![Function XML Structure](images/CT_Function.png)
@@ -188,6 +191,7 @@ Volumetric data is created with functions that are evaluatable for at given mode
 `<function>` is a container for one of three distinct function types: FunctionFromImage3d, PrivateExtensionFunction, FunctionImplicit. The only function type that MUST be supported for the volumetric extension is FunctionFromImage3D which requires an Image3d resource.
 
 ## 3.2 FunctionFromImage3D
+
 Element **\<functionFromImage3d>**
 
 ![FunctionFromImage3d XML](images/element_functionformimage3d.png)
@@ -221,18 +225,17 @@ MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavi
 3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 3-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
-	_Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second `<imagesheet>`. b) tilestyle mirror illustrated throughout the second `<imagesheet>`. c) tilestyle clamp along the u-direction illustrated throughout the second `<imagesheet>`_
-	![Tilestyles](images/tilestyle_all.png)
+ _Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second `<imagesheet>`. b) tilestyle mirror illustrated throughout the second `<imagesheet>`. c) tilestyle clamp along the u-direction illustrated throughout the second `<imagesheet>`_
+ ![Tilestyles](images/tilestyle_all.png)
 
 **filter**:
 The filter attribute defines the interpolation method used when a `<functionfromimage3d>` is being sampled. This is illustrated in Figure 3-4.
 
 - If the interpolation method of an element of type `<functionfromimage3d>` is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
 
-	_Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
+ _Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
 
-	![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
-
+ ![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
 
 - If the interpolation method of an element of type `<functionfromimage3d>` is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight point coordinates defining a box that contains the arbitrary (u,v,w), which transforms back to voxel centers in the 3D image resource.
 
@@ -243,7 +246,6 @@ _Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The greyscale cha
 
 The values `V'` sampled from the `<image3d>` are linearly scaled via `offsetvalue` and `scalevalue` giving a sampled value `V'' = V'*scalevalue + offsetvalue`
 
-
 A `<functionfromimage3d>` is a container for an image3D which is evaluatable. In contrast to implict functions, the inputs and outputs of a functionfromimage3d are fixed and are not defined in the markup.
 
 The ouputs can be referenced by `<volumedata>` elements (e.g. `<color>`) or `<levelset>` using the `channel` attribute. In the implicit namespace a `<functionfromimage3d>` can be referenced by a functionCall-Node in the same way as a implicit function with the listed inputs and outputs.
@@ -251,32 +253,33 @@ The ouputs can be referenced by `<volumedata>` elements (e.g. `<color>`) or `<le
 A `<functionfromimage3d>` has the following input and outputs:
 
 **Inputs:**
-| Identifier | Type |	Description |
+| Identifier | Type | Description |
 |------------|-------------|-------------|
 | pos        | vector    | UVW coordinates of the point to be evaluated. Points outside the range from (0, 0, 0) to (1 , 1, 1) will be mapped according to the tile style |
 
 The ouput values are in the range from 0 to 1. Please see [Chapter 4.2](#42-imagestack) for more information on the input pixel layouts.
 
 **Outputs:**
-| Identifier | Type |	Description |
+| Identifier | Type | Description |
 |------------|-------------|-------------|
 | color      | vector    | Vector containing the rgb values (x=red, y=green, z=blue), alpha is ignored |
-| red		 | scalar    | Scalar containing the red value |
-| green		 | scalar    | Scalar containing the green value |
-| blue		 | scalar    | Scalar containing the blue value |
+| red   | scalar    | Scalar containing the red value |
+| green   | scalar    | Scalar containing the green value |
+| blue   | scalar    | Scalar containing the blue value |
 | alpha      | scalar    | Scalar containing the alpha value |
 
-The appearance of color and red, green, blue might seem redundant, but allows to also use the output directly as a vectorial field. 
+The appearance of color and red, green, blue might seem redundant, but allows to also use the output directly as a vectorial field.
 
 **Example Usage:**
+
 ```xml
  
 <v:image3d id="2">
-			<v:imagestack rowcount="821" columncount="819" sheetcount="11">
-				<v:imagesheet path="/volume/layer_01.png"/>
-				...
-			</v:imagestack>
-		</v:image3d>
+   <v:imagestack rowcount="821" columncount="819" sheetcount="11">
+    <v:imagesheet path="/volume/layer_01.png"/>
+    ...
+   </v:imagestack>
+  </v:image3d>
 <v:functionfromimage3d id="3" displayname="function from image3d" image3dID="2" offset="0" scale="1400" tilestyleu="wrap" tilestylev="clamp" tilestylew="mirror" filter="linear"></v:functionfromimage3d>
 ...
 <v:volumedata id="3">
@@ -296,6 +299,7 @@ The appearance of color and red, green, blue might seem redundant, but allows to
 ```
 
 ## 3.3 PrivateExtensionFunction
+
 Element **\<PrivateExtensionFunction>
 
 ![PrivateExtensionFunction XML](images/element_privateextensionfunction.png)
@@ -308,6 +312,7 @@ Element **\<PrivateExtensionFunction>
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
 ## 3.4 ImplicitFunction
+
 Element **\<i:implicitfunction>
 
 ![ImplicitFunction XML](images/element_implicitfunction.png)
@@ -317,7 +322,7 @@ Element **\<i:implicitfunction>
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 | xmlns | ST\_namespace | required | implict | Specifies the namespace of the function. |
 
-ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification in the  _implicit_ namespace. The function requires an input DataType and an output DataType. 
+ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification in the  _implicit_ namespace. The function requires an input DataType and an output DataType.
 
 # Chapter 4. 3D Image
 
@@ -352,7 +357,7 @@ Volumetric images can be embedded inside a 3MF file using groups of PNG images t
 
 All `<imagesheet>`-elements within an imagestack MUST have the same number of rows and columns that is specified in the rowcount and columncount-attributes, respectively. rowcount, columncount and sheetcount MUST not exceed 1024^3, each. The total number of voxels MUST be limited by 1024^5. There MUST be exactly sheetcount `<imagesheet>`-elements under `<imagestack>` that are implicitly ordered starting with index 0.
 
-Imagestack objects, and thus all underlying `<imagesheet>` elements, MUST follow one of the input pixel layouts shown in the table below. All imagesheets within an imagestack MUST have the same input pixel layouts, and each channel MUST have the same bit-depth across all imagesheets. Pixel values sampled from a PNG file with a bitdepth of `N` bits will be normalized to 
+Imagestack objects, and thus all underlying `<imagesheet>` elements, MUST follow one of the input pixel layouts shown in the table below. All imagesheets within an imagestack MUST have the same input pixel layouts, and each channel MUST have the same bit-depth across all imagesheets. Pixel values sampled from a PNG file with a bitdepth of `N` bits will be normalized to
 `pixelvalue / (2^N-1)`, i.e. a fully separated channel is normalized to 1, the minimum sampled value is normalized to 0.
 
 The following table shows the logical interpretation of sampling the "R", "G", "B" or "A"-channel depending on the input pixel layouts. The meaning of symbols is as follows: R – red, G – green, B – blue, A – alpha, Y – greyscale.
@@ -369,8 +374,8 @@ For example, if a function output from `<functionfromimage3d>` in a 3MF-file tha
 The `<imagestack>`-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1} x {0,1,...,columncount-1} x {0,1,...,sheetcount-1}). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each `<imagesheet>` corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel indices are shown as bold black triple, the UVW-coordinate values as red triples.
 Figure 2-1 b) illustrates the voxel indices and the UVW-values throughout the first `<imagesheet>`, Figure 2-1 c) illustrates these quantities throughout the second `<imagesheet>`. A voxel index triple `(i,j,k)` corresponds to a voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
 
-__Note__: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
-Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d.
+**Note**: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
+Materials and Properties specification <https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d>.
 
 The sampling rules for UVW values are determined by the filter-rule, and the behavior for UVW-values outside the unit-cube are determined by the tilestyle attributes [of the `<functionfromimage3d>`](#32-functionfromimage3d).
 
@@ -378,23 +383,22 @@ _Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) show
 ![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 4.1.1 File Formats
+
 PNG images can provide acceptable compression and bit-depth for the boundary-function, color information, material mixing ratios or arbitrary property information.
 
-The following describes recommendations for the channel bit depth of PNG images used in this specification and is based on the nomenclature in the specification of the Portable Network Graphics (PNG, https://www.w3.org/TR/PNG) format.
+The following describes recommendations for the channel bit depth of PNG images used in this specification and is based on the nomenclature in the specification of the Portable Network Graphics (PNG, <https://www.w3.org/TR/PNG>) format.
 
 - Color information, material mixing ratios and arbitrary properties can be deduced from PNG images with arbitrary channel depth. It is RECOMMENDED to store color into RGB-channels within a PNG.
 
 - It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A typical approach to store this levelset information is to encode the signed distance field of the boundary of the object in this channel, or to limit the encoding to a narrow region around the boundary of the object. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1, but with a very high spatial resolution.
 
-	_Figure 2-2: 2D-slice through the levelset representation of a sphere of radius 5 illustrated as red circle. a) the greyscale values of the image represent the signed distance function in a box around the sphere. Values range from -10 to 10. b) High resolution image of the slice. White indicates a point that is inside the sphere, black outside the sphere. c) Image encoding the signed distance in a narrow band of thickness 2 around the boundary of the sphere. Values outside this band only indicate whether the point is inside or outside the sphere, as in b)._
-	![Leveset representation of a sphere ](images/illustration_boundary.png)
-
+ _Figure 2-2: 2D-slice through the levelset representation of a sphere of radius 5 illustrated as red circle. a) the greyscale values of the image represent the signed distance function in a box around the sphere. Values range from -10 to 10. b) High resolution image of the slice. White indicates a point that is inside the sphere, black outside the sphere. c) Image encoding the signed distance in a narrow band of thickness 2 around the boundary of the sphere. Values outside this band only indicate whether the point is inside or outside the sphere, as in b)._
+ ![Leveset representation of a sphere ](images/illustration_boundary.png)
 
 - Producers SHOULD store information for which they require high resolution in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
 
-
 ## 4.2.2 OPC package layout
-__Note__: Introductory information about the Open Packaging Conventions (OPC) can be found in the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#11-package).
+**Note**: Introductory information about the Open Packaging Conventions (OPC) can be found in the 3MF Core Specification (see <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#11-package>).
 
 It is RECOMMENDED that producers of 3MF Documents with the Volumetric Extension specification use the following part naming convention:
 
@@ -417,10 +421,11 @@ Element **\<imagesheet>**
 
 Each `<imagesheet>` element has one required attribute. The path property determines the part name (i.e. path) of the 2D image data (see chapter 6 of the Materials & Properties Extension specification for more information).
 
-__Note__:
+**Note**:
 Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of `<image3d>` and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different data format for a voxel grid as child under `<image3d>` would not affect the remaining parts of this specification.
 
 # Chapter 5 LevelSet
+
 ### 5.1.1 LevelSet element
 
 A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<levelset>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
@@ -441,9 +446,8 @@ Element **\<levelset>**
 | minfeaturesize | ST_Number    |          | 0.0     | Specifies the minimum size of features to be considered in the boundary. |
 | meshid     | ST_ResourceID| required |         | ResourceID of the `<mesh>` that is used to define the evaluation domain of the level set.|
 | meshbboxonly   | xs:boolean   |          | false   | Indicates whether to consider only the bounding box of the mesh for the level set. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
-| volumeid     | ST_ResourceID |		   |         | ResourceID of a `<volumedata>`-Resource to apply on the object |
-
+| fallbackvalue  | ST_Number |     | 0.0  | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+| volumeid     | ST_ResourceID |     |         | ResourceID of a `<volumedata>`-Resource to apply on the object |
 
 The  `<levelset>`-element is used to describe the interior and exterior of an object via a levelset function.
 
@@ -464,7 +468,6 @@ The transformation of the object coordinate system into the scalar field coordin
 If the boundary-property of the enclosing mesh is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the referenced scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 See Figure 6-1 for an illustration of this transform in the sampling process.
 
-
 **minfeaturesize**:
 
 The minimum size of features to be considered in the boundary. This is used as a hint for the consumer to determine the resolution of the boundary. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
@@ -482,17 +485,15 @@ Any undefined result MUST be evaluated as the value provided.
 _Figure 5-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (rectangle) with `<volumedata>` child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows `<volumedata>` child element X in object A, and `<volumedata>` child element Y in object B. The table lays out how these `<volumedata>` child elements are sampled at positions p1 to p4._
 ![Illustration of overlapping meshes with `<volumedata>` child elements](images/overlap_properties.png)
 
-
 # Chapter 6. Volumetric Data
 
 ## 6.1. Volumetric Data extension to Resources
- 
+
 Element **\<Resource>**
 
 ![mesh XML structure](images/element_mesh.png)
 
 The volumetric data `<volumedata>` element is a new OPTIONAL element which extends is a type of resource to be used by a Shape (i.e. a `<mesh>` or `<levelset>` element.
-
 
 ## 6.2. Volumetric Data
 
@@ -500,14 +501,13 @@ Element **\<volumedata>**
 
 ![volumedata XML structure](images/element_volumedata.png)
 
-
 | Name           | Type         | Use      | Default | Annotation                                                           |
 | -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
 | id     | ST_ResourceID| required |         | ResourceID of volume data by which it can be referenced. |
 
 The `<volumedata>` defines the volumetric properties in the interior of a Shape.
 
-The child-element of the `<volumedata>` element reference a function, that has to match the signature requirements of the child element. 
+The child-element of the `<volumedata>` element reference a function, that has to match the signature requirements of the child element.
 Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the `<volumedata>` applies to a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
 
@@ -520,24 +520,22 @@ The clipping surface is defined by the surface of the enclosing Shape. This impl
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
-
-
-
-__Note__
+**Note**
 Volumetric content is always clipped to the clipping surface of the shape that embeds it.
 If a property (color, composite or properties) defined at the surface of an object conflicts with the property within the object defined by this extension, the surface property has precedence in the following sense:
 The consumer MUST define a surface layer with a thickness as small as possible to achieve the surface property on the outside of the object. Outside of this thin surface region, the volumetric property MUST be applied everywhere within the object.
 
-__Note__
+**Note**
 Defining conflicting surface- and volumetric properties can be very powerful, e.g. if one wants to add a high resolution surface texture over a lower resolution volumetric color. However, producers MUST be aware that the thickness of this surface layer can vary between consumers depending on the manufacturing technology they employ.
 
 The properties at surface regions that are not explicitly specified are instead given by the volumetric properties.
 
 Conflicting properties must be handled as follows:
+
 1. Producers MUST not define colors, materials or properties via child elements of the `<volumedata>` element that are impossible on physical grounds (e.g. non-conducting copper).
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
-__Note__: In the case where objects with different `<volumedata>` child elements overlap, only the `<volumedata>` child elements from last object can be used.
+**Note**: In the case where objects with different `<volumedata>` child elements overlap, only the `<volumedata>` child elements from last object can be used.
 This makes sure that `<volumedata>` child elements of an overlapped object do not determine the value of any `<volumedata>` child elements of an overlapping object. Figure 5-1 illustrates this behavior.
 
 ### 6.2.1 Color element
@@ -552,12 +550,12 @@ Element **\<color>**
 | transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the `<function>` coordinate system. |
 | channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
 | minfeaturesize  | ST_Number      |          |  0.0       | Hint for the minimum size of features. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+| fallbackvalue  | ST_Number |     | 0.0  | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 To simplify parsing, producers MUST define a `<vector3dfield>`-element prior to referencing it via the vector3dfieldid in a `<color>`-element.
 
 The `<color>` element is used to define the color of the object.
-The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values.
+The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification <https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values>.
 
 The vector components `x`, `y` and `z` of the 3D vector field are interpreted as the "R", "G" and "B" channels of the color of the enclosing meshobject, respectively. If either channel evaluates to a value \<0 or \>1 it has to be truncated at 0 or 1, respectively.
 
@@ -599,6 +597,7 @@ The number of `<base>`-elements in the `<basematerials>` element referenced by a
 Producers MUST NOT create files where the sum of all values in its child `<materialmapping>`-elements is smaller than `10^-5`. If the total is smaller than this threshold, the mixing ratio is up to the consumer.
 
 - If there are `N` materials, then the mixing ration of material `i` at point `X` is given by:
+
    ```
    value of channel i / sum(value of all N mixing contributions at point X)
    ```
@@ -617,7 +616,7 @@ Element **\<materialmapping>**
 | transform      | ST_Matrix3D   |          |         | Transformation of the object coordinate system into the `<function>` coordinate system |
 | channel        | xs:QName      | required |         | Name of the function output to be used for the mixing contribution. The output must be a scalar. |
 | minfeaturesize | ST_Number     |          | 0       | Hint for the minimum size of features. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+| fallbackvalue  | ST_Number |     | 0.0  | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The `<materialmapping>` element defines the relative contribution of a specific material to the mixing of materials in it's parent `<composite>`-element.
 
@@ -655,7 +654,7 @@ Element **\<property>**
 | channel | xs:QName | required |  | Name of the function output to be used for the property. |
 | name | xs:QName | required | | Contains either the name of the property, defined in a 3MF extension specification, or the name of a vendor-defined property. Either MUST be prefixed with a valid XML namespace name declared on the `<model>` element. |
 | required | xs:boolean | | false | Indicator whether this property is required to process this 3MF document instance. |
-| fallbackvalue	 | ST_Number	|		   | 0.0	 | Specifies the value to be used for this data element if the output of the referenced function is undefined |
+| fallbackvalue  | ST_Number |     | 0.0  | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
 The `<property>` element allows to assign any point in space a scalar or vectorial value of a freely definable property. This can be used to assign, e.g. opacity, conductivity, or translucency.
 
@@ -671,15 +670,15 @@ If a `<property>`-element is being sampled at position `(x,y,z)` in the mesh's l
 Name of the function output to be used for the property. Note that the type of the output determines the type of the property.
 
 This specification does not provide qualified names for such properties as part of the standard volumetric namespace.
-A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called "http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05".
+A later extension of the 3MF format might define such qualified names as part of a different extension specification or a later version of the volumetric extension specification. Producers that want to specify such properties now, SHOULD define a qualified name that can e.g. be called "<http://www.vendorwwebsite.com/3mf/vendor13mfextension/2021/05>".
 The specifications of private namespaces (that are not ratified by the 3MF Consortium) MUST be negotiated between producer and consumer of a 3MF file.
 
 The names of `<property>`-elements MUST be unique within a `<volumedata>`. This name MUST be prefixed with a valid XML namespace name declared on the <model> element.
-The interpretation of the value MUST be defined by the owner of the namespace. 
-	
-__Note__:
+The interpretation of the value MUST be defined by the owner of the namespace.
+ 
+**Note**:
 The producer of a 3MF file is responsible for assembling the values in the `<property>` (and the referenced `<function>` such that sampling it in the print-bed coordinate system as a e.g. physical property, is sensible. This requirement is particularly important if the accumulated transformation `T0` between print-bed coordinates and local object coordinates is not a rigid body transformation.
-(The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component, and Figure 6.2 in this document).
+(The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element> and <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component>, and Figure 6.2 in this document).
 
 If the interpretation of a property might result in a conflict with the standard volumedata-elements (boundary, color, composite) the namespace-owner MUST specify a resolution to the conflict. A producer MUST NOT create files with properties that conflict with each other.
 
@@ -702,7 +701,7 @@ Equipped with the language elements of this specification, one can recapitulate 
 
 Figure 7-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a `<volumedata>` element (in this case `<color>`) is sampled in the object coordinate space.
 
-Figure 7-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element and https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component).
+Figure 7-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element> and <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component>).
 
 Figure 7-1 b) shows the `<functionfromimage3d>` underlying the color of the object. The sampling point is represented in the coordinate system of the `<functionfromimage3d>`. The transformation `T1` from object coordinate space to `<functionfromimage3d>` coordinate system is given by the `transform`-element in the `<color>`-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the `<functionfromimage3d>` context.
 The color value sampled in this illustration directly originates from a `<functionfromimage3d>` element.
@@ -722,7 +721,6 @@ This specification is limited in scope. Three noteworthy limitations are:
 
 1. One cannot overlay a function over a meshless (composite) object, one has to duplicate the volume data elements at the object leaves.
 
-
 2. The fields in this definition are limited to be scalar- (or 1D-vector-) valued and 3D-vector valued. Vectors of other dimensionality must be assembled by the producer / consumer using multiple scalar / 3D-vector fields.
 
 3. It is not possible to assemble a field object that represents the RGB and alpha-channels from images. However one may assamble and blend data from RGBA-images explicitely by extracting the alpha channel into a scalar field and by using the alpha scalar field as a composition mask of two RGB 3d vector fields.
@@ -734,6 +732,7 @@ The implicit namespace extension enriches the volumetric extension by facilitati
 The functions are members of volumetric data that define a field with arbitrary precision. These functions can be integrated with the existing children of volumedata (materialMapping, property,boundary, color), where they are defined at every point within the mesh or its bounding box. These functions are created via a connected node set. They link inputs and outputs, and allow interaction with other resources.
 
 ## Chapter 1. Overview of Implicit Additions
+
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 ![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds FunctionImplicit and Native nodes. Optionally PrivateExtensionFunction can be defined.
 
@@ -776,6 +775,7 @@ Consider an example:
     </i:function>
 
 ```
+
 In this example, the _function_ representing a sphere takes two inputs, a vector 'pos' and a scalar value 'radius'.
 
 Links are defined by back-referencing the output of one node to the input of another node.
@@ -787,7 +787,6 @@ The 'subtraction' node computes the difference between the length of the input v
 The `<i:out>` element defines the output of the function. The connection to the subtraction output is established through the `<i:scalarref>` element.
 
 It showcases the flexibility of defining various mathematical operations like length computation and subtraction through nested nodes within the function. The result of these computations can be accessed through the `<i:out>` member.
-
 
 Furthermore, a function can include basic mathematical operations like additions, subtractions, and multiplications to cosines, logarithms or clamping. The operations can use different types like scalars, vectors, and matrices.
 
@@ -832,7 +831,7 @@ Overview of native nodes
 | [max](#max)                | maximum value operation                    |
 | [abs](#abs)                | absolute value operation                   |
 | [fmod](#fmod)              | Remainder of floating point division       |
-| [mod](#mod)                | Modulo operation           				  |
+| [mod](#mod)                | Modulo operation                 |
 | [pow](#pow)                | power function operation                   |
 | [sqrt](#sqrt)              | square root function operation             |
 | [exp](#exp)                | exponential function operation             |
@@ -855,11 +854,10 @@ Overview of native nodes
 | [length](#length)          | length operation                           |
 | [constresourceid](#constresourceid)  | constant resource ID                       |
 
-
 ## addition
 
 **Description:**
-Performs an addtion of the inputs "A" and "B" and writes the result to the output "result". 
+Performs an addtion of the inputs "A" and "B" and writes the result to the output "result".
 
 **Inputs:**
 
@@ -867,7 +865,6 @@ Performs an addtion of the inputs "A" and "B" and writes the result to the outpu
 |--------------|---------------------------------------------|
 | A      | First summand                |
 | B      | Second summand               |
-
 
 **Outputs:**
 
@@ -882,7 +879,6 @@ The operation can be used for the following types of inputs and outputs:
 | scalar   | scalar   | scalar   |  |
 | vector   | vector   | vector   | vector is added componentwise |
 | matrix   | matrix   | matrix   | matrix elements are added componentwise |
-
 
 **Example Usage:**
 
@@ -900,13 +896,12 @@ The operation can be used for the following types of inputs and outputs:
 
 ```
 
-
-
 ## constant
 
 **Description:** Node for a constant scalar value. The output must have the identifier "value".
 
 Example:
+
 ```xml
 
 <i:constant identifier="constant1" displayname="Constant 1" value="1.0">
@@ -928,7 +923,6 @@ Example:
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
 | value        | Constant scalar value                       |
-
 
 ## constvec
 
@@ -1134,6 +1128,7 @@ None
 ```
 
 ## composematrix
+
 **Description:** Composes a matrix from 16 scalar values.
 
 **Inputs:**
@@ -1141,8 +1136,8 @@ None
 | Identifier | Description |
 |------------|-------------|
 | m00        | Scalar value for element (0,0) of the matrix |
-| mRC 		 | Scalar value for element (R,C) of the matrix |
-| ...		 | ... |
+| mRC    | Scalar value for element (R,C) of the matrix |
+| ...   | ... |
 | m33        | Scalar value for element (3,3) of the matrix |
 
 **Outputs:**
@@ -1156,34 +1151,34 @@ None
 ```xml
 
 <i:composematrix identifier="composeMatrix_0" displayname="composed matrix">
-	<i:in>
-		<i:scalarref identifier="m00" ref="constantM00.value"/>
-		<i:scalarref identifier="m01" ref="constantM01.value"/>
-		<i:scalarref identifier="m02" ref="constantM02.value"/>
-		<i:scalarref identifier="m03" ref="constantM03.value"/>
-		<i:scalarref identifier="m10" ref="constantM10.value"/>
-		<i:scalarref identifier="m11" ref="constantM11.value"/>
-		<i:scalarref identifier="m12" ref="constantM12.value"/>
-		<i:scalarref identifier="m13" ref="constantM13.value"/>
-		<i:scalarref identifier="m20" ref="constantM20.value"/>
-		<i:scalarref identifier="m21" ref="constantM21.value"/>
-		<i:scalarref identifier="m22" ref="constantM22.value"/>
-		<i:scalarref identifier="m23" ref="constantM23.value"/>
-		<i:scalarref identifier="m30" ref="constantM30.value"/>
-		<i:scalarref identifier="m31" ref="constantM31.value"/>
-		<i:scalarref identifier="m32" ref="constantM32.value"/>
-		<i:scalarref identifier="m33" ref="constantM33.value"/>
-	</i:in>
-	<i:out>
-		<i:matrix identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:scalarref identifier="m00" ref="constantM00.value"/>
+  <i:scalarref identifier="m01" ref="constantM01.value"/>
+  <i:scalarref identifier="m02" ref="constantM02.value"/>
+  <i:scalarref identifier="m03" ref="constantM03.value"/>
+  <i:scalarref identifier="m10" ref="constantM10.value"/>
+  <i:scalarref identifier="m11" ref="constantM11.value"/>
+  <i:scalarref identifier="m12" ref="constantM12.value"/>
+  <i:scalarref identifier="m13" ref="constantM13.value"/>
+  <i:scalarref identifier="m20" ref="constantM20.value"/>
+  <i:scalarref identifier="m21" ref="constantM21.value"/>
+  <i:scalarref identifier="m22" ref="constantM22.value"/>
+  <i:scalarref identifier="m23" ref="constantM23.value"/>
+  <i:scalarref identifier="m30" ref="constantM30.value"/>
+  <i:scalarref identifier="m31" ref="constantM31.value"/>
+  <i:scalarref identifier="m32" ref="constantM32.value"/>
+  <i:scalarref identifier="m33" ref="constantM33.value"/>
+ </i:in>
+ <i:out>
+  <i:matrix identifier="result"/>
+ </i:out>
 </i:composematrix>
 
 ```
 
 ## matrixfromcolumns
 
-**Description:** Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1]. 
+**Description:** Node for composing a matrix from column vectors. The 4th row is set [0,0,0,1].
 
 **Inputs:**
 
@@ -1206,7 +1201,8 @@ The operation can be used for the following types of inputs and outputs:
 |-----|-----|-----|-----|----------|
 |vector|vector|vector|vector|matrix|
 
-**Example Usage:** 
+**Example Usage:**
+
 ```xml
 
 <i:matrixfromcolumns identifier="matrixfromcolumns" displayname="composed matrix">
@@ -1225,7 +1221,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## matrixfromrows
 
-**Description:** Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1). 
+**Description:** Node for composing a Matrix from row vectors. The 4th column is set to (0,0,0,1).
 
 **Inputs:**
 | Identifier   | Description                                 |
@@ -1264,6 +1260,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## multiplication  
+
 **Description:** Performs the multiplication A x B = result. The inputs must have the identifier "A" and "B", and the output must have the identifier "result". All imputs must be of the same type (scalar, vector, matrix).
 
 **Inputs:**  
@@ -1292,18 +1289,19 @@ The operation can be used for the following types of inputs and outputs:
 ```xml
  
 <i:multiplication identifier="multiplication1" displayname="Multiplication 1">
-	<i:in>
-		<i:scalarref identifier="A" ref="constant1.c1"/>
-		<i:scalarref identifier="B" ref="inputs.radius"/>
-	</i:in>
-	<i:out>
-		<i:scalar identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:scalarref identifier="A" ref="constant1.c1"/>
+  <i:scalarref identifier="B" ref="inputs.radius"/>
+ </i:in>
+ <i:out>
+  <i:scalar identifier="result"/>
+ </i:out>
 </i:multiplication>
 
 ```
 
 ## subtraction
+
 **Description:** Performs subtracts the inputs "A" and "B" and writes the difference to the output "result".
 
 **Inputs:**
@@ -1344,6 +1342,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## division
+
 **Description:** Performs a division of the inputs "A" and "B" and writes the quotient to the output "result".
 
 **Inputs:**
@@ -1360,7 +1359,6 @@ The operation can be used for the following types of inputs and outputs:
 | result     | Quotient    |
 
 The operation can be used for the following types of inputs and outputs:
-
 
 | A        | B          | result  | comment                                   |
 |----------|------------|---------|-------------------------------------------|
@@ -1483,9 +1481,10 @@ The operation can be used for the following types of inputs and outputs:
 
 | A   | B   | result   | comment   |
 |-----|-----|----------|------------|
-| matrix   | vector   | vector   | 
+| matrix   | vector   | vector   |
 
 **Example Usage:**
+
 ```xml
 
 <matrixvectormultiplication identifier="matVec1" displayname="Matrix Vector Multiplication 1">
@@ -1500,11 +1499,11 @@ The operation can be used for the following types of inputs and outputs:
 
 ```
 
-## transpose 
+## transpose
 
 **Description:** Performs the transpose of a matrix. The input 'A' must be a matrix and the output must be a matrix with the identifier "result".
 
-**Inputs:** 
+**Inputs:**
 
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
@@ -1518,7 +1517,7 @@ The operation can be used for the following types of inputs and outputs:
 
 The operation can be used for the following types of inputs and outputs:  
 
-| A   | result   | 
+| A   | result   |
 |-----|----------|
 | matrix   | matrix   |
 
@@ -1527,17 +1526,18 @@ The operation can be used for the following types of inputs and outputs:
 ```xml
 
 <i:transpose identifier="transpose1" displayname="Transpose 1">
-	<i:in>
-		<i:matrixref identifier="A" ref="inputs.matrix1"/>
-	</i:in>
-	<i:out>
-		<i:matrix identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:matrixref identifier="A" ref="inputs.matrix1"/>
+ </i:in>
+ <i:out>
+  <i:matrix identifier="result"/>
+ </i:out>
 </i:transpose>
 
 ```
 
 ## inverse
+
 **Description:** Computes the inverse of a matrix. The input "A" must be a matrix and the output must be a matrix with the identifier "result".
 
 **Inputs:**
@@ -1554,11 +1554,12 @@ The operation can be used for the following types of inputs and outputs:
 
 The operation can be used for the following types of inputs and outputs:
 
-| A   | result   | 
+| A   | result   |
 |-----|----------|
 | matrix   | matrix   |
 
 **Example Usage:**
+
 ```xml
 
 <i:inverse identifier="inverse1" displayname="Inverse 1">
@@ -1752,19 +1753,19 @@ The operation can be used for the following types of inputs and outputs:
 ```xml
 
 <i:arccos identifier="arccos1" displayname="Arccos 1">
-	<i:in>
-		<i:vectorref identifier="A" ref="inputs.vector1"/>
-	</i:in>
-	<i:out>
-		<i:vector identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:vectorref identifier="A" ref="inputs.vector1"/>
+ </i:in>
+ <i:out>
+  <i:vector identifier="result"/>
+ </i:out>
 </i:arccos>
 
 ```
 
 ## arctan
 
-**Description:** Performs an arctan function with a scalar or vector as input and a scalar or vector as output. The input must have the identifier "A", and the output must have the identifier "result". 
+**Description:** Performs an arctan function with a scalar or vector as input and a scalar or vector as output. The input must have the identifier "A", and the output must have the identifier "result".
 
 **Inputs:**
 
@@ -1785,19 +1786,19 @@ The operation can be used for the following types of inputs and outputs:
 | A        | result                     | comment                             |
 |----------|----------------------------|-------------------------------------|
 | scalar   | scalar                     |                                     |
-| vector   | vector                     | arctan of each component of the vector |											
+| vector   | vector                     | arctan of each component of the vector |           
 
 **Example Usage:**
 
 ```xml
 
 <i:arctan identifier="arctan1" displayname="Arctan 1">
-	<i:in>
-		<i:vectorref identifier="A" ref="inputs.vector1"/>
-	</i:in>
-	<i:out>
-		<i:vector identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:vectorref identifier="A" ref="inputs.vector1"/>
+ </i:in>
+ <i:out>
+  <i:vector identifier="result"/>
+ </i:out>
 </i:arctan>
 
 ```
@@ -1963,12 +1964,11 @@ The operation can be used for the following types of inputs and outputs:
 
 ```
 
-
 ## fmod
-**Description:** Computes the remainder of the divison of the inputs "A" / "B" and writes the result to the output "result", as known from C++ fmod.
-result = A - B * trunc(A/B) 
-The result will have the same sign as A.
 
+**Description:** Computes the remainder of the divison of the inputs "A" / "B" and writes the result to the output "result", as known from C++ fmod.
+result = A - B * trunc(A/B)
+The result will have the same sign as A.
 
 **Inputs:**
 | Identifier   | Description                      |
@@ -1989,6 +1989,7 @@ The operation can be used for the following types of inputs and outputs:
 | matrix    | matrix    | matrix  | modulo operation of each component of the matrices|
 
 **Example Usage:**
+
 ```xml
  
 <i:fmod identifier="fmod1" displayname="Fmod 1">
@@ -2004,7 +2005,8 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## mod
-**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result" as know from GLSL mod. 
+
+**Description:** Performs a modulo operation on the inputs "A" and "B" and writes the result to the output "result" as know from GLSL mod.
 result = A - B * floor(A/B)
 
 **Inputs:**
@@ -2026,6 +2028,7 @@ The operation can be used for the following types of inputs and outputs:
 | matrix    | matrix    | matrix  | modulo operation of each component of the matrices|
 
 **Example Usage:**
+
 ```xml
  
 <i:mod identifier="mod1" displayname="mod 1">
@@ -2039,7 +2042,6 @@ The operation can be used for the following types of inputs and outputs:
 <i:mod>
 
 ```
-
 
 ## pow
 
@@ -2067,16 +2069,17 @@ The operation can be used for the following types of inputs and outputs:
 | matrix  | matrix  | matrix  | Power of each component of the matrices     |
 
 **Example Usage:**
+
 ```xml
 
 <i:pow identifier="pow1" displayname="Pow 1">
-	<i:in>
-		<i:vectorref identifier="A" ref="inputs.vector1"/>
-		<i:vectorref identifier="B" ref="inputs.vector2"/>
-	</i:in>
-	<i:out>
-		<i:vector identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:vectorref identifier="A" ref="inputs.vector1"/>
+  <i:vectorref identifier="B" ref="inputs.vector2"/>
+ </i:in>
+ <i:out>
+  <i:vector identifier="result"/>
+ </i:out>
 </i:pow>
 
 ```
@@ -2103,20 +2106,22 @@ The operation can be used for the following types of inputs and outputs:
 | matrix   | matrix   | square root of each component of the matrix |
 
 **Example Usage:**
+
 ```xml
 
 <i:sqrt identifier="sqrt1" displayname="Sqrt 1">
-	<i:in>
-		<i:vectorref identifier="A" ref="inputs.vector1"/>
-	</i:in>
-	<i:out>
-		<i:vector identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:vectorref identifier="A" ref="inputs.vector1"/>
+ </i:in>
+ <i:out>
+  <i:vector identifier="result"/>
+ </i:out>
 </i:sqrt>
 
 ```
 
 ## mesh
+
 **Description:** Evaluates the signed distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar with the identifier "distance". The mesh is assumed to be closed and watertight.
 
 **Inputs:**
@@ -2139,21 +2144,23 @@ The operation can be used for the following types of inputs and outputs:
 | vector   | -   | scalar   | -  |
 
 **Example Usage:**
+
 ```xml
 
 <i:mesh identifier="distanceToMesh1" displayname="Distance to Mesh 1" objectid="1" >
-	<i:in>
-		<i:vectorref identifier="pos" ref="inputs.pos"/>
-	 	<i:resourceref identifier="mesh" ref="reosurceidnode.value"/>
-	</i:in>
-	<i:out>
-		<i:scalar identifier="distance"/>
-	</i:out>
+ <i:in>
+  <i:vectorref identifier="pos" ref="inputs.pos"/>
+   <i:resourceref identifier="mesh" ref="reosurceidnode.value"/>
+ </i:in>
+ <i:out>
+  <i:scalar identifier="distance"/>
+ </i:out>
 </i:mesh>
 
 ```
 
 ## unsignedmesh
+
 **Description:** Evaluates the unsigned distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar with the identifier "distance". The mesh does not need to be closed or watertight.
 
 **Inputs:**
@@ -2176,16 +2183,17 @@ The operation can be used for the following types of inputs and outputs:
 | vector   | -   | scalar   | -  |
 
 **Example Usage:**
+
 ```xml
 
 <i:unsignedmesh identifier="UnsignedDistToMesh1" displayname="Unsigned distance to Mesh" objectid="1" >
-	<i:in>
-		<i:vectorref identifier="pos" ref="inputs.pos"/>
-	 	<i:resourceref identifier="mesh" ref="reosurceidnode.value"/>
-	</i:in>
-	<i:out>
-		<i:scalar identifier="distance"/>
-	</i:out>
+ <i:in>
+  <i:vectorref identifier="pos" ref="inputs.pos"/>
+   <i:resourceref identifier="mesh" ref="reosurceidnode.value"/>
+ </i:in>
+ <i:out>
+  <i:scalar identifier="distance"/>
+ </i:out>
 </i:unsignedmesh>
 
 ```
@@ -2229,7 +2237,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ## log
 
-**Description:** Performs a natural logarithm of the input "A" and writes the result to the output "result". 
+**Description:** Performs a natural logarithm of the input "A" and writes the result to the output "result".
 
 **Inputs:**
 
@@ -2266,7 +2274,7 @@ The operation can be used for the following types of inputs and outputs:
 
 ```
 
-## log2 
+## log2
 
 **Description:** Performs a base 2 logarithm operation on the input "A" and writes the result to the output "result".
 
@@ -2306,6 +2314,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## log10
+
 **Description:** Performs a base 10 logarithm of the input "A" and writes the result to the output "result".
 
 **Inputs:**
@@ -2326,6 +2335,7 @@ The operation can be used for the following types of inputs and outputs:
 | matrix  | matrix  | Logarithm is calculated componentwise |
 
 **Example Usage:**
+
 ```xml
 
 <i:log10 identifier="log101" displayname="Log10 1">
@@ -2340,6 +2350,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## exp
+
 **Description:** Performs an exponential function on the input "A" and writes the result to the output "result".
 
 **Inputs:**
@@ -2350,25 +2361,26 @@ The operation can be used for the following types of inputs and outputs:
 **Outputs:**
 | Identifier | Description              |
 |------------|--------------------------|
-| result     | Result of exponential function | 
+| result     | Result of exponential function |
 
 The operation can be used for the following types of inputs and outputs:
 | A      | result  | Comment                          |
 |--------|---------|----------------------------------|
-| scalar | scalar  |                                  | 
+| scalar | scalar  |                                  |
 | vector | vector  | Exponential of each component of the vector |
-| matrix | matrix  | Exponential of each component of the matrix | 
+| matrix | matrix  | Exponential of each component of the matrix |
 
 **Example Usage:**
+
 ```xml
 
 <i:exp identifier="exp1" displayname="Exp 1">
-	<i:in>
-		<i:vectorref identifier="A" ref="inputs.vector1"/>
-	</i:in>
-	<i:out>
-		<i:vector identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:vectorref identifier="A" ref="inputs.vector1"/>
+ </i:in>
+ <i:out>
+  <i:vector identifier="result"/>
+ </i:out>
 </i:exp>
 
 ```
@@ -2418,7 +2430,7 @@ The operation can be used for the following types of inputs and outputs:
 
 **Inputs:**
 
-| Identifier | Description | 
+| Identifier | Description |
 |------------|-------------|
 | A          | Operand     |
 
@@ -2510,9 +2522,9 @@ The operation can be used for the following types of inputs and outputs:
 
 The operation can be used for the following types of inputs and outputs:
 
-| A       | min     | max     | result                     | 
+| A       | min     | max     | result                     |
 |---------|---------|---------|----------------------------|
-| scalar  | scalar  | scalar  | scalar                     | 
+| scalar  | scalar  | scalar  | scalar                     |
 | vector  | vector  | vector  | Vector with clamped values component-wise |
 | matrix  | matrix  | matrix  | Matrix with clamped values component-wise |
 
@@ -2561,6 +2573,7 @@ The operation can be used for the following types of inputs and outputs:
 | matrix  | matrix  | matrix  | matrix  | matrix      |
 
 **Example Usage:**
+
 ```xml
 
 <i:select identifier="select1" displayname="Select 1">
@@ -2693,6 +2706,7 @@ The operation can be used for the following types of inputs and outputs:
 </i:floor>
 
 ```
+
 ## sign
 
 **Description:** Performs the sign function on the input "A" and writes the result to the output "result". If the input is less than zero this function returns -1, if the input is greater than zero this function returns 1, and if the input is equal to zero this function returns 0.
@@ -2733,6 +2747,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## fract
+
 **Description:** Returns the fractional part of the input (A - floor(A)).
 
 **Inputs:**
@@ -2771,6 +2786,7 @@ The operation can be used for the following types of inputs and outputs:
 ```
 
 ## functionCall
+
 **Description:** Calls a function with the given identifier. The input must have the identifier "functionID". The rest of the inputs and outputs must match the inputs and outputs of the function.
 
 **Inputs:**
@@ -2791,12 +2807,12 @@ The operation can be used for the following types of inputs and outputs:
 ```xml
 
 <i:functioncall identifier="functionCall1" displayname="Function Call 1">
-	<i:in>
-		<i:resourceref identifier="functionID" ref="resourceidnode.value"/>
-	</i:in>
-	<i:out>
-		<i:scalar identifier="result"/>
-	</i:out>
+ <i:in>
+  <i:resourceref identifier="functionID" ref="resourceidnode.value"/>
+ </i:in>
+ <i:out>
+  <i:scalar identifier="result"/>
+ </i:out>
 </i:functioncall>
 
 ```
@@ -2825,6 +2841,7 @@ Calling the sphere function from the example in [Chapter 2. Function Implicit](#
         </i:out>
     </i:functioncall>
 ```
+
 The inputs of the sphere function are added as inputs to the `<i:functioncall>` node. The output of the  `<i:functioncall>` node is the output of the sphere function. A `<i:constresourceid>` node is used to define the functionID of the sphere function. Note that a resourceid can also be used as a function input.
 
 ## Chapter 5. Implicit Evaluation
@@ -2832,6 +2849,7 @@ The inputs of the sphere function are added as inputs to the `<i:functioncall>` 
 ## 5.1 Valid Graphs
 
 The native nodes provided are used to create abitrary graphs. In order for these graphs to be evaluatable they must meet the following criteria and any graph that fails to meet this criteria MUST be rejected.
+
 - Nodes that compose a Function form a subgraph that must be acyclic and directed.
 - References between Functions that form the graph MUST be acyclic and directed.
 - A Function MUST NOT reference itself.
@@ -2843,7 +2861,6 @@ The native nodes provided can create graphs that have regions that will evaluate
 
 ## Chapter 6. Notes
 
-
 # Part III. Appendices
 
 # Appendix A. Glossary
@@ -2851,6 +2868,7 @@ The native nodes provided can create graphs that have regions that will evaluate
 See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/blob/master/glossary.md).
 
 ## Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions
+
 VOLUMETRIC_SCHEMA_INSERT
 
 _sheet0.png_
@@ -2860,7 +2878,6 @@ IMPLICIT_SCHEMA_INSERT
 
 _sheet1.png_
 ![sheet1.png](images/sheet1.png)
-
 
 # References
 
