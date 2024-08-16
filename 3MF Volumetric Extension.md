@@ -255,10 +255,12 @@ A `<functionfromimage3d>` has the following input and outputs:
 |------------|-------------|-------------|
 | pos        | vector    | UVW coordinates of the point to be evaluated. Points outside the range from (0, 0, 0) to (1 , 1, 1) will be mapped according to the tile style |
 
+The ouput values are in the range from 0 to 1. Please see [Chapter 4.2](#42-imagestack) for more information on the input pixel layouts.
+
 **Outputs:**
 | Identifier | Type |	Description |
 |------------|-------------|-------------|
-| color      | vector    | Vector containg the rgb values |
+| color      | vector    | Vector containing the rgb values (x=red, y=green, z=blue), alpha is ignored |
 | red		 | scalar    | Scalar containing the red value |
 | green		 | scalar    | Scalar containing the green value |
 | blue		 | scalar    | Scalar containing the blue value |
@@ -277,17 +279,19 @@ The appearance of color and red, green, blue might seem redundant, but allows to
 		</v:image3d>
 <v:functionfromimage3d id="3" displayname="function from image3d" image3dID="2" offset="0" scale="1400" tilestyleu="wrap" tilestylev="clamp" tilestylew="mirror" filter="linear"></v:functionfromimage3d>
 ...
-<mesh>
-	<vertices>
-		...
-	</vertices>
-	<triangles>
-		...
-	</triangles>
-	<v:volumedata>
-		<v:property name="Temp" transform="0.01 0 0 0 0.01 0 0 0 0.01 0.5 0.5 0.5" functionid="3" channel="red"/>
-	</v:volumedata>
-</mesh>
+<v:volumedata id="3">
+    <v:property name="Temp" transform="0.01 0 0 0 0.01 0 0 0 0.01 0.5 0.5 0.5" functionid="3" channel="red"/>
+</v:volumedata>
+<object id="4">
+    <mesh volumeid="3">
+        <vertices>
+            ...
+        </vertices>
+        <triangles>
+            ...
+        </triangles>
+    </mesh>
+</object>
 
 ```
 
@@ -496,6 +500,11 @@ Element **\<volumedata>**
 
 ![volumedata XML structure](images/element_volumedata.png)
 
+
+| Name           | Type         | Use      | Default | Annotation                                                           |
+| -------------- | ------------ | -------- | ------- | -------------------------------------------------------------------- |
+| id     | ST_ResourceID| required |         | ResourceID of volume data by which it can be referenced. |
+
 The `<volumedata>` defines the volumetric properties in the interior of a `<shape>` element.
 
 The child-element of the `<volumedata>` element reference a function, that has to match the signature requirements of the child element. 
@@ -510,6 +519,8 @@ To rationalize how this specification modifies the definition of geometry within
 The clipping surface is defined by the surface of the enclosing `<shape>` element. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
 
 This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
+
+
 
 
 __Note__
