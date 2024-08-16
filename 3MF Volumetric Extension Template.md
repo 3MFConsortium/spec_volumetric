@@ -20,19 +20,19 @@
   - [Software Conformance](#software-conformance)
 - [Part I: Volumetric Extension](#part-i-volumetric-extension)
   - [Chapter 1. Overview of Volumetric Additions](#chapter-1-overview-of-volumetric-additions)
-  - [Chapter 2. DataTypes](#chapter-2-datatypes)
-  - [Chapter 3. Functions](#chapter-3-functions-and-function-types)
-  - [Chapter 4. 3D Image](#chapter-4-3d-image)
-  - [Chapter 5. LevelSet](#chapter-5-levelset)
-  - [Chapter 6. Volumetric Data](#chapter-6-volumetric-data)
-  - [Chapter 7. Notes](#chapter-6-notes)
+  - [Chapter 2. Functions](#chapter-2-functions-and-function-types)
+  - [Chapter 3. 3D Image](#chapter-3-3d-image)
+  - [Chapter 4. LevelSet](#chapter-4-levelset)
+  - [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
+  - [Chapter 6. Notes](#chapter-6-notes)
 - [Part II. Implicit Extension](#3mf-volumetric-implicit-extensions)
   - [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
-  - [Chapter 2. Function Implicit](#chapter-2-function-implicit)
-  - [Chapter 3. Nodes](#chapter-3-nodes)
-  - [Chapter 4. Native Nodes](#chapter-4-native-nodes)
-  - [Chapter 5. Implicit Evaluation](#chapter-5-implicit-evaluation)
-  - [Chapter 6. Notes](#chapter-6-notes)
+  - [Chapter 2. DataTypes](#chapter-2-datatypes)
+  - [Chapter 3. Function Implicit](#chapter-3-function-implicit)
+  - [Chapter 4. Nodes](#chapter-4-nodes)
+  - [Chapter 5. Native Nodes](#chapter-5-native-nodes)
+  - [Chapter 6. Implicit Evaluation](#chapter-6-implicit-evaluation)
+  - [Chapter 7. Notes](#chapter-7-notes)
 - [Part III. Appendices](#part-ii-appendices)
   - [Appendix A. Glossary](#appendix-a-glossary)
   - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
@@ -110,72 +110,10 @@ This extension is meant to be an exact specification of geometric, appearance-re
 
 A producer using the level set of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
-# Chapter 2. DataTypes
 
-The volumetric extension of 3MF, defines 4 new datatypes that are used for definition of the outputs of functions for volumetric evaluation.
-They allow to reference the output of nodes in a graph for the implicit extension or define the mapping of the output channels for the sampling of an image3d with functionFromImage3D. The References are of the type ST_NodeOutputIdentifier.
+# Chapter 2. Functions and Function Types
 
-## 2.1 ST_NodeOutputIdentifier
-
-The `ST_NodeOutputIdentifier` is a simple type used to represent an identifier for a node output in the format of "nodename.outputname".
-
-ST_ScalarID, ST_VectorID, ST_MatrixID and ST_ResourceOutputID are derived from ST_NodeOutputIdentifier.
-
-### Format
-
-The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier must consist of alphanumeric characters and underscores. The dot (.) separates the node name and the output name.
-
-## 2.2 ScalarReference
-
-Element `<scalarref>`
-
-![Scalar XML Structure](images/element_scalarreference.png)
-| Name      | Type             | Use      | Default | Annotation                                                                 |
-| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
-| identifier| ST_Identifier    | required |         | Specifies an identifier for this scalar resource.                          |
-| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_ScalarID      | required |         | Reference to the scalar in the form "NodeIdentifier.ScalarIdentifier".  
-
-## 2.3 VectorReference
-
-Element `<vectorref>`
-
-![Vector XML Structure](images/element_vectorreference.png)
-| Name      | Type             | Use      | Default | Annotation                                                                 |
-| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
-| identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
-| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation. |
-| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".   |
-
-## 2.4 MatrixReference
-
-Element `<matrixref>`
-
-References to functions are only used for the implicit extension.
-
-![Vector XML Structure](images/element_matrixreference.png)
-| Name      | Type             | Use      | Default | Annotation                                                                 |
-| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
-| identifier| ST_Identifier    | required |         | Specifies an identifier for this matrix resource.                          |
-| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_MatrixID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".                              |
-
-## 2.5 ResourceReference
-
-Element `<resourceref>`
-
-References to resources are used for the volumeData element and for the implicit extension to create a function reference.
-
-![Function XML Structure](images/element_resourcereference.png)
-| Name      | Type             | Use      | Default | Annotation                                                                 |
-| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
-| identifier| ST_Identifier    | required |         | Specifies an identifier for this function resource.                          |
-| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
-| ref       | ST_ResourceOutputID      | required |         | Reference to the resource output in the form "NodeIdentifier.OutputIdentifier".                              |
-
-# Chapter 3. Functions and Function Types
-
-## 3.1 Functions
+## 2.1 Functions
 
 Complex Type **CT_Function**
 
@@ -190,7 +128,7 @@ Volumetric data is created with functions that are evaluatable for at given mode
 
 `<function>` is a container for one of three distinct function types: FunctionFromImage3d, PrivateExtensionFunction, FunctionImplicit. The only function type that MUST be supported for the volumetric extension is FunctionFromImage3D which requires an Image3d resource.
 
-## 3.2 FunctionFromImage3D
+## 2.2 FunctionFromImage3D
 
 Element **\<functionFromImage3d>**
 
@@ -225,7 +163,7 @@ MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavi
 3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 3-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
- _Figure 3-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second `<imagesheet>`. b) tilestyle mirror illustrated throughout the second `<imagesheet>`. c) tilestyle clamp along the u-direction illustrated throughout the second `<imagesheet>`_
+ _Figure 2-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second `<imagesheet>`. b) tilestyle mirror illustrated throughout the second `<imagesheet>`. c) tilestyle clamp along the u-direction illustrated throughout the second `<imagesheet>`_
  ![Tilestyles](images/tilestyle_all.png)
 
 **filter**:
@@ -233,13 +171,13 @@ The filter attribute defines the interpolation method used when a `<functionfrom
 
 - If the interpolation method of an element of type `<functionfromimage3d>` is "nearest", sampling it at an arbitrary (u,v,w) returns the floating point value defined by the closest point (u',v',w') to (u,v,w) which transforms back to a voxel center in the 3D image resource. If a coordinate u,v, or w maps exactly at the middle between to voxel centers, sampling (u,v,w) should return the floating point value defined by the voxel center with the lower index value of the two voxel centers in question.
 
- _Figure 3-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
+ _Figure 2-3: voxel lookup using filter method "nearest" neighbor: sampling at uvw=(1/8,2/3,0) evaluates the voxel with index-triple (0,0,0) (not (1,0,0)), and sampling at (u,v,w)=(0.5,0.5,0) evaluates the voxel with index-triple (1,1,0) (not (1,2,0))._
 
  ![Voxel lookup using filter method "nearest" neighbor](images/lookup_filter_nearest.png)
 
 - If the interpolation method of an element of type `<functionfromimage3d>` is "linear", sampling it at an arbitrary (u,v,w) returns the floating point defined by trilinearly interpolating between the eight point coordinates defining a box that contains the arbitrary (u,v,w), which transforms back to voxel centers in the 3D image resource.
 
-_Figure 3-4: filter attributes "nearest" (a) and "linear" (b). The greyscale channel ("Y") of the image 3d of Figure 3-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
+_Figure 2-4: filter attributes "nearest" (a) and "linear" (b). The greyscale channel ("Y") of the image 3d of Figure 3-1 is reused in this example. The region shown is clipped at w=0.75, v=1/6 and u=2. The grey wireframe box indicates the UVW unit box. The tilesyle is "wrap" in all directions._
 ![Tilestyle mirror](images/filter.png)
 
 **`offsetvalue` and `scalevalue`**:
@@ -257,7 +195,7 @@ A `<functionfromimage3d>` has the following input and outputs:
 |------------|-------------|-------------|
 | pos        | vector    | UVW coordinates of the point to be evaluated. Points outside the range from (0, 0, 0) to (1 , 1, 1) will be mapped according to the tile style |
 
-The ouput values are in the range from 0 to 1. Please see [Chapter 4.2](#42-imagestack) for more information on the input pixel layouts.
+The ouput values are in the range from 0 to 1. Please see [Chapter 3.2](#32-imagestack) for more information on the input pixel layouts.
 
 **Outputs:**
 | Identifier | Type | Description |
@@ -298,7 +236,7 @@ The appearance of color and red, green, blue might seem redundant, but allows to
 
 ```
 
-## 3.3 PrivateExtensionFunction
+## 2.3 PrivateExtensionFunction
 
 Element **\<PrivateExtensionFunction>
 
@@ -311,7 +249,7 @@ Element **\<PrivateExtensionFunction>
 
 PrivateExtensionFunction is an OPTIONAL function type to support. This function can take either a <scalar> or <vector> input and returns either a <scalar> or <vector>. The intent of this function type is to allow users to extend the volumetric specification for custom functionality that is not possible with the existing functions.
 
-## 3.4 ImplicitFunction
+## 2.4 ImplicitFunction
 
 Element **\<i:implicitfunction>
 
@@ -324,9 +262,9 @@ Element **\<i:implicitfunction>
 
 ImplicitFunction is an OPTIONAL function type to support for the Volumetric specification in the  _implicit_ namespace. The function requires an input DataType and an output DataType.
 
-# Chapter 4. 3D Image
+# Chapter 3. 3D Image
 
-## 4.1 3D Image
+## 3.1 3D Image
 
 Element **\<image3d>**
 
@@ -341,7 +279,7 @@ Volumetric data can be encoded as 3d images that consist of voxels. Each `<image
 
 `<image3d>` is a container for different representations of voxeldata. This specification defines only the `<imagestack>`-elements. Later versions of this specification might provide alternative child elements for the `<image3d>` element.
 
-## 4.2 ImageStack
+## 3.2 ImageStack
 
 Element **\<imagestack>**
 
@@ -377,12 +315,12 @@ Figure 2-1 b) illustrates the voxel indices and the UVW-values throughout the fi
 **Note**: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
 Materials and Properties specification <https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d>.
 
-The sampling rules for UVW values are determined by the filter-rule, and the behavior for UVW-values outside the unit-cube are determined by the tilestyle attributes [of the `<functionfromimage3d>`](#32-functionfromimage3d).
+The sampling rules for UVW values are determined by the filter-rule, and the behavior for UVW-values outside the unit-cube are determined by the tilestyle attributes of the [`<functionfromimage3d>`](#22-functionfromimage3d).
 
 _Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
 ![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
-## 4.1.1 File Formats
+## 3.2.1 File Formats
 
 PNG images can provide acceptable compression and bit-depth for the boundary-function, color information, material mixing ratios or arbitrary property information.
 
@@ -397,7 +335,7 @@ The following describes recommendations for the channel bit depth of PNG images 
 
 - Producers SHOULD store information for which they require high resolution in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
 
-## 4.2.2 OPC package layout
+## 3.2.2 OPC package layout
 **Note**: Introductory information about the Open Packaging Conventions (OPC) can be found in the 3MF Core Specification (see <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#11-package>).
 
 It is RECOMMENDED that producers of 3MF Documents with the Volumetric Extension specification use the following part naming convention:
@@ -409,7 +347,7 @@ This implies that all parts for `<imagesheet>` in an imagestack SHOULD be locate
 _Figure 2-3: OPC package layout_
 ![OPC package layout](images/OPC_overview.png)
 
-## 4.2.3 3D Image Sheet
+## 3.2.3 3D Image Sheet
 
 Element **\<imagesheet>**
 
@@ -424,15 +362,15 @@ Each `<imagesheet>` element has one required attribute. The path property determ
 **Note**:
 Other file formats like OpenVDB, OpenEXR, or VTK offer similar functionality as a stack of PNGs and are more efficient at doing so. However, their use in a manufacturing environment is hard as these formats are conceptually more complex and harder to implement. Therefore, this specification relies on the human readable and conceptually simpler stack of PNGs. Later versions of this extension, or private extension of the 3MF format MAY use different 3D image formats to encode a volumetric data as different child elements of `<image3d>` and benefit from their advanced features. The remainder of this specification deals with the mapping of volumetric data onto mesh-objects in a 3MF file and giving this volumetric data a meaning for additive manufacturing processes. Adding a different data format for a voxel grid as child under `<image3d>` would not affect the remaining parts of this specification.
 
-# Chapter 5 LevelSet
+# Chapter 4 LevelSet
 
-### 5.1.1 LevelSet element
+### 4.1.1 LevelSet element
 
 A powerful application of Volumetric and Implicit modeling is the ability to define the shape of an object from volumetric information. Therefore we are introducing the concept of a **\<levelset>** element which can be used to define the boundary of a shape using a levelset function. This is analogous to how a mesh defines the boundary between the inside and outside of the shape. In this case the mesh surface represents the surface of the levelset value equal to zero.
 
 The child-element of the `<levelset>`-element references a functionID that must have a scalar output. This 'shape' represents the levelset function that MUST be evaluated to determine the actual shape of the object.
 
-Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any levelset element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the `<meshid>`-element. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the the `<meshbboxonly>`-element to true and the `<levelset>`-element must be evaluated within the extents of the mesh referenced by the `<meshid>`-element.
+Since fields can be evaluated in an unbounded way, a closed mesh is required to enclose any levelset element to make the evaluation space bounded. For example a simple box that represents the bounding box of the geometry encoded in the `meshid`-attribute. There are cases where a producer would want to specify a bounding box for evaluation. In that case one can set the `meshbboxonly`-attribute to true. The `<levelset>`-element must be evaluated within the extents of the mesh referenced by the `meshid`-attribute.
 
 Element **\<levelset>**
 
@@ -482,12 +420,12 @@ Any undefined result MUST be evaluated as the value provided.
 
 **VolumeDetermination**
 
-_Figure 5-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (rectangle) with `<volumedata>` child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows `<volumedata>` child element X in object A, and `<volumedata>` child element Y in object B. The table lays out how these `<volumedata>` child elements are sampled at positions p1 to p4._
+_Figure 4-1: a) LevelSet A with a Mesh clipping surface. b) Mesh object B (rectangle) with `<volumedata>` child element Y. The mesh objects are defined in the order A-B. c) shows the volume defined by the overlapped mesh objects. d) shows `<volumedata>` child element X in object A, and `<volumedata>` child element Y in object B. The table lays out how these `<volumedata>` child elements are sampled at positions p1 to p4._
 ![Illustration of overlapping meshes with `<volumedata>` child elements](images/overlap_properties.png)
 
-# Chapter 6. Volumetric Data
+# Chapter 5. Volumetric Data
 
-## 6.1. Volumetric Data extension to Resources
+## 5.1. Volumetric Data extension to Resources
 
 Element **\<Resource>**
 
@@ -495,7 +433,7 @@ Element **\<Resource>**
 
 The volumetric data `<volumedata>` element is a new OPTIONAL element which extends is a type of resource to be used by a Shape (i.e. a `<mesh>` or `<levelset>` element.
 
-## 6.2. Volumetric Data
+## 5.2. Volumetric Data
 
 Element **\<volumedata>**
 
@@ -538,7 +476,7 @@ Conflicting properties must be handled as follows:
 **Note**: In the case where objects with different `<volumedata>` child elements overlap, only the `<volumedata>` child elements from last object can be used.
 This makes sure that `<volumedata>` child elements of an overlapped object do not determine the value of any `<volumedata>` child elements of an overlapping object. Figure 5-1 illustrates this behavior.
 
-### 6.2.1 Color element
+### 5.2.1 Color element
 
 Element **\<color>**
 
@@ -546,13 +484,13 @@ Element **\<color>**
 
 | Name            | Type           | Use      | Default | Annotation                                                |
 | --------------- | -------------- | -------- | ------- | --------------------------------------------------------- |
-|| functionid      | ST_ResourceID  | required |         | Model Resource Id of the function providing the color                                                          |
-| transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the `<function>` coordinate system. |
+| functionid      | ST_ResourceID  | required |         | Model Resource Id of the function providing the color                                                          |
+| transform       | ST_Matrix3D    |          |         | Transformation of the object coordinate system into the coordinate system of the referenced function. |
 | channel         | xs:QName       | required |         | Name of the function ouput to be used as color. The output must be of type vector |
 | minfeaturesize  | ST_Number      |          |  0.0       | Hint for the minimum size of features. |
 | fallbackvalue  | ST_Number |     | 0.0  | Specifies the value to be used for this data element if the output of the referenced function is undefined |
 
-To simplify parsing, producers MUST define a `<vector3dfield>`-element prior to referencing it via the vector3dfieldid in a `<color>`-element.
+To simplify parsing, producers MUST define the function referenced by functionid prior to the `<color>`-element.
 
 The `<color>` element is used to define the color of the object.
 The color MUST be interpreted in linearized sRGB color space as defined in the Materials and Properties specification <https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#12-srgb-and-linear-color-values>.
@@ -578,7 +516,7 @@ The minimum size of features to be considered in the color. This is used as a hi
 
 Any undefined result MUST be evaluated as the value. The fallback value is specified as a scalar and MUST be applied across the result vector element-wise.
 
-## 6.2.2 Composite element
+## 5.2.2 Composite element
 
 Element **\<composite>**
 
@@ -604,7 +542,7 @@ Producers MUST NOT create files where the sum of all values in its child `<mater
 
 The order of the <materialmapping>-elements defines an implicit 0-based index. This index corresponds to the index defined by the `<base>`- elements in the `<basematerials>`-element of the core specification.
 
-## 6.2.3 Material mapping element
+## 5.2.3 Material mapping element
 
 Element **\<materialmapping>**
 
@@ -687,35 +625,35 @@ If a physical unit is necessary, the namespace owner MUST define a unique and un
 If a `<property>` is marked as `required`, and a consumer does not support it, it MUST warn the user or the appropriate upstream processes that it cannot process all contents in this 3MF document instance.
 Producers of 3MF files MUST mark all volumetric `<property>`-elements required to represent the design intent of a model as `required`.
 
-# Chapter 7. Notes
+# Chapter 6. Notes
 
-## 7.1. Evaluation Graph
+## 6.1. Evaluation Graph
 
 The elements in this specification form an acyclic directed graph when evaluating the value of any volumedata-subelement.
 
 It is RECOMMENDED that calculations during evaluation of the graph are performed in at least single-precision floating-point arithmethic, according to IEEE 754.
 
-## 7.2. Evaluation Process
+## 6.2. Evaluation Process
 
 Equipped with the language elements of this specification, one can recapitulate the core concepts with an overview of the sampling process.
 
-Figure 7-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a `<volumedata>` element (in this case `<color>`) is sampled in the object coordinate space.
+Figure 6-1 illustrates the 3MF elements, the different coordinate systems and transforms between them when a `<volumedata>` element (in this case `<color>`) is sampled in the object coordinate space.
 
-Figure 7-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element> and <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component>).
+Figure 6-1 a) The object's color is sampled at position (+) in the print-bed coordinate system. The clipping surface is hinted at with a wireframe. The transformation `T0` of the print-bed coordinate system into the object coordinate system is given by the `transform`-attributes on the `item` and `component`-elements in the path that leads to this object in the `build`-hierarchy of the 3MF Core Specification (see <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#3431-item-element> and <https://github.com/3MFConsortium/spec_core/blob/1.3.0/3MF%20Core%20Specification.md#421-component>).
 
-Figure 7-1 b) shows the `<functionfromimage3d>` underlying the color of the object. The sampling point is represented in the coordinate system of the `<functionfromimage3d>`. The transformation `T1` from object coordinate space to `<functionfromimage3d>` coordinate system is given by the `transform`-element in the `<color>`-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the `<functionfromimage3d>` context.
+Figure 6-1 b) shows the `<functionfromimage3d>` underlying the color of the object. The sampling point is represented in the coordinate system of the `<functionfromimage3d>`. The transformation `T1` from object coordinate space to `<functionfromimage3d>` coordinate system is given by the `transform`-element in the `<color>`-element. The original clipping surface from a) is only shown for illustration porpuses. It does not exist in the `<functionfromimage3d>` context.
 The color value sampled in this illustration directly originates from a `<functionfromimage3d>` element.
 
-Figure 7-1 c) Shows the `<functionfromimage3d>` again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between `<functionfromimage3d>` coordinate system and UVW space is given according to the `transform`-attribute of the `<functionfromimage3d>` element.
+Figure 6-1 c) Shows the `<functionfromimage3d>` again. The unit box of the UVW coordinate system is shown as a wireframe. The transformation `T2` between `<functionfromimage3d>` coordinate system and UVW space is given according to the `transform`-attribute of the `<functionfromimage3d>` element.
 
-Figure 7-1 d) Shows the UVW coordinate space of the `<image3d>`-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying `<imagestack>`-element map.
+Figure 6-1 d) Shows the UVW coordinate space of the `<image3d>`-element and where the sampling point (+) is evaluated, and the UVW-locations to which the voxel centers of the underlying `<imagestack>`-element map.
 
-Figure 7-1 e) illustrates where the sampling point (+) ends up in the voxel index space of the `<imagestack>`. The mapping of UVW to voxel indices in the `<imagestack>`-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
+Figure 6-1 e) illustrates where the sampling point (+) ends up in the voxel index space of the `<imagestack>`. The mapping of UVW to voxel indices in the `<imagestack>`-element is described in [Chapter 2. 3D Image](#chapter-2-3d-image).
 
-_Figure 7-1: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the `<functionfromimage3d>`. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the `<functionfromimage3d>` again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
+_Figure 6-1: Illustration of the different coordinate systems and 3MF elements in the sampling process. a) the object to be sampled at position (+). b) A view into the `<functionfromimage3d>`. The original clipping surface from a) is only shown for illustration porpuses. c) Shows the `<functionfromimage3d>` again. The unit box of the UVW coordinate system is shown as a wireframe. d) The UVW coordinate space and the UVW-locations to which the voxel-centers map. e) The sampling point (+) in the voxel index space._
 ![Illustration of different coordinate systems in the sampling process](images/fig_coordinatesystems.png)
 
-## 7.3. Limitations
+## 6.3. Limitations
 
 This specification is limited in scope. Three noteworthy limitations are:
 
@@ -734,9 +672,70 @@ The functions are members of volumetric data that define a field with arbitrary 
 ## Chapter 1. Overview of Implicit Additions
 
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
-![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds FunctionImplicit and Native nodes. Optionally PrivateExtensionFunction can be defined.
+![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds `<scalarref>`,`<vectorref>`,`<matrixref>`, `<resourceref>`, `<i:function>` and Native nodes. Optionally PrivateExtensionFunction can be defined.
 
-## Chapter 2. Function Implicit
+# Chapter 2. DataTypes
+
+The volumetric extension of 3MF, defines 4 new datatypes that are used for definition of the outputs of functions for volumetric evaluation.
+They allow to reference the output of nodes in a graph or define the mapping of the output channels for the sampling of an image3d with functionFromImage3D. The References are of the type ST_NodeOutputIdentifier.
+
+## 2.1 ST_NodeOutputIdentifier
+
+The `ST_NodeOutputIdentifier` is a simple type used to represent an identifier for a node output in the format of "nodename.outputname".
+
+ST_ScalarID, ST_VectorID, ST_MatrixID and ST_ResourceOutputID are derived from ST_NodeOutputIdentifier.
+
+### Format
+
+The format of `ST_NodeOutputIdentifier` is "nodename.outputname". The identifier must consist of alphanumeric characters and underscores. The dot (.) separates the node name and the output name.
+
+## 2.2 ScalarReference
+
+Element `<scalarref>`
+
+![Scalar XML Structure](images/element_scalarreference.png)
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this scalar resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_ScalarID      | required |         | Reference to the scalar in the form "NodeIdentifier.ScalarIdentifier".  
+
+## 2.3 VectorReference
+
+Element `<vectorref>`
+
+![Vector XML Structure](images/element_vectorreference.png)
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this vector resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation. |
+| ref       | ST_VectorID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".   |
+
+## 2.4 MatrixReference
+
+Element `<matrixref>`
+
+![Vector XML Structure](images/element_matrixreference.png)
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this matrix resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_MatrixID      | required |         | Reference to the scalar in the form "NodeIdentifier.VectorIdentifier".                              |
+
+## 2.5 ResourceReference
+
+Element `<resourceref>`
+
+References to resources are used for the volumeData element and to create a function reference.
+
+![Function XML Structure](images/element_resourcereference.png)
+| Name      | Type             | Use      | Default | Annotation                                                                 |
+| --------- | ---------------- | -------- | ------- | -------------------------------------------------------------------------- |
+| identifier| ST_Identifier    | required |         | Specifies an identifier for this function resource.                          |
+| displayname| xs:string       | optional |         | The name to be displayed e.g. for annotation
+| ref       | ST_ResourceOutputID      | required |         | Reference to the resource output in the form "NodeIdentifier.OutputIdentifier".                              |
+
+## Chapter 3. Function Implicit
 
 The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs.
 
@@ -792,11 +791,11 @@ Furthermore, a function can include basic mathematical operations like additions
 
 This flexible architecture allows the user to define almost any mathematical function with an arbitrary number of inputs and outputs, allowing extensive customization for generating volumetric data.
 
-## Chapter 3. Nodes
+## Chapter 4. Nodes
 
 A node has an unique identifier and an abritary displayname. A node must not have the identifier "inputs" or "outputs". Identifiers are restricted to alpha-numerical characters.
 
-## Chapter 4. Native Nodes
+## Chapter 5. Native Nodes
 
 Overview of native nodes
 
@@ -2844,9 +2843,9 @@ Calling the sphere function from the example in [Chapter 2. Function Implicit](#
 
 The inputs of the sphere function are added as inputs to the `<i:functioncall>` node. The output of the  `<i:functioncall>` node is the output of the sphere function. A `<i:constresourceid>` node is used to define the functionID of the sphere function. Note that a resourceid can also be used as a function input.
 
-## Chapter 5. Implicit Evaluation
+## Chapter 6. Implicit Evaluation
 
-## 5.1 Valid Graphs
+## 6.1 Valid Graphs
 
 The native nodes provided are used to create abitrary graphs. In order for these graphs to be evaluatable they must meet the following criteria and any graph that fails to meet this criteria MUST be rejected.
 
@@ -2855,11 +2854,11 @@ The native nodes provided are used to create abitrary graphs. In order for these
 - A Function MUST NOT reference itself.
 - Inputs must only reference outputs of the same DataType.
 
-## 5.2 Undefined Results and Fallback Values
+## 6.2 Undefined Results and Fallback Values
 
 The native nodes provided can create graphs that have regions that will evaluate to an undefined value. This undefined value presents a problem when trying to evaluate a <levelset> object or a a volume data element such as <color>. Such undefined results make the result of the function undefined and the volumetric data element MUST be evaluated to the volumetric data element's fallback value.
 
-## Chapter 6. Notes
+## Chapter 7. Notes
 
 # Part III. Appendices
 
