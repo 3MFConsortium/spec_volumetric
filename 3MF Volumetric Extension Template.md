@@ -124,13 +124,13 @@ Complex Type **CT_Function**
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
 | displayname | xs:string | | | Function resource name used for annotations purposes. |
 
-Volumetric data is created with functions that are evaluatable for at given model position. Each `<function>` element is assumed to represent a method which can be evaluated within the model being described. Functions have input arguments and output arguments, each argument MUST be one of the supported datatypes enumerated in Chapter 2.
+Volumetric data is created with functions that are evaluatable for at given model position. Each `function` element is assumed to represent a method which can be evaluated within the model being described. Functions have input arguments and output arguments, each argument MUST be one of the supported datatypes enumerated in Chapter 2.
 
-`<function>` is a container for one of three distinct function types: FunctionFromImage3d, PrivateExtensionFunction, FunctionImplicit. The only function type that MUST be supported for the volumetric extension is FunctionFromImage3D which requires an Image3d resource.
+`function` is a container for one of three distinct function types: `<functionfromimage3d>`, `<implicitfunction>` or a PrivateExtensionFunction. The only function type that MUST be supported for the volumetric extension is `<functionfromimage3d>` which requires an Image3d resource.
 
 ## 2.2 FunctionFromImage3D
 
-Element **\<functionFromImage3d>**
+Element **\<functionfromimage3d>**
 
 ![FunctionFromImage3d XML](images/element_functionformimage3d.png)
 
@@ -672,7 +672,7 @@ The functions are members of volumetric data that define a field with arbitrary 
 ## Chapter 1. Overview of Implicit Additions
 
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
-![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds `<scalarref>`,`<vectorref>`,`<matrixref>`, `<resourceref>`, `<i:function>` and Native nodes. Optionally PrivateExtensionFunction can be defined.
+![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds `<scalarref>`,`<vectorref>`,`<matrixref>`, `<resourceref>`, `<i:implicitfunction>` and Native nodes. Optionally PrivateExtensionFunction can be defined.
 
 # Chapter 2. DataTypes
 
@@ -737,7 +737,7 @@ References to resources are used for the volumeData element and to create a func
 
 ## Chapter 3. Function Implicit
 
-The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions that can be utilized for generating volumetric data as an alternative to FunctionFromImage3D<functionfromimage3d>. These functions can be nested and can have an arbitrary number of inputs and outputs.
+The _implicit_ namespace enhances the _volumetric extension_ by providing a way for the definition of closed form functions using the element `<implicitfunction>` in the  `<resources>` section.  It can be utilized for generating volumetric data as an alternative to `<functionfromimage3d>` or referenced by `<levelset>`. These functions can be nested and can have an arbitrary number of inputs and outputs.
 
 When used as input for `<levelset>`, the functions are evaluated at each point within the mesh or its bounding box. These functions are constructed through a graph-connected node set that is connected to both the function's inputs and outputs. Some of node types allow the usage of other resources, like computing the signed distance to mesh. Also a functionFromImage3D can be called from inside of a function.
 
@@ -746,7 +746,7 @@ Consider an example:
 
 ```xml
      
-    <i:function id="5" displayname="sphere">
+    <i:implicitfunction id="5" displayname="sphere">
         <i:in>
             <i:vector identifier="pos" displayname="pos"></i:vector>
             <i:scalar identifier="radius" displayname="radius"></i:scalar>
@@ -771,7 +771,7 @@ Consider an example:
         <i:out>
             <i:scalarref identifier="shape" displayname="shape" ref="Subtraction_4.result"></i:scalarref>
         </i:out>
-    </i:function>
+    </i:implicitfunction>
 
 ```
 
