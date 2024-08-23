@@ -200,7 +200,7 @@ The ouput values are in the range from 0 to 1. Please see [Chapter 3.2](#32-imag
 **Outputs:**
 | Identifier | Type | Description |
 |------------|-------------|-------------|
-| color      | vector    | Vector containing the rgb values (x=red, y=green, z=blue), alpha is ignored |
+| color      | vector    | Vector containing the RGB values (x=red, y=green, z=blue), alpha is ignored |
 | red   | scalar    | Scalar containing the red value |
 | green   | scalar    | Scalar containing the green value |
 | blue   | scalar    | Scalar containing the blue value |
