@@ -108,7 +108,7 @@ There are two central ideas of this extension. The first is to provide a new geo
 
 This extension is meant to be an exact specification of geometric, appearance-related, material and in fact arbitrary properties, and consumers MUST interpret it as such. However, the intent is also to enable editors of 3MF files to use the designated data structures for efficient interoperability and post-processing of the geometry and properties described in this extension.
 
-A producer using the level set of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Consumers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
+A producer using the level set of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Producers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
 
 # Chapter 2. Functions and Function Types
@@ -474,7 +474,7 @@ Conflicting properties must be handled as follows:
 2. Consumers that read files with properties that cannot be realized due to limitations specific to them (e.g. a specific manufacturing device that does not support a material in a specific color), SHOULD raise a warning, but MAY handle this in any appropriate way for them. If there is an established process between Producer and Consumer, resolution of such conflicts SHOULD be performed e.g. via negotiation through printer capabilities and a print ticket.
 
 **Note**: In the case where objects with different `<volumedata>` child elements overlap, only the `<volumedata>` child elements from last object can be used.
-This makes sure that `<volumedata>` child elements of an overlapped object do not determine the value of any `<volumedata>` child elements of an overlapping object. Figure 5-1 illustrates this behavior.
+This makes sure that `<volumedata>` child elements of an overlapped object do not determine the value of any `<volumedata>` child elements of an overlapping object. Figure 4-1 illustrates this behavior.
 
 ### 5.2.1 Color element
 
@@ -579,7 +579,7 @@ If this attribute is set, any undefined result MUST be evaluated as the value.
 
 If the sampled value of a `<function>` is `<0` it must be evaluated as "0".
 
-### 6.2.4 Property element
+### 5.2.4 Property element
 
 Element **\<property>**
 
