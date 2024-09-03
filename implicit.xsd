@@ -2681,6 +2681,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 
@@ -2694,6 +2695,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 	<!-- Matrix input value -->
@@ -2706,6 +2708,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 	<!-- ResourceId input -->
@@ -2718,6 +2721,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="CT_Ref">
@@ -2785,8 +2789,11 @@
 			]]>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Input">
