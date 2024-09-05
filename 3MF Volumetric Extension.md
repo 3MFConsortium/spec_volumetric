@@ -200,7 +200,7 @@ The ouput values are in the range from 0 to 1. Please see [Chapter 3.2](#32-imag
 **Outputs:**
 | Identifier | Type | Description |
 |------------|-------------|-------------|
-| color      | vector    | Vector containing the RGB values (x=red, y=green, z=blue), alpha is ignored |
+| color      | vector    | Vector containing the rgb values (x=red, y=green, z=blue), alpha is ignored |
 | red   | scalar    | Scalar containing the red value |
 | green   | scalar    | Scalar containing the green value |
 | blue   | scalar    | Scalar containing the blue value |
@@ -310,14 +310,14 @@ The following table shows the logical interpretation of sampling the "R", "G", "
 For example, if a function output from `<functionfromimage3d>` in a 3MF-file that maps to the R(ed) channel, but the referenced image is only monochromatic, then the greyscale channel is interpreted as the R color channel. Similarly, color values sampled from a monochromatic image are interpreted as if all "R", "G", "B" color channels share the same greyscale value. If there is no alpha channel present in the image, the highest possible value `1` MUST be used.
 
 The `<imagestack>`-element defines a voxel grid of values (e.g. RGB, grey-Alpha, grey) values distributed in a cuboid ({0,1,...,rowcount-1} x {0,1,...,columncount-1} x {0,1,...,sheetcount-1}). The left-front-bottom corner of this grid corresponds to the (0,0,0)-UVW coordinate when this 3D Image is being sampled, whereas the right-back-top corner corresponds to the (1,1,1) UVW-coordinate. Each `<imagesheet>` corresponds to one PNG-file in the package. Figure 2-1 a) illustrates a voxel grid with `rowcount=3`, `columncount=4` and `sheetcount=2` voxels. Voxel indices are shown as bold black triple, the UVW-coordinate values as red triples.
-Figure 2-1 b) illustrates the voxel indices and the UVW-values throughout the first `<imagesheet>`, Figure 2-1 c) illustrates these quantities throughout the second `<imagesheet>`. A voxel index triple `(i,j,k)` corresponds to a voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
+Figure 3-1 b) illustrates the voxel indices and the UVW-values throughout the first `<imagesheet>`, Figure 3-1 c) illustrates these quantities throughout the second `<imagesheet>`. A voxel index triple `(i,j,k)` corresponds to a voxel with rowindex `i`, columnindex `j` and sheetindex `k`.
 
 **Note**: The columnindex (`j`) relates to the UVW-coordinate `U`, whereas the rowindex `i` relates to the UVW-coordinate `V`. This definition is inline with the
 Materials and Properties specification <https://github.com/3MFConsortium/spec_materials/blob/1.2.1/3MF%20Materials%20Extension.md#chapter-6-texture-2d>.
 
 The sampling rules for UVW values are determined by the filter-rule, and the behavior for UVW-values outside the unit-cube are determined by the tilestyle attributes of the [`<functionfromimage3d>`](#22-functionfromimage3d).
 
-_Figure 2-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
+_Figure 3-1: Voxel indixes and UVW-texture space of a sample voxel grid: a) shows a voxel grid of 3x4x2 voxels. b) shows a section view of the bottom voxels, c) shows a section view of the top voxels. The orange voxel at the right, front and bottom of a) has rowindex=2, columnindex=3 and sheetindex=0. d) shows the voxelcenters of this configuration._
 ![Voxel indices and UVW-texture space of a sample voxel grid](images/image3dcoordinates.png)
 
 ## 3.2.1 File Formats
@@ -330,7 +330,7 @@ The following describes recommendations for the channel bit depth of PNG images 
 
 - It is RECOMMENDED to store image information that will be used as levelset-function to represent a boundary in PNGs with one channel only. A typical approach to store this levelset information is to encode the signed distance field of the boundary of the object in this channel, or to limit the encoding to a narrow region around the boundary of the object. A different option is to deduce the levelset-function from a channel with binary values, i.e. from images of image type "greyscale" with bit-depth of 1 or an indexed-color with bit depths of 1, but with a very high spatial resolution.
 
- _Figure 2-2: 2D-slice through the levelset representation of a sphere of radius 5 illustrated as red circle. a) the greyscale values of the image represent the signed distance function in a box around the sphere. Values range from -10 to 10. b) High resolution image of the slice. White indicates a point that is inside the sphere, black outside the sphere. c) Image encoding the signed distance in a narrow band of thickness 2 around the boundary of the sphere. Values outside this band only indicate whether the point is inside or outside the sphere, as in b)._
+ _Figure 3-2: 2D-slice through the levelset representation of a sphere of radius 5 illustrated as red circle. a) the greyscale values of the image represent the signed distance function in a box around the sphere. Values range from -10 to 10. b) High resolution image of the slice. White indicates a point that is inside the sphere, black outside the sphere. c) Image encoding the signed distance in a narrow band of thickness 2 around the boundary of the sphere. Values outside this band only indicate whether the point is inside or outside the sphere, as in b)._
  ![Leveset representation of a sphere ](images/illustration_boundary.png)
 
 - Producers SHOULD store information for which they require high resolution in image channels with bit depth of 16. Most professional image editing tools and standard implementations of the PNG format support channels with 16 bit.
@@ -344,7 +344,7 @@ Paths of `<imagesheet>` SHOULD consist of four segments. "/3D/volumetric/" as th
 
 This implies that all parts for `<imagesheet>` in an imagestack SHOULD be located in the same OPC folder.
 
-_Figure 2-3: OPC package layout_
+_Figure 3-3: OPC package layout_
 ![OPC package layout](images/OPC_overview.png)
 
 ## 3.2.3 3D Image Sheet
@@ -5789,6 +5789,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 
@@ -5802,6 +5803,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 	<!-- Matrix input value -->
@@ -5814,6 +5816,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 	<!-- ResourceId input -->
@@ -5826,6 +5829,7 @@ _sheet0.png_
 			</xs:documentation>
 		</xs:annotation>
 		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
+		<xs:attribute name="displayname" type="xs:string" use="optional" />
 	</xs:complexType>
 
 	<xs:complexType name="CT_Ref">
@@ -5893,8 +5897,11 @@ _sheet0.png_
 			]]>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:attribute name="identifier" type="ST_Identifier" use="required" />
-		<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
+		<xs:complexContent>
+			<xs:extension base="CT_Ref">
+				<xs:attribute name="ref" type="ST_ResourceOutputID" use="required" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<xs:complexType name="CT_Input">
