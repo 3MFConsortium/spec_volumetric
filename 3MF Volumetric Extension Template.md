@@ -148,19 +148,22 @@ Element **\<functionfromimage3d>**
 
 Elements of type `<functionfromimage3d>` define a function which can be sampled at any point in space from values on a voxel grid defined in the `<image3d>` element. The function is evaluated by sampling the image3d at the UVW coordinates of the model position. The UVW coordinates are determined by the filter-rule and the tilestyle attributes of the `<functionfromimage3d>`-element.
 
+**Note**:
+The UVW coordinates are normalized to (0,0,0) at the left-front-bottom corner of the voxel grid and (1,1,1) at the right-back-top corner of the voxel grid. So to map the volume data to an object the producer has to provide a transformation matrix that maps the object coordinate system to the normalized coordinates of the `<functionfromimage3d>`.
+
 To simplify parsing, producers MUST define `<image3d>`-elements prior to referencing them via imaged3did in a `<functionfromimage3d>`-element.
 
 **tilestyle-u, -v or -w**:
 
 MUST be one of "wrap", "mirror" or  "clamp". This property determines the behavior of the sampler of this `<functionfromimage3d>` for 3d texture coordinates (u,v,w) outside the [0,1]x[0,1]x[0,1] cell. The different modes have the following interpretation (for s = u, s = v, or s = w):
 
-1. "wrap" assumes periodic texture sampling, see Figure 3-1 a). A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
+1. "wrap" assumes periodic texture sampling, see Figure 2-1 a). A texture coordinate s that falls outside the [0,1] interval will be transformed per the following formula:
 </br>s’ = s – floor(s)
 
 2. "mirror" means that each time the texture width or height is exceeded, the next repetition of the texture MUST be reflected across a plane perpendicular to the axis in question, see Figure 3-1 b). This behavior follows this formula:
 </br>s’ = 1 - abs( s - 2 * floor(s/2) - 1 )
 
-3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 3-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
+3. "clamp" will restrict the texture coordinate value to the [0,1] range, see Figure 2-1 c). A texture coordinate s that falls outside the [0,1] interval will be transformed according to the following formula:
 </br>s’ = min(1, max(0,s))
 
  _Figure 2-1: Illustration of different tilestyles. a) tilestyle wrap illustrated throughout the second `<imagesheet>`. b) tilestyle mirror illustrated throughout the second `<imagesheet>`. c) tilestyle clamp along the u-direction illustrated throughout the second `<imagesheet>`_
