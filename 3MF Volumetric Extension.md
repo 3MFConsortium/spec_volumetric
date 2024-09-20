@@ -6,7 +6,7 @@
 
 | **Version** | 0.8.0 |
 | --- | --- |
-| **Status** | Draft |
+| **Status** | Pre-release |
 
 **Note**
 
