@@ -1,6 +1,6 @@
 #
 
-# 3MF Volumetric & Implicit Extensions
+# ![3mf logo](images/3mf_logo_50px.png) 3MF Volumetric & Implicit Extensions
 
 ## Specification & Reference Guide
 
