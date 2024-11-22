@@ -16,7 +16,7 @@ jobs:
         with:
           submodules: true
       - run: pip install wheel
-      - run: pip install --force-reinstall -v "grip==4.5.2"
+      - run: pip install --force-reinstall -v "grip==4.6.0"
       - run: ./markdownToPDF/install_wkhtmltopdf.sh
       - run: ./markdownToPDF/mdToPDF.sh "$SPECNAME"
       - name: Upload PDF
