@@ -2901,10 +2901,12 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<!-- Complex Types -->
 	<xs:complexType name="CT_Resources">
 		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
-			<xs:element ref="volumedata" minOccurs="0" maxOccurs="2147483647" />
-			<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647" />
-			<xs:element ref="functionfromimage3d" minOccurs="0" maxOccurs="2147483647" />
+			<xs:choice minOccurs="0" maxOccurs="2147483647">
+				<xs:element ref="volumedata" minOccurs="0" maxOccurs="2147483647" />
+				<xs:element ref="image3d" minOccurs="0" maxOccurs="2147483647" />
+				<xs:element ref="functionfromimage3d" minOccurs="0" maxOccurs="2147483647" />
+				<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+			</xs:choice>
 		</xs:sequence>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
@@ -3142,8 +3144,8 @@ _sheet0.png_
 	<!-- Complex Types -->
 	<xs:complexType name="CT_Resources">
 		<xs:choice minOccurs="0" maxOccurs="2147483647">
-			<xs:any namespace="##other" processContents="lax" />
 			<xs:element ref="implicitfunction" />
+			<xs:any namespace="##other" processContents="lax" />
 		</xs:choice>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
