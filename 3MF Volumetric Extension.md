@@ -32,7 +32,7 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   - [Chapter 4. LevelSet](#chapter-4-levelset)
   - [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
   - [Chapter 6. Notes](#chapter-6-notes)
-- [Part II. Implicit Extension](#3mf-volumetric-implicit-extensions)
+- [Part II. Implicit Extension](#part-ii-implicit-extension)
   - [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
   - [Chapter 2. DataTypes](#chapter-2-datatypes)
   - [Chapter 3. Function Implicit](#chapter-3-function-implicit)
@@ -40,11 +40,10 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   - [Chapter 5. Native Nodes](#chapter-5-native-nodes)
   - [Chapter 6. Implicit Evaluation](#chapter-6-implicit-evaluation)
   - [Chapter 7. Notes](#chapter-7-notes)
-- [Part III. Appendices](#part-ii-appendices)
+- [Part III. Appendices](#part-iii-appendices)
   - [Appendix A. Glossary](#appendix-a-glossary)
-  - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
-  - [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
-  - [Appendix D: Example file](#appendix-d-example-file)
+  - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-and-implicit-extensions)
+  - [Appendix C. Namespaces](#appendix-c-namespaces)
 - [References](#references)
 
 ## Change History
@@ -6177,9 +6176,15 @@ _sheet0.png_
 	<xs:element name="mod" type="CT_Mod" />
 
 </xs:schema>
-
+```
 _sheet1.png_
 ![sheet1.png](images/sheet1.png)
+
+# Appendix C. Namespaces
+
+Volumetric http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01
+
+Implicit http://schemas.3mf.io/3dmanufacturing/implicit/2023/12
 
 # References
 
