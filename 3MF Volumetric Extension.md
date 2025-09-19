@@ -4,9 +4,9 @@
 
 ## Specification & Reference Guide
 
-| **Version** | 0.8.0 |
+| **Version** | 1.0.0 |
 | --- | --- |
-| **Status** | Pre-release |
+| **Status** | Published |
 
 ## Disclaimer
 
@@ -18,6 +18,7 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
 
 ## Table of Contents
 
+- [Change history](#change-history)
 - [Preface](#preface)
   - [Introduction](#introduction)
   - [About this Specification](#about-this-specification)
@@ -45,6 +46,12 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   - [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
   - [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
+
+## Change History
+
+| **Version** | **Changes Description** | **Date** |
+| --- | --- | --- |
+| 1.0 | First published version | October 2, 2025 |
 
 # Preface
 
