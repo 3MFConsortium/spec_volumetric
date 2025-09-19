@@ -4759,18 +4759,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5050,18 +5041,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5538,16 +5520,13 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:choice>
 								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
+									<xs:element ref="scalarref" minOccurs="3" maxOccurs="3" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
+									<xs:element ref="vectorref" minOccurs="3" maxOccurs="3" />
 								</xs:sequence>
 								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
+									<xs:element ref="matrixref" minOccurs="3" maxOccurs="3" />
 								</xs:sequence>
 							</xs:choice>
 						</xs:complexType>
