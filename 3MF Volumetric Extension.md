@@ -4,9 +4,9 @@
 
 ## Specification & Reference Guide
 
-| **Version** | 0.8.0 |
+| **Version** | 1.0.0 |
 | --- | --- |
-| **Status** | Pre-release |
+| **Status** | Published |
 
 ## Disclaimer
 
@@ -18,6 +18,7 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
 
 ## Table of Contents
 
+- [Change history](#change-history)
 - [Preface](#preface)
   - [Introduction](#introduction)
   - [About this Specification](#about-this-specification)
@@ -31,7 +32,7 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   - [Chapter 4. LevelSet](#chapter-4-levelset)
   - [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
   - [Chapter 6. Notes](#chapter-6-notes)
-- [Part II. Implicit Extension](#3mf-volumetric-implicit-extensions)
+- [Part II. Implicit Extension](#part-ii-implicit-extension)
   - [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
   - [Chapter 2. DataTypes](#chapter-2-datatypes)
   - [Chapter 3. Function Implicit](#chapter-3-function-implicit)
@@ -39,12 +40,17 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   - [Chapter 5. Native Nodes](#chapter-5-native-nodes)
   - [Chapter 6. Implicit Evaluation](#chapter-6-implicit-evaluation)
   - [Chapter 7. Notes](#chapter-7-notes)
-- [Part III. Appendices](#part-ii-appendices)
+- [Part III. Appendices](#part-iii-appendices)
   - [Appendix A. Glossary](#appendix-a-glossary)
-  - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
-  - [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
-  - [Appendix D: Example file](#appendix-d-example-file)
+  - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-and-implicit-extensions)
+  - [Appendix C. Namespaces](#appendix-c-namespaces)
 - [References](#references)
+
+## Change History
+
+| **Version** | **Changes Description** | **Date** |
+| --- | --- | --- |
+| 1.0 | First published version | October 2, 2025 |
 
 # Preface
 
@@ -3119,7 +3125,7 @@ _sheet0.png_
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
-	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all"
+	elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all"
 	xmlns="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vol="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01">
@@ -3145,7 +3151,7 @@ _sheet0.png_
 	<xs:complexType name="CT_Resources">
 		<xs:choice minOccurs="0" maxOccurs="2147483647">
 			<xs:element ref="implicitfunction" />
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:choice>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
@@ -3201,18 +3207,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3680,18 +3677,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3753,18 +3741,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -3826,18 +3805,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4545,14 +4515,8 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4614,18 +4578,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4687,18 +4642,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4823,18 +4769,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4896,18 +4833,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -4969,18 +4897,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5041,9 +4960,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:element ref="scalarref" />
-								<xs:element ref="vectorref" />
-								<xs:element ref="matrixref" />
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5519,15 +5438,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref" minOccurs="3" maxOccurs="3" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref" minOccurs="3" maxOccurs="3" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref" minOccurs="3" maxOccurs="3" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="3" maxOccurs="3" />
+								<xs:element ref="vectorref" minOccurs="3" maxOccurs="3" />
+								<xs:element ref="matrixref" minOccurs="3" maxOccurs="3" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5592,18 +5505,9 @@ _sheet0.png_
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="4" maxOccurs="4" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="4" maxOccurs="4" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="4" maxOccurs="4" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="4" maxOccurs="4" />
+								<xs:element ref="vectorref" minOccurs="4" maxOccurs="4" />
+								<xs:element ref="matrixref" minOccurs="4" maxOccurs="4" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -5907,7 +5811,8 @@ _sheet0.png_
 			<xs:element ref="vector"/>
 			<xs:element ref="matrix"/>
 			<xs:element ref="resourceid"/>
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 		</xs:choice>
 	</xs:complexType>
 
@@ -5923,7 +5828,8 @@ _sheet0.png_
 			<xs:element ref="scalarref" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="vectorref" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="matrixref" minOccurs="0" maxOccurs="2147483647" />
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 		</xs:choice>
 	</xs:complexType>
 
@@ -5980,8 +5886,10 @@ _sheet0.png_
 			<xs:element ref="unsignedmesh" />
 			<xs:element ref="length" />
 			<xs:element ref="resourceid" />
+			<xs:element ref="constresourceid" />			
 			<xs:element ref="mod" />
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 		</xs:choice>
 	</xs:group>
 
@@ -6035,7 +5943,8 @@ _sheet0.png_
 						<xs:group ref="BasicNodeTypes"  />
 					</xs:choice>
 					<xs:element name="out" type="CT_Output" />
-					<xs:any namespace="##other" processContents="lax" />
+					<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -6266,11 +6175,16 @@ _sheet0.png_
 	<xs:element name="constresourceid" type="CT_ConstResourceID" />
 	<xs:element name="mod" type="CT_Mod" />
 
-
-</xs:schema>```
-
+</xs:schema>
+```
 _sheet1.png_
 ![sheet1.png](images/sheet1.png)
+
+# Appendix C. Namespaces
+
+Volumetric http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01
+
+Implicit http://schemas.3mf.io/3dmanufacturing/implicit/2023/12
 
 # References
 
