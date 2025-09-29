@@ -12,9 +12,6 @@
 
 THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any warranties (express, implied, or otherwise), including implied warranties of merchantability, non-infringement, fitness for a particular purpose, or title, related to the materials. The entire risk as to implementing or otherwise using the materials is assumed by the implementer and user. IN NO EVENT WILL ANY MEMBER BE LIABLE TO ANY OTHER PARTY FOR LOST PROFITS OR ANY FORM OF INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES OF ANY CHARACTER FROM ANY CAUSES OF ACTION OF ANY KIND WITH RESPECT TO THIS DELIVERABLE OR ITS GOVERNING AGREEMENT, WHETHER BASED ON BREACH OF CONTRACT, TORT (INCLUDING NEGLIGENCE), OR OTHERWISE, AND WHETHER OR NOT THE OTHER MEMBER HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-**Note**
-
-This version of the 3MF Volumetric Extension is a pre-release version. Consumers and producers can implement this version and use it, however, future version of this specification, in particular the "Published" version, might not be backwards compatible to this version.
 
 ## Table of Contents
 
@@ -32,7 +29,7 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   - [Chapter 4. LevelSet](#chapter-4-levelset)
   - [Chapter 5. Volumetric Data](#chapter-5-volumetric-data)
   - [Chapter 6. Notes](#chapter-6-notes)
-- [Part II. Implicit Extension](#part-ii-implicit-extension)
+- [Part II. Implicit Extension](#3mf-volumetric-implicit-extensions)
   - [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
   - [Chapter 2. DataTypes](#chapter-2-datatypes)
   - [Chapter 3. Function Implicit](#chapter-3-function-implicit)
@@ -40,10 +37,11 @@ This version of the 3MF Volumetric Extension is a pre-release version. Consumers
   - [Chapter 5. Native Nodes](#chapter-5-native-nodes)
   - [Chapter 6. Implicit Evaluation](#chapter-6-implicit-evaluation)
   - [Chapter 7. Notes](#chapter-7-notes)
-- [Part III. Appendices](#part-iii-appendices)
+- [Part III. Appendices](#part-ii-appendices)
   - [Appendix A. Glossary](#appendix-a-glossary)
-  - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-and-implicit-extensions)
-  - [Appendix C. Namespaces](#appendix-c-namespaces)
+  - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-extension)
+  - [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
+  - [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
 
 ## Change History
@@ -6175,8 +6173,8 @@ _sheet0.png_
 	<xs:element name="constresourceid" type="CT_ConstResourceID" />
 	<xs:element name="mod" type="CT_Mod" />
 
-</xs:schema>
-```
+</xs:schema>```
+
 _sheet1.png_
 ![sheet1.png](images/sheet1.png)
 

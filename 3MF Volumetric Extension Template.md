@@ -15,6 +15,7 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
 
 ## Table of Contents
 
+- [Change history](#change-history)
 - [Preface](#preface)
   - [Introduction](#introduction)
   - [About this Specification](#about-this-specification)
@@ -42,6 +43,12 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
   - [Appendix C. Standard Namespace](#appendix-c-standard-namespace)
   - [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
+
+## Change History
+
+| **Version** | **Changes Description** | **Date** |
+| --- | --- | --- |
+| 1.0 | First published version | October 2, 2025 |
 
 # Preface
 
@@ -2883,6 +2890,12 @@ IMPLICIT_SCHEMA_INSERT
 
 _sheet1.png_
 ![sheet1.png](images/sheet1.png)
+
+# Appendix C. Namespaces
+
+Volumetric http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01
+
+Implicit http://schemas.3mf.io/3dmanufacturing/implicit/2023/12
 
 # References
 
