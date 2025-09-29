@@ -1209,25 +1209,25 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- arcsin function for scalars or componentwise for vectors -->
+	<!-- asin function for scalars or componentwise for vectors -->
 	<xs:complexType name="CT_Arcsin">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for an arcsine (asin) function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arcsin(scalar) = scalar
-			- arcsin(vector) = vector (arcsin of each component of the vector)
+			- asin(scalar) = scalar
+			- asin(vector) = vector (asin of each component of the vector)
 						
 			Example:
-			<arcsin identifier="arcsin1" displayname="Arcsin 1">
+			<asin identifier="asin1" displayname="Asin 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arcsin>
+			</asin>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1239,7 +1239,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arcsin function.
+							Inputs to the asin function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1254,7 +1254,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							arcsin of the input
+							asin of the input
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1269,25 +1269,25 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- arccos function for scalars or componentwise for vectors -->
+	<!-- acos function for scalars or componentwise for vectors -->
 	<xs:complexType name="CT_Arccos">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arccos function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for an arccosine (acos) function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arccos(scalar) = scalar
-			- arccos(vector) = vector (arccos of each component of the vector)
+			- acos(scalar) = scalar
+			- acos(vector) = vector (acos of each component of the vector)
 						
 			Example:
-			<arccos identifier="arccos1" displayname="Arccos 1">
+			<acos identifier="acos1" displayname="Acos 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arccos>
+			</acos>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1299,7 +1299,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arccos function.
+							Inputs to the acos function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1314,7 +1314,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							arccos of the input
+							acos of the input
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1329,25 +1329,25 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- arctan function for scalars or componentwise for vectors -->
+	<!-- atan function for scalars or componentwise for vectors -->
 	<xs:complexType name="CT_Arctan">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arctan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for an arctangent (atan) function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arctan(scalar) = scalar
-			- arctan(vector) = vector (arctan of each component of the vector)
+			- atan(scalar) = scalar
+			- atan(vector) = vector (atan of each component of the vector)
 						
 			Example:
-			<arctan identifier="arctan1" displayname="Arctan 1">
+			<atan identifier="atan1" displayname="Atan 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arctan>
+			</atan>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1359,7 +1359,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arctan function.
+							Inputs to the atan function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1374,7 +1374,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							arctan of the input
+							atan of the input
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1390,18 +1390,18 @@
 	</xs:complexType>
 
 
-	<!-- arctan2 function -->
+	<!-- atan2 function -->
 	<xs:complexType name="CT_Arctan2">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arctan2 function. The inputs must have the identifier "A" and "B",
+			Derived node for an atan2 function. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arctan2(scalar,scalar) = scalar
-			- arctan2(vector,vector) = vector (arctan2 of each component of the vectors)
+			- atan2(scalar,scalar) = scalar
+			- atan2(vector,vector) = vector (atan2 of each component of the vectors)
 						
 			Example:
-			<arctan2 identifier="arctan21" displayname="Arctan2 1">
+			<atan2 identifier="atan21" displayname="Atan2 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 					<vectorref identifier="B" ref="inputs.vector2"/>
@@ -1409,7 +1409,7 @@
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arctan2>
+			</atan2>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1421,7 +1421,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arctan2 function.
+							Inputs to the atan2 function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1442,7 +1442,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-									arctan2 of the input
+									atan2 of the input
 									]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -2832,10 +2832,10 @@
 			<xs:element ref="sin" />
 			<xs:element ref="cos" />
 			<xs:element ref="tan" />
-			<xs:element ref="arcsin" />
-			<xs:element ref="arccos" />
-			<xs:element ref="arctan" />
-			<xs:element ref="arctan2" />
+			<xs:element ref="asin" />
+			<xs:element ref="acos" />
+			<xs:element ref="atan" />
+			<xs:element ref="atan2" />
 			<xs:element ref="min" />
 			<xs:element ref="max" />
 			<xs:element ref="abs" />
@@ -3116,10 +3116,10 @@
 	<xs:element name="sin" type="CT_Sinus" />
 	<xs:element name="cos" type="CT_Cosinus" />
 	<xs:element name="tan" type="CT_Tan" />
-	<xs:element name="arcsin" type="CT_Arcsin" />
-	<xs:element name="arccos" type="CT_Arccos" />
-	<xs:element name="arctan" type="CT_Arctan" />
-	<xs:element name="arctan2" type="CT_Arctan2" />
+	<xs:element name="asin" type="CT_Arcsin" />
+	<xs:element name="acos" type="CT_Arccos" />
+	<xs:element name="atan" type="CT_Arctan" />
+	<xs:element name="atan2" type="CT_Arctan2" />
 	<xs:element name="min" type="CT_Min" />
 	<xs:element name="max" type="CT_Max" />
 	<xs:element name="abs" type="CT_Abs" />

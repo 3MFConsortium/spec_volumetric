@@ -831,10 +831,10 @@ Overview of native nodes
 | [sin](#sin)                | sine function operation                    |
 | [cos](#cos)                | cosine function operation                  |
 | [tan](#tan)                | tangent function operation                 |
-| [arcsin](#arcsin)          | arcsine function operation                 |
-| [arccos](#arccos)          | arccosine function operation               |
-| [arctan](#arctan)          | arctangent function operation              |
-| [arctan2](#arctan2)        | two-argument arctangent function operation |
+| [asin](#asin)              | arcsine (asin) function operation          |
+| [acos](#acos)              | arccosine (acos) function operation        |
+| [atan](#atan)              | arctangent (atan) function operation       |
+| [atan2](#atan2)            | two-argument arctangent function operation |
 | [min](#min)                | minimum value operation                    |
 | [max](#max)                | maximum value operation                    |
 | [abs](#abs)                | absolute value operation                   |
@@ -1695,47 +1695,47 @@ The operation can be used for the following types of inputs and outputs:
 
 ```
 
-## arcsin
+## asin
 
-**Description:** Performs an arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A", and the output must have the identifier "result".
+**Description:** Performs an arcsine (`asin`) function with a scalar or vector input and produces a scalar or vector output. The input must have the identifier "A", and the output must have the identifier "result".
 
 **Inputs:**
 
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
-| A            | Input for the arcsin function               |
+| A            | Input for the arcsine function              |
 
 **Outputs:**
 
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
-| result       | Arcsin of the input                         |
+| result       | Arcsine of the input                        |
 
 The operation can be used for the following types of inputs and outputs:
 
-| A         | result  | comment                               |
-|-----------|---------|---------------------------------------|
-| scalar    | scalar  |                                       |
-| vector    | vector  | Arcsin of each component of the vector |
+| A         | result  | comment                                   |
+|-----------|---------|-------------------------------------------|
+| scalar    | scalar  |                                           |
+| vector    | vector  | Arcsine of each component of the vector   |
 
 **Example Usage:**
 
 ```xml
 
-<i:arcsin identifier="arcsin1" displayname="Arcsin 1">
+<i:asin identifier="asin1" displayname="Asin 1">
     <i:in>
         <i:scalarref identifier="A" ref="inputs.scalar1"/>
     </i:in>
     <i:out>
         <i:scalar identifier="result"/>
     </i:out>
-</i:arcsin>
+</i:asin>
 
 ```
 
-## arccos
+## acos
 
-**Description:** Performs an arctan function with a scalar or vector as input and a scalar or vector as output. The input must have the identifier "A", and the output must have the indentifier "result".
+**Description:** Performs an arccosine (`acos`) function with a scalar or vector input and produces a scalar or vector output. The input must have the identifier "A", and the output must have the identifier "result".
 
 **Inputs:**
 
@@ -1747,33 +1747,33 @@ The operation can be used for the following types of inputs and outputs:
 
 | Identifier   | Description                |
 |--------------|----------------------------|
-| result       | Arccos of A                |
+| result       | Arccosine of A             |
 
 The operation can be used for the following types of inputs and outputs:
 
-| A         | result | comment                      |
-|-----------|--------|------------------------------|
-| scalar    | scalar | -                            |
-| vector    | vector | Arccos of each component of the vector |
+| A         | result | comment                               |
+|-----------|--------|---------------------------------------|
+| scalar    | scalar |                                       |
+| vector    | vector | Arccosine of each component of the vector |
 
 **Example Usage:**
 
 ```xml
 
-<i:arccos identifier="arccos1" displayname="Arccos 1">
+<i:acos identifier="acos1" displayname="Acos 1">
  <i:in>
   <i:vectorref identifier="A" ref="inputs.vector1"/>
  </i:in>
  <i:out>
   <i:vector identifier="result"/>
  </i:out>
-</i:arccos>
+</i:acos>
 
 ```
 
-## arctan
+## atan
 
-**Description:** Performs an arctan function with a scalar or vector as input and a scalar or vector as output. The input must have the identifier "A", and the output must have the identifier "result".
+**Description:** Performs an arctangent (`atan`) function with a scalar or vector input and produces a scalar or vector output. The input must have the identifier "A", and the output must have the identifier "result".
 
 **Inputs:**
 
@@ -1787,59 +1787,59 @@ The operation can be used for the following types of inputs and outputs:
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
 | scalar       | Scalar output                               |
-| vector       | Vector output (arctan of each component)    |
+| vector       | Vector output (arctangent of each component) |
 
 The operation can be used for the following types of inputs and outputs:
 
-| A        | result                     | comment                             |
-|----------|----------------------------|-------------------------------------|
-| scalar   | scalar                     |                                     |
-| vector   | vector                     | arctan of each component of the vector |           
+| A        | result                     | comment                                 |
+|----------|----------------------------|-----------------------------------------|
+| scalar   | scalar                     |                                         |
+| vector   | vector                     | Arctangent of each component of the vector |
 
 **Example Usage:**
 
 ```xml
 
-<i:arctan identifier="arctan1" displayname="Arctan 1">
+<i:atan identifier="atan1" displayname="Atan 1">
  <i:in>
   <i:vectorref identifier="A" ref="inputs.vector1"/>
  </i:in>
  <i:out>
   <i:vector identifier="result"/>
  </i:out>
-</i:arctan>
+</i:atan>
 
 ```
 
-## arctan2
+## atan2
 
-**Description:** Performs the arctangent of the inputs "A" and "B" and writes the result to the output "result". The inputs can be scalar or vector and the output is scalar or vector.
+**Description:** Performs the two-argument arctangent (`atan2`) of the inputs "A" and "B" and writes the result to the output "result". The inputs can be scalar or vector and the output is scalar or vector.
 
 **Inputs:**
 
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
-| A      | First input                |
-| B      | Second input               |
+| A            | First input                                 |
+| B            | Second input                                |
 
 **Outputs:**
 
 | Identifier   | Description                                 |
 |--------------|---------------------------------------------|
-| result      | Result of the arctan2 operation                |
+| result       | Result of the atan2 operation               |
 
 The operation can be used for the following types of inputs and outputs:
 
-| A   | B   | result   | comment   |
-|-----|-----|----------|------------|
-| scalar   | scalar   | scalar   |   |
-| vector   | vector   | vector   | arctan2 of each component of the vectors |
+| A       | B       | result   | comment                                         |
+|---------|---------|----------|-------------------------------------------------|
+| scalar  | scalar  | scalar   |                                                 |
+| vector  | vector  | vector   | Atan2 of each component of the vectors          |
 
 **Example Usage:**
 
 ```xml
 
-<i:arctan2 identifier="arctan21" displayname="Arctan2 1">
+<i:atan2 identifier="atan21" displayname="Atan2 1">
     <i:in>
         <i:vectorref identifier="A" ref="inputs.vector1"/>
         <i:vectorref identifier="B" ref="inputs.vector2"/>
@@ -1847,7 +1847,7 @@ The operation can be used for the following types of inputs and outputs:
     <i:out>
         <i:vector identifier="result"/>
     </i:out>
-</i:arctan2>
+</i:atan2>
 
 ```
 
