@@ -4297,7 +4297,7 @@ _sheet0.png_
 	</xs:complexType>
 
 	<!-- asin function for scalars or componentwise for vectors -->
-	<xs:complexType name="CT_Arcsin">
+	<xs:complexType name="CT_ASin">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
@@ -4357,7 +4357,7 @@ _sheet0.png_
 	</xs:complexType>
 
 	<!-- acos function for scalars or componentwise for vectors -->
-	<xs:complexType name="CT_Arccos">
+	<xs:complexType name="CT_ACos">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
@@ -4417,7 +4417,7 @@ _sheet0.png_
 	</xs:complexType>
 
 	<!-- atan function for scalars or componentwise for vectors -->
-	<xs:complexType name="CT_Arctan">
+	<xs:complexType name="CT_ATan">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
@@ -4478,7 +4478,7 @@ _sheet0.png_
 
 
 	<!-- atan2 function -->
-	<xs:complexType name="CT_Arctan2">
+	<xs:complexType name="CT_ATan2">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
@@ -6142,10 +6142,10 @@ _sheet0.png_
 	<xs:element name="sin" type="CT_Sinus" />
 	<xs:element name="cos" type="CT_Cosinus" />
 	<xs:element name="tan" type="CT_Tan" />
-	<xs:element name="asin" type="CT_Arcsin" />
-	<xs:element name="acos" type="CT_Arccos" />
-	<xs:element name="atan" type="CT_Arctan" />
-	<xs:element name="atan2" type="CT_Arctan2" />
+	<xs:element name="asin" type="CT_ASin" />
+	<xs:element name="acos" type="CT_ACos" />
+	<xs:element name="atan" type="CT_ATan" />
+	<xs:element name="atan2" type="CT_ATan2" />
 	<xs:element name="min" type="CT_Min" />
 	<xs:element name="max" type="CT_Max" />
 	<xs:element name="abs" type="CT_Abs" />
