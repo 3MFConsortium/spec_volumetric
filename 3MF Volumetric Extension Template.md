@@ -266,7 +266,6 @@ The appearance of color and red, green, blue might seem redundant, but allows to
 
 Element **\<PrivateExtensionFunction>**
 
-![PrivateExtensionFunction XML](images/element_privateextensionfunction.png)
 | Name   | Type   | Use | Default | Annotation |
 | --- | --- | --- | --- | --- |
 | id | ST\_ResourceID | required | | Specifies an identifier for this function resource. |
