@@ -24,6 +24,7 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
   - [Software Conformance](#software-conformance)
 - [Part I: Volumetric Extension](#part-i-volumetric-extension)
   - [Chapter 1. Overview of Volumetric Additions](#chapter-1-overview-of-volumetric-additions)
+    - [1.1. Resources](#11-resources)
   - [Chapter 2. Functions](#chapter-2-functions-and-function-types)
   - [Chapter 3. 3D Image](#chapter-3-3d-image)
   - [Chapter 4. LevelSet](#chapter-4-levelset)
@@ -31,6 +32,7 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
   - [Chapter 6. Notes](#chapter-6-notes)
 - [Part II. Implicit Extension](#3mf-volumetric-implicit-extensions)
   - [Chatper 1. Overview of Implicit Additions](#chapter-1-overview-of-implicit-additions)
+    - [1.1. Resources](#11-resources)
   - [Chapter 2. DataTypes](#chapter-2-datatypes)
   - [Chapter 3. Function Implicit](#chapter-3-function-implicit)
   - [Chapter 4. Nodes](#chapter-4-nodes)
@@ -120,6 +122,20 @@ This extension is meant to be an exact specification of geometric, appearance-re
 
 A producer using the level set of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Producers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
+
+### 1.1. Resources
+
+Element **\<resources>**
+
+![Volumetric Resources overview](images/CT_Resources.png)
+
+All new elements defined by the Volumetric Extension live under the core <resources> element. The ordering shown is illustrative; the schema does not enforce ordering as these extension elements fall under the core spec’s <any> container.
+
+This extension adds the following resource types:
+
+- `<function>` resources, which can host a `<functionfromimage3d>`, an `<i:implicitfunction>` (see Part II), or a PrivateExtensionFunction
+- `<image3d>` resources for embedded volumetric imagery (via `<imagestack>`)
+- `<volumedata>` resources that describe volumetric properties applied to shapes
 
 # Chapter 2. Functions and Function Types
 
@@ -686,6 +702,16 @@ The functions are members of volumetric data that define a field with arbitrary 
 
 _Figure 1-1: Overview of model XML structure of 3MF with implicit additions_
 ![Overview of model XML structure of 3MF with volumetric additions](images/fig_overview_implicit.png) Implicit adds `<scalarref>`,`<vectorref>`,`<matrixref>`, `<resourceref>`, `<i:implicitfunction>` and Native nodes. Optionally PrivateExtensionFunction can be defined.
+
+### 1.1. Resources
+
+Element **\<resources>**
+
+![Implicit Resources overview](images/CT_Resources_Implicit.png)
+
+All new elements defined by the Implicit Extension also live under the core `<resources>` element.
+
+This extension adds `<i:implicitfunction>` resources in the implicit namespace, whose contents define a node graph of native operations and references.
 
 # Chapter 2. DataTypes
 
