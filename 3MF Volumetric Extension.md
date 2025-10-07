@@ -24,7 +24,8 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
   - [Software Conformance](#software-conformance)
 - [Part I: Volumetric Extension](#part-i-volumetric-extension)
   - [Chapter 1. Overview of Volumetric Additions](#chapter-1-overview-of-volumetric-additions)
-    - [1.1. Resources](#11-resources)
+        - [1.1. Breaking Change to the Core Specification](#11-breaking-change-to-the-core-specification)
+        - [1.2. Resources](#12-resources)
   - [Chapter 2. Functions](#chapter-2-functions-and-function-types)
   - [Chapter 3. 3D Image](#chapter-3-3d-image)
   - [Chapter 4. LevelSet](#chapter-4-levelset)
@@ -119,8 +120,25 @@ This extension is meant to be an exact specification of geometric, appearance-re
 
 A producer using the level set of the volumetric specification MUST mark the extension as required, as described in the core specification. Producers only using the other volume data elements, in particular color-, composite- and property-elements, MAY mark the extension as REQUIRED, and MAY be marked as RECOMMENDED. Producers of 3MF files that do not mark the volumetric extension as required are thus assured that the geometric shape of objects in this 3MF file are not altered by the volumetric specification.
 
+### 1.1 Breaking Change to the Core Specification
 
-### 1.1. Resources
+The core specification defines an ordering constraint inside the `<resources>` element through its XSD: all `<object>` elements occur only after the repeated sequence that can contain `<basematerials>` and any extension-defined resources (via the `<any>` placeholder). Consequently, in a pure core (or non‑volumetric) document, producers cannot legally place an `<object>` *before* an extension resource, and extension resources cannot legally appear *after* an `<object>`. This ordering collides with new volumetric requirements where the following extension resources may need to reference mesh objects:
+
+- `<v:function>` (including `<v:functionfromimage3d>`, `<i:implicitfunction>` and `PrivateExtensionFunction`) – e.g. distance / sampling nodes that take a mesh resource id.
+- `<v:levelset>` – requires `meshid` to define the evaluation domain.
+- (Future) other volumetric/implicit resources that semantically depend on existing geometry.
+
+In the core specification Section 3.4 the principle is stated: “Producers MUST define each element prior to referencing it elsewhere in the document…”. To avoid forcing producers either to break this principle with forward references or to duplicate geometry, this extension introduces the following BREAKING CHANGE when (and only when) the volumetric extension is declared as REQUIRED via the `requiredextensions` attribute on `<model>`:
+
+1. Relaxed resource ordering: `<object>` elements are no longer constrained to appear only *after* all non‑object resources. Within `<resources>`, `<object>`, `<v:function>`, `<v:image3d>`, `<v:volumedata>`, and `<v:levelset>` MAY appear in any order or be interleaved, subject to rule (3) below.
+2. Consumer acceptance: Consumers that support this extension MUST accept any ordering of the above resource types and MUST NOT raise an error solely because an `<object>` precedes or interrupts the sequence of extension resources.
+3. Define-before-use: Producers MUST continue to place a resource definition before its first reference.
+4. Materials precedence unchanged: Core material/property group resources (e.g. `<basematerials>` or other extension material groups defined in the core choice) SHOULD still be defined before any `<object>` or volumetric resource that references them. This change does not relax material group ordering.
+
+
+
+
+### 1.2. Resources
 
 Element **\<resources>**
 
