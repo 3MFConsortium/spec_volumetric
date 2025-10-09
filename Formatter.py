@@ -15,15 +15,15 @@ if __name__ == '__main__':
         exit(1)
     
     template = None
-    with open(f'{cwd}/3MF Volumetric Extension Template.md', 'r') as file:
+    with open(f'{cwd}/3MF Volumetric Extension Template.md', 'r', encoding='utf-8') as file:
         template = file.read()
     
     implicit = None
-    with open(f'{cwd}/implicit.xsd', 'r') as file:
+    with open(f'{cwd}/implicit.xsd', 'r', encoding='utf-8') as file:
         implicit = file.read()
     
     volumetric = None
-    with open(f'{cwd}/volumetric.xsd', 'r') as file:
+    with open(f'{cwd}/volumetric.xsd', 'r', encoding='utf-8') as file:
         volumetric = file.read()
     
     # Volumetric placeholder is VOLUMETRIC_SCHEMA_INSERT
@@ -32,6 +32,6 @@ if __name__ == '__main__':
     # Implicit placeholder is IMPLICIT_SCHEMA_INSERT
     template = template.replace('IMPLICIT_SCHEMA_INSERT', "```xml\n" + implicit + "```")
 
-    with open(f'{cwd}/3MF Volumetric Extension.md', 'w') as file:
+    with open(f'{cwd}/3MF Volumetric Extension.md', 'w', encoding='utf-8') as file:
         file.write(template)
     
