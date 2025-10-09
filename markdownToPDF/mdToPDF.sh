@@ -39,9 +39,12 @@ sed -i 's|href="#|name="|g' "$TMPFILE"
 sed -i 's|<a href="@|<a href="#|g' "$TMPFILE"
 sed -i 's|<pre|<code style="white-space: pre-wrap; page-break-inside: avoid !important; display: block;"|g' "$TMPFILE"
 sed -i 's|</pre|</code|g' "$TMPFILE"
-sed -i "/Page tweaks/ a 	* {		font-size: large;	}" "$TMPFILE"
+# Font size is controlled via print.css; do not inject a global font-size here
 
-MARGIN=14
+MARGIN_TOP=20
+MARGIN_RIGHT=20
+MARGIN_BOTTOM=20
+MARGIN_LEFT=22
 
 # Deprecated: original rendering without print overrides
 # ./wkhtmltopdf --title "$FILE" --footer-left "[section]" --footer-right "[page]/[topage]" --footer-font-size 7 --footer-spacing 4 \
@@ -61,10 +64,11 @@ fi
 	--footer-right "[page]/[topage]" \
 	--footer-font-size 7 \
 	--footer-spacing 4 \
-	--margin-top $MARGIN \
-	--margin-left $MARGIN \
-	--margin-right $MARGIN \
-	--margin-bottom $MARGIN \
+	--page-size A4 \
+	--margin-top $MARGIN_TOP \
+	--margin-left $MARGIN_LEFT \
+	--margin-right $MARGIN_RIGHT \
+	--margin-bottom $MARGIN_BOTTOM \
 	--user-style-sheet "$SCRIPT_DIR/print.css" \
 	--print-media-type \
 	--viewport-size 1280x2000 \

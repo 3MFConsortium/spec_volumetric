@@ -35,3 +35,6 @@ table {
 h1, h2, h3, h4, h5, h6 {
   page-break-after: avoid;
 }
+
+/* Body font size to align with core spec look */
+body { font-size: 12px; }
