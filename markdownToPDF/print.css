@@ -13,6 +13,13 @@ html, body {
   padding: 0 !important;
 }
 
+/* Remove GitHub "Box" borders/shadows around README containers */
+#readme, .readme, .Box, .Box-body, .Box-header, .container-lg, .markdown-body {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
 /* Images and SVGs scale to page width */
 img, svg, video, canvas {
   max-width: 100% !important;
@@ -37,4 +44,10 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Body font size to align with core spec look */
-body { font-size: 12px; }
+body { font-size: 10px; }
+
+/* Remove horizontal rules if any theme injects them */
+hr {
+  border: 0 !important;
+  height: 0 !important;
+}
