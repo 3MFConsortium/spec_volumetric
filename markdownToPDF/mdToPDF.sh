@@ -23,7 +23,7 @@
 
 #!/bin/bash
 
-mkdir ~/.grip
+mkdir -p ~/.grip
 echo "PASSWORD = '${GITHUB_API_KEY}'" > ~/.grip/settings.py
 
 FILE="$1"
@@ -43,6 +43,32 @@ sed -i "/Page tweaks/ a 	* {		font-size: large;	}" "$TMPFILE"
 
 MARGIN=14
 
-./wkhtmltopdf --title "$FILE" --footer-left "[section]" --footer-right "[page]/[topage]" --footer-font-size 7 --footer-spacing 4 \
---margin-top $MARGIN --margin-left $MARGIN --margin-right $MARGIN --margin-bottom $MARGIN \
-"$TMPFILE" "$FILE.pdf"
+# Deprecated: original rendering without print overrides
+# ./wkhtmltopdf --title "$FILE" --footer-left "[section]" --footer-right "[page]/[topage]" --footer-font-size 7 --footer-spacing 4 \
+# --margin-top $MARGIN --margin-left $MARGIN --margin-right $MARGIN --margin-bottom $MARGIN \
+# "$TMPFILE" "$FILE.pdf"
+
+# Re-render with print stylesheet and safer flags to avoid left clipping
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WKHTMLTOPDF_BIN="./wkhtmltopdf"
+if [ ! -x "$WKHTMLTOPDF_BIN" ]; then
+	WKHTMLTOPDF_BIN="wkhtmltopdf"
+fi
+
+"$WKHTMLTOPDF_BIN" \
+	--title "$FILE" \
+	--footer-left "[section]" \
+	--footer-right "[page]/[topage]" \
+	--footer-font-size 7 \
+	--footer-spacing 4 \
+	--margin-top $MARGIN \
+	--margin-left $MARGIN \
+	--margin-right $MARGIN \
+	--margin-bottom $MARGIN \
+	--user-style-sheet "$SCRIPT_DIR/print.css" \
+	--print-media-type \
+	--viewport-size 1280x2000 \
+		--dpi 96 \
+		--disable-smart-shrinking \
+	--zoom 1.0 \
+	"$TMPFILE" "$FILE.pdf"

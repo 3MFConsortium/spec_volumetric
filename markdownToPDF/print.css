@@ -1,0 +1,40 @@
+/* Print overrides for wkhtmltopdf to avoid left-side clipping and enforce full-width layout */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* GitHub/Grip typically wraps content in .markdown-body with fixed padding and max-width */
+.markdown-body, .container, .container-lg, .clearfix, .boxed-group, #readme, .readme {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Images and SVGs scale to page width */
+img, svg, video, canvas {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Ensure code blocks wrap and don't overflow page width */
+pre, code, pre code {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+}
+
+/* Tables shouldn't overflow the page */
+table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  word-break: break-word !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid;
+}
+
+/* Optional: slightly larger base font for readability in print */
+body { font-size: 14px; }
