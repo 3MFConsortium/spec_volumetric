@@ -499,7 +499,7 @@ The child elements modify the enclosing Shape by specifying color, material comp
 To rationalize how this specification modifies the definition of geometry within a 3MF model, the concept of a "clipping surface" of a mesh with a `<volumedata>` element is introduced.
 The clipping surface is defined by the surface of the enclosing Shape. This implicitly takes into account any geometry defined by e.g. the beamlattices specification.
 
-This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The printed geometry is defined by the interior of the clipping surface.
+This clipping surface trims any volumetric data defined therein. Any data outside the clipping surface MUST be ignored. The geometry that should be printed is defined by the interior of the clipping surface.
 
 **Note**
 Volumetric content is always clipped to the clipping surface of the shape that embeds it.
