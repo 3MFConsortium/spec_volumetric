@@ -41,18 +41,18 @@ table {
 
 /* More compact table typography for print */
 .markdown-body table, table {
-  font-size: 11px !important;   /* cells */
+  font-size: 10px !important;
   line-height: 1.25 !important;
 }
 .markdown-body table th, table th {
-  font-size: 10.5px !important; /* headers slightly smaller */
+  font-size: 10.5px !important;
   font-weight: 600 !important;
 }
 .markdown-body table td, .markdown-body table th, table td, table th {
   padding: 4px 6px !important;  /* tighter padding */
 }
 .markdown-body table code, table code {
-  font-size: 10.5px !important;
+  font-size: 10px !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -60,7 +60,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Body font size (target .markdown-body to override GitHub styles) */
-body, .markdown-body { font-size: 11px !important; }
+body, .markdown-body { font-size: 12px !important; }
 /* Optional: keep paragraphs readable after size change */
 .markdown-body p, .markdown-body li { line-height: 1.4 !important; }
 
