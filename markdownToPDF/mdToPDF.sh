@@ -41,10 +41,10 @@ sed -i 's|<pre|<code style="white-space: pre-wrap; page-break-inside: avoid !imp
 sed -i 's|</pre|</code|g' "$TMPFILE"
 # Font size is controlled via print.css; do not inject a global font-size here
 
-MARGIN_TOP=20
-MARGIN_RIGHT=20
-MARGIN_BOTTOM=20
-MARGIN_LEFT=22
+MARGIN_TOP=64
+MARGIN_RIGHT=21
+MARGIN_BOTTOM=21
+MARGIN_LEFT=21
 
 # Deprecated: original rendering without print overrides
 # ./wkhtmltopdf --title "$FILE" --footer-left "[section]" --footer-right "[page]/[topage]" --footer-font-size 7 --footer-spacing 4 \
