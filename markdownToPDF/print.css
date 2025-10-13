@@ -60,7 +60,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Body font size to align with core spec look */
-body { font-size: 10px; }
+body { font-size: 8px; }
 
 /* Remove horizontal rules if any theme injects them */
 hr {
