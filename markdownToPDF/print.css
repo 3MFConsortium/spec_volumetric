@@ -61,13 +61,6 @@ table {
   /* keep padding as defined above */
 }
 
-/* Keep short metadata columns unwrapped (e.g., Name, Type, Use, Default) */
-.markdown-body table th:nth-child(-n+4),
-.markdown-body table td:nth-child(-n+4),
-table th:nth-child(-n+4),
-table td:nth-child(-n+4) {
-  white-space: nowrap !important;
-}
 
 /* Let the last column (e.g., Annotation) wrap as needed */
 .markdown-body table th:last-child,
@@ -80,15 +73,6 @@ table td:last-child {
   hyphens: auto !important;
 }
 
-/* Hint typical widths to bias layout toward wider Annotation column (non-strict) */
-.markdown-body table th:nth-child(1), .markdown-body table td:nth-child(1),
-table th:nth-child(1), table td:nth-child(1) { width: 16% !important; }
-.markdown-body table th:nth-child(2), .markdown-body table td:nth-child(2),
-table th:nth-child(2), table td:nth-child(2) { width: 14% !important; }
-.markdown-body table th:nth-child(3), .markdown-body table td:nth-child(3),
-table th:nth-child(3), table td:nth-child(3) { width: 10% !important; }
-.markdown-body table th:nth-child(4), .markdown-body table td:nth-child(4),
-table th:nth-child(4), table td:nth-child(4) { width: 10% !important; }
 
 h1, h2, h3, h4, h5, h6 {
   page-break-after: avoid;
