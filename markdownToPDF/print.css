@@ -59,8 +59,10 @@ h1, h2, h3, h4, h5, h6 {
   page-break-after: avoid;
 }
 
-/* Body font size to align with core spec look */
-body { font-size: 8px; }
+/* Body font size (target .markdown-body to override GitHub styles) */
+body, .markdown-body { font-size: 11px !important; }
+/* Optional: keep paragraphs readable after size change */
+.markdown-body p, .markdown-body li { line-height: 1.4 !important; }
 
 /* Remove horizontal rules if any theme injects them */
 hr {
