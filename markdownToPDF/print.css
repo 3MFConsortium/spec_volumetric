@@ -39,6 +39,22 @@ table {
   word-break: break-word !important;
 }
 
+/* More compact table typography for print */
+.markdown-body table, table {
+  font-size: 11px !important;   /* cells */
+  line-height: 1.25 !important;
+}
+.markdown-body table th, table th {
+  font-size: 10.5px !important; /* headers slightly smaller */
+  font-weight: 600 !important;
+}
+.markdown-body table td, .markdown-body table th, table td, table th {
+  padding: 4px 6px !important;  /* tighter padding */
+}
+.markdown-body table code, table code {
+  font-size: 10.5px !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
   page-break-after: avoid;
 }
