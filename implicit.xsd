@@ -2114,16 +2114,17 @@
 		- "gradient" is the raw gradient (float3)
 		- "magnitude" is the length of the gradient (scalar)
 
-		The finite difference step is controlled by the attribute "step" (default 0.001). Consumers MUST clamp the effective step to
-		>= 1e-8. Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected
+		The finite difference step is provided as a scalar input named "step". Consumers MUST clamp the effective step to
+		>= 1e-8. If the input is missing or evaluates to NaN/Inf, the consumer MUST treat the result as undefined. Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected
 		vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step).
 
 		Example:
-		<functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos" step="0.001">
+		<functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos">
 			<in>
 				<resourceref identifier="functionID" ref="functionIDNode.value"/>
 				<vectorref identifier="pos" ref="inputs.pos"/>
 				<scalarref identifier="radius" ref="inputs.radius"/>
+				<scalarref identifier="step" ref="inputs.step"/>
 			</in>
 			<out>
 				<vector identifier="vector"/>
@@ -2142,7 +2143,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-		Inputs to the function gradient. Must include a resourceref with identifier "functionID" and the argument references required
+		Inputs to the function gradient. Must include a resourceref with identifier "functionID", a scalarref with identifier "step", and the argument references required
 		by the referenced function. The identifier of the vector input to differentiate must match the value of the @vectorinput attribute.
 									]]>
 								</xs:documentation>
@@ -2174,7 +2175,6 @@
 				</xs:all>
 				<xs:attribute name="scalaroutput" type="xs:string" use="required" />
 				<xs:attribute name="vectorinput" type="xs:string" use="required" />
-				<xs:attribute name="step" type="xs:double" use="optional" default="0.001" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>

@@ -2336,20 +2336,21 @@ The operation can be used for the following types of inputs and outputs:
 
 ## functiongradient
 
-**Description:** Computes the spatial gradient of a referenced function output using central finite differences. The inputs MUST include a resource reference with the identifier "functionID" and all argument references required by the referenced function. The attribute "scalaroutput" MUST name a scalar output of the referenced function. The attribute "vectorinput" MUST name a vector (float3) input of the referenced function with respect to which the gradient is computed. Consumers MUST clamp the effective step to >= 1e-8.
+**Description:** Computes the spatial gradient of a referenced function output using central finite differences. The inputs MUST include a resource reference with the identifier "functionID", a scalar input named "step", and all argument references required by the referenced function. The attribute "scalaroutput" MUST name a scalar output of the referenced function. The attribute "vectorinput" MUST name a vector (float3) input of the referenced function with respect to which the gradient is computed. Consumers MUST clamp the effective step to >= 1e-8.
 
 The outputs MUST have the identifiers "vector", "gradient" and "magnitude" where:
 - "vector" is the normalized gradient (float3)
 - "gradient" is the raw gradient (float3)
 - "magnitude" is the length of the gradient (scalar)
 
-Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step).
+Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step). If the provided step is missing or not finite (NaN/Inf), the result is undefined.
 
 **Inputs:**
 
 | Identifier | Description |
 |------------|-------------|
 | functionID | Resource reference to the function to differentiate |
+| step       | Scalar step size for central finite differences |
 | defined by function | Provide references for all inputs of the referenced function; the identifier of the vector input to differentiate MUST match the value of the @vectorinput attribute |
 
 **Outputs:**
@@ -2366,17 +2367,17 @@ Central finite differences are used: for each component c ∈ {x,y,z}, evaluate 
 |--------------|-----------|----------|---------|-------------|
 | scalaroutput | xs:string | yes      |         | Name of the scalar output of the referenced function to differentiate |
 | vectorinput  | xs:string | yes      |         | Name of the vector (float3) input of the referenced function used for differentiation |
-| step         | xs:double | no       | 0.001   | Finite difference step size; consumers MUST clamp the effective step to >= 1e-8 |
 
 **Example Usage:**
 
 ```xml
 
-<i:functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos" step="0.001">
+<i:functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos">
     <i:in>
         <i:resourceref identifier="functionID" ref="FunctionCall_5_functionID.value"/>
         <i:vectorref identifier="pos" ref="inputs.pos"/>
         <i:scalarref identifier="radius" ref="inputs.radius"/>
+        <i:scalarref identifier="step" ref="inputs.step"/>
     </i:in>
     <i:out>
         <i:vector identifier="vector"/>
