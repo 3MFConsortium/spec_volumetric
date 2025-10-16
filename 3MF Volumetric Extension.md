@@ -900,7 +900,10 @@ Overview of native nodes
 | [floor](#floor)            | floor operation                            |
 | [sign](#sign)              | signum operation                           |
 | [fract](#fract)            | fractional part extraction operation        |
+| [functiongradient](#functiongradient) | spatial gradient of a function       |
+| [normalizedistance](#normalizedistance) | normalized distance from a function |
 | [functioncall](#functioncall) | function call operation                  |
+| [beamlattice](#beamlattice) | signed distance to beam lattice operation  |
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
 | [length](#length)          | length operation                           |
@@ -2287,6 +2290,149 @@ The operation can be used for the following types of inputs and outputs:
 
 ```
 
+## beamlattice
+
+**Description:** Evaluates the signed distance to a beam lattice. The input MUST have the identifier "pos" and MUST be a vector. A resource identifier MUST specify the beam lattice. The output is a scalar with the identifier "distance". The distance is positive if the point is outside the beam lattice and negative if the point is inside the beam lattice.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| pos        | Input vector |
+| beamlattice | Resource identifier for the beam lattice |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| distance   | Signed distance to the beam lattice |
+
+The operation can be used for the following types of inputs and outputs:
+
+| pos   | beamlattice | distance | comment |
+|-------|-------------|----------|---------|
+| vector| -           | scalar   | -       |
+
+**Attributes:**
+
+| Attribute     | Type      | Required | Default | Description |
+|---------------|-----------|----------|---------|-------------|
+| accuraterange | double    | no       | 0.0     | Non-negative distance band (in model units) around the beam lattice within which the returned signed distance MUST be accurate. Outside this band (i.e., for points p with |distance(p)| > accuraterange), consumers MAY return approximate values or implementation-defined extrapolations. Consumers MUST clamp negative values of accuraterange to 0.0. |
+
+**Example Usage:**
+
+```xml
+
+<i:beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1" accuraterange="2.5">
+    <i:in>
+        <i:vectorref identifier="pos" ref="inputs.pos"/>
+        <i:resourceref identifier="beamlattice" ref="resourceidnode.value"/>
+    </i:in>
+    <i:out>
+        <i:scalar identifier="distance"/>
+    </i:out>
+</i:beamlattice>
+
+```
+
+## functiongradient
+
+**Description:** Computes the spatial gradient of a referenced function output using central finite differences. The inputs MUST include a resource reference with the identifier "functionID", a scalar input named "step", and all argument references required by the referenced function. The attribute "scalaroutput" MUST name a scalar output of the referenced function. The attribute "vectorinput" MUST name a vector (float3) input of the referenced function with respect to which the gradient is computed. Consumers MUST clamp the effective step to >= 1e-8.
+
+The outputs MUST have the identifiers "vector", "gradient" and "magnitude" where:
+- "vector" is the normalized gradient (float3)
+- "gradient" is the raw gradient (float3)
+- "magnitude" is the length of the gradient (scalar)
+
+Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step). If the provided step is missing or not finite (NaN/Inf), the result is undefined.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| functionID | Resource reference to the function to differentiate |
+| step       | Scalar step size for central finite differences |
+| defined by function | Provide references for all inputs of the referenced function; the identifier of the vector input to differentiate MUST match the value of the @vectorinput attribute |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| vector     | Normalized gradient (float3) |
+| gradient   | Raw gradient (float3) |
+| magnitude  | Length of the gradient (scalar) |
+
+**Attributes:**
+
+| Attribute    | Type      | Required | Default | Description |
+|--------------|-----------|----------|---------|-------------|
+| scalaroutput | xs:string | yes      |         | Name of the scalar output of the referenced function to differentiate |
+| vectorinput  | xs:string | yes      |         | Name of the vector (float3) input of the referenced function used for differentiation |
+
+**Example Usage:**
+
+```xml
+
+<i:functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos">
+    <i:in>
+        <i:resourceref identifier="functionID" ref="FunctionCall_5_functionID.value"/>
+        <i:vectorref identifier="pos" ref="inputs.pos"/>
+        <i:scalarref identifier="radius" ref="inputs.radius"/>
+        <i:scalarref identifier="step" ref="inputs.step"/>
+    </i:in>
+    <i:out>
+        <i:vector identifier="vector"/>
+        <i:vector identifier="gradient"/>
+        <i:scalar identifier="magnitude"/>
+    </i:out>
+</i:functiongradient>
+
+```
+
+## normalizedistance
+
+**Description:** Computes a normalized distance from a referenced scalar function output by dividing the function value by the magnitude of its spatial gradient, using central finite differences. The inputs MUST include a resource reference with the identifier "functionID", a scalar input named "step", and all argument references required by the referenced function. The attribute "scalaroutput" MUST name a scalar output of the referenced function. The attribute "vectorinput" MUST name a vector (float3) input of the referenced function with respect to which the gradient is computed. Consumers MUST clamp the effective step to >= 1e-8.
+
+Formally, let f be the referenced scalar output and x the vector input. Using central finite differences with the provided step, compute ∇f(x) and its magnitude |∇f(x)|, then output f(x)/max(|∇f(x)|, 1e-8). If the provided step is missing or not finite (NaN/Inf), the result is undefined.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| functionID | Resource reference to the function providing f(x) |
+| step       | Scalar step size for central finite differences |
+| defined by function | Provide references for all inputs of the referenced function; the identifier of the vector input to differentiate MUST match the value of the @vectorinput attribute |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Normalized distance f(x)/|∇f(x)| (scalar) |
+
+**Attributes:**
+
+| Attribute    | Type      | Required | Default | Description |
+|--------------|-----------|----------|---------|-------------|
+| scalaroutput | xs:string | yes      |         | Name of the scalar output of the referenced function to use as f(x) |
+| vectorinput  | xs:string | yes      |         | Name of the vector (float3) input of the referenced function used for gradient computation |
+
+**Example Usage:**
+
+```xml
+
+<i:normalizedistance identifier="n1" displayname="Normalized Distance" scalaroutput="distance" vectorinput="pos">
+    <i:in>
+        <i:resourceref identifier="functionID" ref="FunctionCall_5_functionID.value"/>
+        <i:vectorref identifier="pos" ref="inputs.pos"/>
+        <i:scalarref identifier="step" ref="inputs.step"/>
+    </i:in>
+    <i:out>
+        <i:scalar identifier="result"/>
+    </i:out>
+</i:normalizedistance>
+
+```
+
 ## log
 
 **Description:** Performs a natural logarithm of the input "A" and writes the result to the output "result".
@@ -3194,6 +3340,137 @@ _sheet0.png_
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
+	<!-- NormalizeDistance: normalized signed distance using referenced function and its gradient -->
+	<xs:complexType name="CT_NormalizeDistance">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+	Derived node for computing a normalized distance from a referenced scalar function output using its gradient magnitude for normalization.
+	The inputs must include a resource reference with the identifier "functionID", a scalar input "step" for finite differences, and all
+	argument references required by the referenced function. The attribute "scalaroutput" must name a scalar output of the referenced function.
+	The attribute "vectorinput" must name a vector (float3) input of the referenced function with respect to which the gradient is computed.
+
+	Let f be the referenced scalar output and x the vector input. Using central finite differences with the provided step, compute ∇f(x) and its
+	magnitude |∇f(x)|. The node outputs the normalized distance defined as f(x) / max(|∇f(x)|, eps) where eps = 1e-8. Consumers MUST clamp the effective
+	step to >= 1e-8 and treat missing or non-finite step values as undefined results.
+
+	Example:
+	<normalizedistance identifier="n1" displayname="Normalized Distance" scalaroutput="distance" vectorinput="pos">
+		<in>
+			<resourceref identifier="functionID" ref="functionIDNode.value"/>
+			<vectorref identifier="pos" ref="inputs.pos"/>
+			<scalarref identifier="step" ref="inputs.step"/>
+		</in>
+		<out>
+			<scalar identifier="result"/>
+		</out>
+	</normalizedistance>
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+	Inputs to the normalized distance. Must include a resourceref with identifier "functionID", a scalarref with identifier "step", and the
+	argument references required by the referenced function. The identifier of the vector input must match the value of the @vectorinput attribute.
+								]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
+								<xs:element ref="resourceref" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+	Output normalized distance value "result" (scalar).
+								]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="scalaroutput" type="xs:string" use="required" />
+				<xs:attribute name="vectorinput" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- signed distance to beam lattice -->
+	<xs:complexType name="CT_SignedDistanceToBeamLattice">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+		Node for evaluating the signed distance to a beam lattice. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
+		The beam lattice is defined by a resource identifier.
+		The distance is positive if the point is outside the beam lattice and negative if the point is inside the beam lattice.
+
+	    The optional attribute "accuraterange" specifies a non-negative distance (in model units, same space as the input "pos") around the beam lattice within which the returned signed distance MUST be accurate. Outside this band (i.e., for points p with |distance(p)| > accuraterange), consumers MAY return approximate values or implementation-defined extrapolations. Consumers MUST clamp negative values of @accuraterange to 0.0.
+								
+		Example:
+	   <beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1" accuraterange="2.5">
+			<in>
+				<vectorref identifier="pos" ref="inputs.pos"/>
+				<resourceref identifier="beamlattice" ref="resourceidnode.value"/>
+			</in>
+			<out>
+				<scalar identifier="distance"/>
+			</out>
+		</beamlattice>
+		]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Inputs to the distance to beam lattice function.
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:all>
+								<xs:element ref="vectorref" />
+								<xs:element ref="resourceref" />
+							</xs:all>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+			distance to beam lattice of the inputs
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="accuraterange" type="xs:double" use="optional" default="0.0" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- node is the base type for all nodes in the implicit function tree.	-->
 	<xs:complexType name="CT_Node">
 		<xs:annotation>
@@ -3460,7 +3737,7 @@ _sheet0.png_
 					<out>
 						<vector identifier="result"/>
 					</out>
-				</composevector>
+				</vectorfromscalar>
 				]]>
 				</xs:documentation>
 		</xs:annotation>
@@ -3888,7 +4165,7 @@ _sheet0.png_
 				<out>
 					<scalar identifier="result"/>
 				</out>
-			</dotproduct>
+			</dot>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -3947,7 +4224,7 @@ _sheet0.png_
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</crossp>
+			</cross>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -5090,11 +5367,11 @@ _sheet0.png_
 			<xs:documentation>
 				<![CDATA[
 			Node for evaluating the unsigned distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
-			The mesh is defined by a resource identifier. The mesh may be be open and is not required to be watertight. 
+			The mesh is defined by a resource identifier. The mesh may be open and is not required to be watertight. 
 			The distance is always positive.
 									
 			Example:
-			<unsignedmesh identifier="UnsigendDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
+			<unsignedmesh identifier="UnsignedDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
 				<in>
 					<vectorref identifier="pos" ref="inputs.pos"/>
 					<resourceref identifier="mesh" ref="resourceidnode.value"/>
@@ -5200,6 +5477,86 @@ _sheet0.png_
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- FunctionGradient: computes gradient of a referenced function -->
+	<xs:complexType name="CT_FunctionGradient">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+		Derived node for computing the spatial gradient of a referenced function. The inputs must include a resource reference with the
+		identifier "functionID" and all argument references required by the referenced function. The attribute "scalaroutput" must name
+		a scalar output of the referenced function. The attribute "vectorinput" must name a vector (float3) input of the referenced function
+		with respect to which the gradient is computed.
+
+		The outputs must have the identifiers "vector", "gradient" and "magnitude" where:
+		- "vector" is the normalized gradient (float3)
+		- "gradient" is the raw gradient (float3)
+		- "magnitude" is the length of the gradient (scalar)
+
+		The finite difference step is provided as a scalar input named "step". Consumers MUST clamp the effective step to
+		>= 1e-8. If the input is missing or evaluates to NaN/Inf, the consumer MUST treat the result as undefined. Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected
+		vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step).
+
+		Example:
+		<functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos">
+			<in>
+				<resourceref identifier="functionID" ref="functionIDNode.value"/>
+				<vectorref identifier="pos" ref="inputs.pos"/>
+				<scalarref identifier="radius" ref="inputs.radius"/>
+				<scalarref identifier="step" ref="inputs.step"/>
+			</in>
+			<out>
+				<vector identifier="vector"/>
+				<vector identifier="gradient"/>
+				<scalar identifier="magnitude"/>
+			</out>
+		</functiongradient>
+		]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Inputs to the function gradient. Must include a resourceref with identifier "functionID", a scalarref with identifier "step", and the argument references required
+		by the referenced function. The identifier of the vector input to differentiate must match the value of the @vectorinput attribute.
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
+								<xs:element ref="resourceref" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Outputs of the function gradient: normalized gradient ("vector"), raw gradient ("gradient"), and gradient length ("magnitude").
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="vector" />
+								<xs:element ref="vector" />
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="scalaroutput" type="xs:string" use="required" />
+				<xs:attribute name="vectorinput" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- base for log, exp etc. -->
 	<xs:complexType name="CT_BaseOneParameterFunc">
 		<xs:complexContent>
@@ -5261,7 +5618,7 @@ _sheet0.png_
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</ln>
+			</log>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -5919,9 +6276,12 @@ _sheet0.png_
 			<xs:element ref="floor" />
 			<xs:element ref="sign" />
 			<xs:element ref="fract" />
+			<xs:element ref="functiongradient" />
+			<xs:element ref="normalizedistance" />
 			<xs:element ref="functioncall" />
 			<xs:element ref="mesh" />
 			<xs:element ref="unsignedmesh" />
+			<xs:element ref="beamlattice" />
 			<xs:element ref="length" />
 			<xs:element ref="resourceid" />
 			<xs:element ref="constresourceid" />			
@@ -5957,7 +6317,7 @@ _sheet0.png_
 				
 				<subtraction identifier="sub1" displayname="subtraction">
 					<in>
-						<scalarref identifier="A" ref="lentgth1.value"/>
+						<scalarref identifier="A" ref="length1.value"/>
 						<scalarref identifier="B" ref="inputs.radius"/>
 					</in>
 					<out>
@@ -5965,7 +6325,7 @@ _sheet0.png_
 					</out>
 				</subtraction>								
 				<out>
-					<vectoref identifier="distance" ref="sub1.difference">
+					<vectorref identifier="distance" ref="sub1.difference"/>
 				</out>
 
 			</implicitfunction>
@@ -6002,7 +6362,7 @@ _sheet0.png_
 					<scalarref identifier="radius" ref="othernode_1.result" />
 				</in>
 				<out>
-					<scalarref identifer="result" ref="mySphereFunction.distance"/>
+					<scalarref identifier="result" ref="mySphereFunction.distance"/>
 				</out>
 			</functioncall>
 			]]>
@@ -6061,7 +6421,7 @@ _sheet0.png_
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			String containing 16 space seperated floating numbers.
+			String containing 16 space separated floating numbers.
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -6098,24 +6458,24 @@ _sheet0.png_
 		</xs:restriction>
 	</xs:simpleType>
 
-	<!-- Identifer for a scalar output -->
+	<!-- Identifier for a scalar output -->
 	<xs:simpleType name="ST_ScalarID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Identifer for a scalar output
+			Identifier for a scalar output
 			]]>
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
 
-	<!-- Identifer for a vector output -->
+	<!-- Identifier for a vector output -->
 	<xs:simpleType name="ST_VectorID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Identifer for a vector output
+			Identifier for a vector output
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -6206,9 +6566,12 @@ _sheet0.png_
 	<xs:element name="floor" type="CT_Floor" />
 	<xs:element name="sign" type="CT_Sign" />
 	<xs:element name="fract" type="CT_Fract" />
+	<xs:element name="functiongradient" type="CT_FunctionGradient" />
+	<xs:element name="normalizedistance" type="CT_NormalizeDistance" />
 	<xs:element name="functioncall" type="CT_FunctionCall" />
 	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
 	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
+	<xs:element name="beamlattice" type="CT_SignedDistanceToBeamLattice" />
 	<xs:element name="length" type="CT_Length" />
 	<xs:element name="constresourceid" type="CT_ConstResourceID" />
 	<xs:element name="mod" type="CT_Mod" />

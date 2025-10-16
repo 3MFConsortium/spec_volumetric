@@ -138,7 +138,7 @@
 							</xs:annotation>
 							<xs:all>
 								<xs:element ref="vectorref" />
-								<xs:element name="resourceref" type="ST_ResourceID" />
+								<xs:element ref="resourceref" />
 							</xs:all>
 						</xs:complexType>
 					</xs:element>
@@ -2968,6 +2968,7 @@
 			<xs:element ref="sign" />
 			<xs:element ref="fract" />
 			<xs:element ref="functiongradient" />
+			<xs:element ref="normalizedistance" />
 			<xs:element ref="functioncall" />
 			<xs:element ref="mesh" />
 			<xs:element ref="unsignedmesh" />
