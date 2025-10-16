@@ -902,6 +902,7 @@ Overview of native nodes
 | [fract](#fract)            | fractional part extraction operation        |
 | [functiongradient](#functiongradient) | spatial gradient of a function       |
 | [functioncall](#functioncall) | function call operation                  |
+| [beamlattice](#beamlattice) | signed distance to beam lattice operation  |
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
 | [length](#length)          | length operation                           |
@@ -2285,6 +2286,45 @@ The operation can be used for the following types of inputs and outputs:
         <i:scalar identifier="result"/>
     </i:out>
 </i:length>
+
+```
+
+## beamlattice
+
+**Description:** Evaluates the signed distance to a beam lattice. The input MUST have the identifier "pos" and MUST be a vector. A resource identifier MUST specify the beam lattice. The output is a scalar with the identifier "distance". The distance is positive if the point is outside the beam lattice and negative if the point is inside the beam lattice.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| pos        | Input vector |
+| beamlattice | Resource identifier for the beam lattice |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| distance   | Signed distance to the beam lattice |
+
+The operation can be used for the following types of inputs and outputs:
+
+| pos   | beamlattice | distance | comment |
+|-------|-------------|----------|---------|
+| vector| -           | scalar   | -       |
+
+**Example Usage:**
+
+```xml
+
+<i:beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1">
+    <i:in>
+        <i:vectorref identifier="pos" ref="inputs.pos"/>
+        <i:resourceref identifier="beamlattice" ref="resourceidnode.value"/>
+    </i:in>
+    <i:out>
+        <i:scalar identifier="distance"/>
+    </i:out>
+</i:beamlattice>
 
 ```
 
