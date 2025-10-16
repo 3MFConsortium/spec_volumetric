@@ -31,6 +31,75 @@
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
+	<!-- NormalizeDistance: normalized signed distance using referenced function and its gradient -->
+	<xs:complexType name="CT_NormalizeDistance">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+	Derived node for computing a normalized distance from a referenced scalar function output using its gradient magnitude for normalization.
+	The inputs must include a resource reference with the identifier "functionID", a scalar input "step" for finite differences, and all
+	argument references required by the referenced function. The attribute "scalaroutput" must name a scalar output of the referenced function.
+	The attribute "vectorinput" must name a vector (float3) input of the referenced function with respect to which the gradient is computed.
+
+	Let f be the referenced scalar output and x the vector input. Using central finite differences with the provided step, compute ∇f(x) and its
+	magnitude |∇f(x)|. The node outputs the normalized distance defined as f(x) / max(|∇f(x)|, eps) where eps = 1e-8. Consumers MUST clamp the effective
+	step to >= 1e-8 and treat missing or non-finite step values as undefined results.
+
+	Example:
+	<normalizedistance identifier="n1" displayname="Normalized Distance" scalaroutput="distance" vectorinput="pos">
+		<in>
+			<resourceref identifier="functionID" ref="functionIDNode.value"/>
+			<vectorref identifier="pos" ref="inputs.pos"/>
+			<scalarref identifier="step" ref="inputs.step"/>
+		</in>
+		<out>
+			<scalar identifier="result"/>
+		</out>
+	</normalizedistance>
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+	Inputs to the normalized distance. Must include a resourceref with identifier "functionID", a scalarref with identifier "step", and the
+	argument references required by the referenced function. The identifier of the vector input must match the value of the @vectorinput attribute.
+								]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
+								<xs:element ref="resourceref" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+	Output normalized distance value "result" (scalar).
+								]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="scalaroutput" type="xs:string" use="required" />
+				<xs:attribute name="vectorinput" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 	<!-- signed distance to beam lattice -->
 	<xs:complexType name="CT_SignedDistanceToBeamLattice">
 		<xs:annotation>
@@ -3188,6 +3257,7 @@
 	<xs:element name="sign" type="CT_Sign" />
 	<xs:element name="fract" type="CT_Fract" />
 	<xs:element name="functiongradient" type="CT_FunctionGradient" />
+	<xs:element name="normalizedistance" type="CT_NormalizeDistance" />
 	<xs:element name="functioncall" type="CT_FunctionCall" />
 	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
 	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
