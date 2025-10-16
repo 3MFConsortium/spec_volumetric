@@ -297,7 +297,7 @@
 					<out>
 						<vector identifier="result"/>
 					</out>
-				</composevector>
+				</vectorfromscalar>
 				]]>
 				</xs:documentation>
 		</xs:annotation>
@@ -725,7 +725,7 @@
 				<out>
 					<scalar identifier="result"/>
 				</out>
-			</dotproduct>
+			</dot>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -784,7 +784,7 @@
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</crossp>
+			</cross>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1927,11 +1927,11 @@
 			<xs:documentation>
 				<![CDATA[
 			Node for evaluating the unsigned distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
-			The mesh is defined by a resource identifier. The mesh may be be open and is not required to be watertight. 
+			The mesh is defined by a resource identifier. The mesh may be open and is not required to be watertight. 
 			The distance is always positive.
 									
 			Example:
-			<unsignedmesh identifier="UnsigendDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
+			<unsignedmesh identifier="UnsignedDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
 				<in>
 					<vectorref identifier="pos" ref="inputs.pos"/>
 					<resourceref identifier="mesh" ref="resourceidnode.value"/>
@@ -2178,7 +2178,7 @@
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</ln>
+			</log>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -2875,7 +2875,7 @@
 				
 				<subtraction identifier="sub1" displayname="subtraction">
 					<in>
-						<scalarref identifier="A" ref="lentgth1.value"/>
+						<scalarref identifier="A" ref="length1.value"/>
 						<scalarref identifier="B" ref="inputs.radius"/>
 					</in>
 					<out>
@@ -2883,7 +2883,7 @@
 					</out>
 				</subtraction>								
 				<out>
-					<vectoref identifier="distance" ref="sub1.difference">
+					<vectorref identifier="distance" ref="sub1.difference"/>
 				</out>
 
 			</implicitfunction>
@@ -2920,7 +2920,7 @@
 					<scalarref identifier="radius" ref="othernode_1.result" />
 				</in>
 				<out>
-					<scalarref identifer="result" ref="mySphereFunction.distance"/>
+					<scalarref identifier="result" ref="mySphereFunction.distance"/>
 				</out>
 			</functioncall>
 			]]>
@@ -2979,7 +2979,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			String containing 16 space seperated floating numbers.
+			String containing 16 space separated floating numbers.
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -3016,24 +3016,24 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<!-- Identifer for a scalar output -->
+	<!-- Identifier for a scalar output -->
 	<xs:simpleType name="ST_ScalarID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Identifer for a scalar output
+			Identifier for a scalar output
 			]]>
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
 
-	<!-- Identifer for a vector output -->
+	<!-- Identifier for a vector output -->
 	<xs:simpleType name="ST_VectorID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Identifer for a vector output
+			Identifier for a vector output
 			]]>
 			</xs:documentation>
 		</xs:annotation>
