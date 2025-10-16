@@ -2037,6 +2037,86 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- FunctionGradient: computes gradient of a referenced function -->
+	<xs:complexType name="CT_FunctionGradient">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+		Derived node for computing the spatial gradient of a referenced function. The inputs must include a resource reference with the
+		identifier "functionID" and all argument references required by the referenced function. The attribute "scalaroutput" must name
+		a scalar output of the referenced function. The attribute "vectorinput" must name a vector (float3) input of the referenced function
+		with respect to which the gradient is computed.
+
+		The outputs must have the identifiers "vector", "gradient" and "magnitude" where:
+		- "vector" is the normalized gradient (float3)
+		- "gradient" is the raw gradient (float3)
+		- "magnitude" is the length of the gradient (scalar)
+
+		The finite difference step is controlled by the attribute "step" (default 0.001). Consumers MUST clamp the effective step to
+		>= 1e-8. Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected
+		vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step).
+
+		Example:
+		<functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos" step="0.001">
+			<in>
+				<resourceref identifier="functionID" ref="functionIDNode.value"/>
+				<vectorref identifier="pos" ref="inputs.pos"/>
+				<scalarref identifier="radius" ref="inputs.radius"/>
+			</in>
+			<out>
+				<vector identifier="vector"/>
+				<vector identifier="gradient"/>
+				<scalar identifier="magnitude"/>
+			</out>
+		</functiongradient>
+		]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Inputs to the function gradient. Must include a resourceref with identifier "functionID" and the argument references required
+		by the referenced function. The identifier of the vector input to differentiate must match the value of the @vectorinput attribute.
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
+								<xs:element ref="resourceref" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Outputs of the function gradient: normalized gradient ("vector"), raw gradient ("gradient"), and gradient length ("magnitude").
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="vector" />
+								<xs:element ref="vector" />
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="scalaroutput" type="xs:string" use="required" />
+				<xs:attribute name="vectorinput" type="xs:string" use="required" />
+				<xs:attribute name="step" type="xs:double" use="optional" default="0.001" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- base for log, exp etc. -->
 	<xs:complexType name="CT_BaseOneParameterFunc">
 		<xs:complexContent>
@@ -2756,6 +2836,7 @@
 			<xs:element ref="floor" />
 			<xs:element ref="sign" />
 			<xs:element ref="fract" />
+			<xs:element ref="functiongradient" />
 			<xs:element ref="functioncall" />
 			<xs:element ref="mesh" />
 			<xs:element ref="unsignedmesh" />
@@ -3043,6 +3124,7 @@
 	<xs:element name="floor" type="CT_Floor" />
 	<xs:element name="sign" type="CT_Sign" />
 	<xs:element name="fract" type="CT_Fract" />
+	<xs:element name="functiongradient" type="CT_FunctionGradient" />
 	<xs:element name="functioncall" type="CT_FunctionCall" />
 	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
 	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
