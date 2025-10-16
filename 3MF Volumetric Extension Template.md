@@ -2312,11 +2312,17 @@ The operation can be used for the following types of inputs and outputs:
 |-------|-------------|----------|---------|
 | vector| -           | scalar   | -       |
 
+**Attributes:**
+
+| Attribute     | Type      | Required | Default | Description |
+|---------------|-----------|----------|---------|-------------|
+| accuraterange | xs:double | no       | 0.0     | Non-negative distance band (in model units) around the beam lattice within which the returned signed distance MUST be accurate. Outside this band (i.e., for points p with |distance(p)| > accuraterange), consumers MAY return approximate values or implementation-defined extrapolations. Consumers MUST clamp negative values of accuraterange to 0.0. |
+
 **Example Usage:**
 
 ```xml
 
-<i:beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1">
+<i:beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1" accuraterange="2.5">
     <i:in>
         <i:vectorref identifier="pos" ref="inputs.pos"/>
         <i:resourceref identifier="beamlattice" ref="resourceidnode.value"/>

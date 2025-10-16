@@ -39,9 +39,11 @@
 		Node for evaluating the signed distance to a beam lattice. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
 		The beam lattice is defined by a resource identifier.
 		The distance is positive if the point is outside the beam lattice and negative if the point is inside the beam lattice.
+
+	    The optional attribute "accuraterange" specifies a non-negative distance (in model units, same space as the input "pos") around the beam lattice within which the returned signed distance MUST be accurate. Outside this band (i.e., for points p with |distance(p)| > accuraterange), consumers MAY return approximate values or implementation-defined extrapolations. Consumers MUST clamp negative values of @accuraterange to 0.0.
 								
 		Example:
-		<beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1">
+	   <beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1" accuraterange="2.5">
 			<in>
 				<vectorref identifier="pos" ref="inputs.pos"/>
 				<resourceref identifier="beamlattice" ref="resourceidnode.value"/>
@@ -86,6 +88,7 @@
 						</xs:complexType>
 					</xs:element>
 				</xs:all>
+				<xs:attribute name="accuraterange" type="xs:double" use="optional" default="0.0" />
 			</xs:extension>
 		</xs:complexContent>
 	</xs:complexType>
