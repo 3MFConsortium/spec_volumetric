@@ -31,6 +31,65 @@
 		<xs:anyAttribute namespace="##other" processContents="lax" />
 	</xs:complexType>
 
+	<!-- signed distance to beam lattice -->
+	<xs:complexType name="CT_SignedDistanceToBeamLattice">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+		Node for evaluating the signed distance to a beam lattice. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
+		The beam lattice is defined by a resource identifier.
+		The distance is positive if the point is outside the beam lattice and negative if the point is inside the beam lattice.
+								
+		Example:
+		<beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1">
+			<in>
+				<vectorref identifier="pos" ref="inputs.pos"/>
+				<resourceref identifier="beamlattice" ref="resourceidnode.value"/>
+			</in>
+			<out>
+				<scalar identifier="distance"/>
+			</out>
+		</beamlattice>
+		]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Inputs to the distance to beam lattice function.
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:all>
+								<xs:element ref="vectorref" />
+								<xs:element name="resourceref" type="ST_ResourceID" />
+							</xs:all>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+			distance to beam lattice of the inputs
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- node is the base type for all nodes in the implicit function tree.	-->
 	<xs:complexType name="CT_Node">
 		<xs:annotation>
@@ -2840,6 +2899,7 @@
 			<xs:element ref="functioncall" />
 			<xs:element ref="mesh" />
 			<xs:element ref="unsignedmesh" />
+			<xs:element ref="beamlattice" />
 			<xs:element ref="length" />
 			<xs:element ref="resourceid" />
 			<xs:element ref="constresourceid" />			
@@ -3128,6 +3188,7 @@
 	<xs:element name="functioncall" type="CT_FunctionCall" />
 	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
 	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
+	<xs:element name="beamlattice" type="CT_SignedDistanceToBeamLattice" />
 	<xs:element name="length" type="CT_Length" />
 	<xs:element name="constresourceid" type="CT_ConstResourceID" />
 	<xs:element name="mod" type="CT_Mod" />
