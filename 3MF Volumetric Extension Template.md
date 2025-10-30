@@ -897,7 +897,10 @@ Overview of native nodes
 | [floor](#floor)            | floor operation                            |
 | [sign](#sign)              | signum operation                           |
 | [fract](#fract)            | fractional part extraction operation        |
+| [functiongradient](#functiongradient) | spatial gradient of a function       |
+| [normalizedistance](#normalizedistance) | normalized distance from a function |
 | [functioncall](#functioncall) | function call operation                  |
+| [beamlattice](#beamlattice) | signed distance to beam lattice operation  |
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
 | [length](#length)          | length operation                           |
@@ -2281,6 +2284,149 @@ The operation can be used for the following types of inputs and outputs:
         <i:scalar identifier="result"/>
     </i:out>
 </i:length>
+
+```
+
+## beamlattice
+
+**Description:** Evaluates the signed distance to a beam lattice. The input MUST have the identifier "pos" and MUST be a vector. A resource identifier MUST specify the beam lattice. The output is a scalar with the identifier "distance". The distance is positive if the point is outside the beam lattice and negative if the point is inside the beam lattice.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| pos        | Input vector |
+| beamlattice | Resource identifier for the beam lattice |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| distance   | Signed distance to the beam lattice |
+
+The operation can be used for the following types of inputs and outputs:
+
+| pos   | beamlattice | distance | comment |
+|-------|-------------|----------|---------|
+| vector| -           | scalar   | -       |
+
+**Attributes:**
+
+| Attribute     | Type      | Required | Default | Description |
+|---------------|-----------|----------|---------|-------------|
+| accuraterange | double    | no       | 0.0     | Non-negative distance band (in model units) around the beam lattice within which the returned signed distance MUST be accurate. Outside this band (i.e., for points p with |distance(p)| > accuraterange), consumers MAY return approximate values or implementation-defined extrapolations. Consumers MUST clamp negative values of accuraterange to 0.0. |
+
+**Example Usage:**
+
+```xml
+
+<i:beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1" accuraterange="2.5">
+    <i:in>
+        <i:vectorref identifier="pos" ref="inputs.pos"/>
+        <i:resourceref identifier="beamlattice" ref="resourceidnode.value"/>
+    </i:in>
+    <i:out>
+        <i:scalar identifier="distance"/>
+    </i:out>
+</i:beamlattice>
+
+```
+
+## functiongradient
+
+**Description:** Computes the spatial gradient of a referenced function output using central finite differences. The inputs MUST include a resource reference with the identifier "functionID", a scalar input named "step", and all argument references required by the referenced function. The attribute "scalaroutput" MUST name a scalar output of the referenced function. The attribute "vectorinput" MUST name a vector (float3) input of the referenced function with respect to which the gradient is computed. Consumers MUST clamp the effective step to >= 1e-8.
+
+The outputs MUST have the identifiers "vector", "gradient" and "magnitude" where:
+- "vector" is the normalized gradient (float3)
+- "gradient" is the raw gradient (float3)
+- "magnitude" is the length of the gradient (scalar)
+
+Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step). If the provided step is missing or not finite (NaN/Inf), the result is undefined.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| functionID | Resource reference to the function to differentiate |
+| step       | Scalar step size for central finite differences |
+| defined by function | Provide references for all inputs of the referenced function; the identifier of the vector input to differentiate MUST match the value of the @vectorinput attribute |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| vector     | Normalized gradient (float3) |
+| gradient   | Raw gradient (float3) |
+| magnitude  | Length of the gradient (scalar) |
+
+**Attributes:**
+
+| Attribute    | Type      | Required | Default | Description |
+|--------------|-----------|----------|---------|-------------|
+| scalaroutput | xs:string | yes      |         | Name of the scalar output of the referenced function to differentiate |
+| vectorinput  | xs:string | yes      |         | Name of the vector (float3) input of the referenced function used for differentiation |
+
+**Example Usage:**
+
+```xml
+
+<i:functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos">
+    <i:in>
+        <i:resourceref identifier="functionID" ref="FunctionCall_5_functionID.value"/>
+        <i:vectorref identifier="pos" ref="inputs.pos"/>
+        <i:scalarref identifier="radius" ref="inputs.radius"/>
+        <i:scalarref identifier="step" ref="inputs.step"/>
+    </i:in>
+    <i:out>
+        <i:vector identifier="vector"/>
+        <i:vector identifier="gradient"/>
+        <i:scalar identifier="magnitude"/>
+    </i:out>
+</i:functiongradient>
+
+```
+
+## normalizedistance
+
+**Description:** Computes a normalized distance from a referenced scalar function output by dividing the function value by the magnitude of its spatial gradient, using central finite differences. The inputs MUST include a resource reference with the identifier "functionID", a scalar input named "step", and all argument references required by the referenced function. The attribute "scalaroutput" MUST name a scalar output of the referenced function. The attribute "vectorinput" MUST name a vector (float3) input of the referenced function with respect to which the gradient is computed. Consumers MUST clamp the effective step to >= 1e-8.
+
+Formally, let f be the referenced scalar output and x the vector input. Using central finite differences with the provided step, compute ∇f(x) and its magnitude |∇f(x)|, then output f(x)/max(|∇f(x)|, 1e-8). If the provided step is missing or not finite (NaN/Inf), the result is undefined.
+
+**Inputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| functionID | Resource reference to the function providing f(x) |
+| step       | Scalar step size for central finite differences |
+| defined by function | Provide references for all inputs of the referenced function; the identifier of the vector input to differentiate MUST match the value of the @vectorinput attribute |
+
+**Outputs:**
+
+| Identifier | Description |
+|------------|-------------|
+| result     | Normalized distance f(x)/|∇f(x)| (scalar) |
+
+**Attributes:**
+
+| Attribute    | Type      | Required | Default | Description |
+|--------------|-----------|----------|---------|-------------|
+| scalaroutput | xs:string | yes      |         | Name of the scalar output of the referenced function to use as f(x) |
+| vectorinput  | xs:string | yes      |         | Name of the vector (float3) input of the referenced function used for gradient computation |
+
+**Example Usage:**
+
+```xml
+
+<i:normalizedistance identifier="n1" displayname="Normalized Distance" scalaroutput="distance" vectorinput="pos">
+    <i:in>
+        <i:resourceref identifier="functionID" ref="FunctionCall_5_functionID.value"/>
+        <i:vectorref identifier="pos" ref="inputs.pos"/>
+        <i:scalarref identifier="step" ref="inputs.step"/>
+    </i:in>
+    <i:out>
+        <i:scalar identifier="result"/>
+    </i:out>
+</i:normalizedistance>
 
 ```
 
