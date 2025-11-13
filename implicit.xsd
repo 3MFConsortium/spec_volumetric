@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
-	elementFormDefault="unqualified" attributeFormDefault="unqualified" blockDefault="#all"
+	elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all"
 	xmlns="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	xmlns:vol="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01">
@@ -26,9 +26,140 @@
 	<xs:complexType name="CT_Resources">
 		<xs:choice minOccurs="0" maxOccurs="2147483647">
 			<xs:element ref="implicitfunction" />
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
 		</xs:choice>
 		<xs:anyAttribute namespace="##other" processContents="lax" />
+	</xs:complexType>
+
+	<!-- NormalizeDistance: normalized signed distance using referenced function and its gradient -->
+	<xs:complexType name="CT_NormalizeDistance">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+	Derived node for computing a normalized distance from a referenced scalar function output using its gradient magnitude for normalization.
+	The inputs must include a resource reference with the identifier "functionID", a scalar input "step" for finite differences, and all
+	argument references required by the referenced function. The attribute "scalaroutput" must name a scalar output of the referenced function.
+	The attribute "vectorinput" must name a vector (float3) input of the referenced function with respect to which the gradient is computed.
+
+	Let f be the referenced scalar output and x the vector input. Using central finite differences with the provided step, compute ∇f(x) and its
+	magnitude |∇f(x)|. The node outputs the normalized distance defined as f(x) / max(|∇f(x)|, eps) where eps = 1e-8. Consumers MUST clamp the effective
+	step to >= 1e-8 and treat missing or non-finite step values as undefined results.
+
+	Example:
+	<normalizedistance identifier="n1" displayname="Normalized Distance" scalaroutput="distance" vectorinput="pos">
+		<in>
+			<resourceref identifier="functionID" ref="functionIDNode.value"/>
+			<vectorref identifier="pos" ref="inputs.pos"/>
+			<scalarref identifier="step" ref="inputs.step"/>
+		</in>
+		<out>
+			<scalar identifier="result"/>
+		</out>
+	</normalizedistance>
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+	Inputs to the normalized distance. Must include a resourceref with identifier "functionID", a scalarref with identifier "step", and the
+	argument references required by the referenced function. The identifier of the vector input must match the value of the @vectorinput attribute.
+								]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
+								<xs:element ref="resourceref" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+	Output normalized distance value "result" (scalar).
+								]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="scalaroutput" type="xs:string" use="required" />
+				<xs:attribute name="vectorinput" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<!-- signed distance to beam lattice -->
+	<xs:complexType name="CT_SignedDistanceToBeamLattice">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+		Node for evaluating the signed distance to a beam lattice. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
+		The beam lattice is defined by a resource identifier.
+		The distance is positive if the point is outside the beam lattice and negative if the point is inside the beam lattice.
+
+	    The optional attribute "accuraterange" specifies a non-negative distance (in model units, same space as the input "pos") around the beam lattice within which the returned signed distance MUST be accurate. Outside this band (i.e., for points p with |distance(p)| > accuraterange), consumers MAY return approximate values or implementation-defined extrapolations. Consumers MUST clamp negative values of @accuraterange to 0.0.
+								
+		Example:
+	   <beamlattice identifier="SignedDistanceToBeamLattice1" displayname="Signed Distance to Beam Lattice 1" accuraterange="2.5">
+			<in>
+				<vectorref identifier="pos" ref="inputs.pos"/>
+				<resourceref identifier="beamlattice" ref="resourceidnode.value"/>
+			</in>
+			<out>
+				<scalar identifier="distance"/>
+			</out>
+		</beamlattice>
+		]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Inputs to the distance to beam lattice function.
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:all>
+								<xs:element ref="vectorref" />
+								<xs:element ref="resourceref" />
+							</xs:all>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+			distance to beam lattice of the inputs
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="accuraterange" type="xs:double" use="optional" default="0.0" />
+			</xs:extension>
+		</xs:complexContent>
 	</xs:complexType>
 
 	<!-- node is the base type for all nodes in the implicit function tree.	-->
@@ -82,18 +213,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -306,7 +428,7 @@
 					<out>
 						<vector identifier="result"/>
 					</out>
-				</composevector>
+				</vectorfromscalar>
 				]]>
 				</xs:documentation>
 		</xs:annotation>
@@ -561,18 +683,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -634,18 +747,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -707,18 +811,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -761,7 +856,7 @@
 				<out>
 					<scalar identifier="result"/>
 				</out>
-			</dotproduct>
+			</dot>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -820,7 +915,7 @@
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</crossp>
+			</cross>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1209,25 +1304,25 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- arcsin function for scalars or componentwise for vectors -->
-	<xs:complexType name="CT_Arcsin">
+	<!-- asin function for scalars or componentwise for vectors -->
+	<xs:complexType name="CT_ASin">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arcsin function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for an arcsine (asin) function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arcsin(scalar) = scalar
-			- arcsin(vector) = vector (arcsin of each component of the vector)
+			- asin(scalar) = scalar
+			- asin(vector) = vector (asin of each component of the vector)
 						
 			Example:
-			<arcsin identifier="arcsin1" displayname="Arcsin 1">
+			<asin identifier="asin1" displayname="Asin 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arcsin>
+			</asin>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1239,7 +1334,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arcsin function.
+							Inputs to the asin function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1254,7 +1349,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							arcsin of the input
+							asin of the input
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1269,25 +1364,25 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- arccos function for scalars or componentwise for vectors -->
-	<xs:complexType name="CT_Arccos">
+	<!-- acos function for scalars or componentwise for vectors -->
+	<xs:complexType name="CT_ACos">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arccos function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for an arccosine (acos) function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arccos(scalar) = scalar
-			- arccos(vector) = vector (arccos of each component of the vector)
+			- acos(scalar) = scalar
+			- acos(vector) = vector (acos of each component of the vector)
 						
 			Example:
-			<arccos identifier="arccos1" displayname="Arccos 1">
+			<acos identifier="acos1" displayname="Acos 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arccos>
+			</acos>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1299,7 +1394,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arccos function.
+							Inputs to the acos function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1314,7 +1409,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							arccos of the input
+							acos of the input
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1329,25 +1424,25 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- arctan function for scalars or componentwise for vectors -->
-	<xs:complexType name="CT_Arctan">
+	<!-- atan function for scalars or componentwise for vectors -->
+	<xs:complexType name="CT_ATan">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arctan function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
+			Derived node for an arctangent (atan) function with a scalar or vector as output and a scalar or vector input. The input must have the identifier "A",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arctan(scalar) = scalar
-			- arctan(vector) = vector (arctan of each component of the vector)
+			- atan(scalar) = scalar
+			- atan(vector) = vector (atan of each component of the vector)
 						
 			Example:
-			<arctan identifier="arctan1" displayname="Arctan 1">
+			<atan identifier="atan1" displayname="Atan 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 				</in>
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arctan>
+			</atan>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1359,7 +1454,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arctan function.
+							Inputs to the atan function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1374,7 +1469,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							arctan of the input
+							atan of the input
 							]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1390,18 +1485,18 @@
 	</xs:complexType>
 
 
-	<!-- arctan2 function -->
-	<xs:complexType name="CT_Arctan2">
+	<!-- atan2 function -->
+	<xs:complexType name="CT_ATan2">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Derived node for a arctan2 function. The inputs must have the identifier "A" and "B",
+			Derived node for an atan2 function. The inputs must have the identifier "A" and "B",
 			the output must have the identifier "result". The following combinations of inputs and outputs are allowed:
-			- arctan2(scalar,scalar) = scalar
-			- arctan2(vector,vector) = vector (arctan2 of each component of the vectors)
+			- atan2(scalar,scalar) = scalar
+			- atan2(vector,vector) = vector (atan2 of each component of the vectors)
 						
 			Example:
-			<arctan2 identifier="arctan21" displayname="Arctan2 1">
+			<atan2 identifier="atan21" displayname="Atan2 1">
 				<in>
 					<vectorref identifier="A" ref="inputs.vector1"/>
 					<vectorref identifier="B" ref="inputs.vector2"/>
@@ -1409,7 +1504,7 @@
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</arctan2>
+			</atan2>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -1421,19 +1516,13 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-							Inputs to the arctan2 function.
+							Inputs to the atan2 function.
 							]]>
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -1442,7 +1531,7 @@
 							<xs:annotation>
 								<xs:documentation>
 									<![CDATA[
-									arctan2 of the input
+									atan2 of the input
 									]]>
 								</xs:documentation>
 							</xs:annotation>
@@ -1495,18 +1584,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -1568,18 +1648,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -1640,18 +1711,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -1713,18 +1775,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -1786,18 +1839,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -1859,18 +1903,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -1931,18 +1966,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="vectorref" minOccurs="2" maxOccurs="2" />
+								<xs:element ref="matrixref" minOccurs="2" maxOccurs="2" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -2032,11 +2058,11 @@
 			<xs:documentation>
 				<![CDATA[
 			Node for evaluating the unsigned distance to a mesh. The input must have the identifier "pos" and must be a vector. The output is a scalar and must have the identifier "distance".
-			The mesh is defined by a resource identifier. The mesh may be be open and is not required to be watertight. 
+			The mesh is defined by a resource identifier. The mesh may be open and is not required to be watertight. 
 			The distance is always positive.
 									
 			Example:
-			<unsignedmesh identifier="UnsigendDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
+			<unsignedmesh identifier="UnsignedDistanceToMesh1" displayname="Unsigned Distance to Mesh 1">
 				<in>
 					<vectorref identifier="pos" ref="inputs.pos"/>
 					<resourceref identifier="mesh" ref="resourceidnode.value"/>
@@ -2142,6 +2168,86 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- FunctionGradient: computes gradient of a referenced function -->
+	<xs:complexType name="CT_FunctionGradient">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+		Derived node for computing the spatial gradient of a referenced function. The inputs must include a resource reference with the
+		identifier "functionID" and all argument references required by the referenced function. The attribute "scalaroutput" must name
+		a scalar output of the referenced function. The attribute "vectorinput" must name a vector (float3) input of the referenced function
+		with respect to which the gradient is computed.
+
+		The outputs must have the identifiers "vector", "gradient" and "magnitude" where:
+		- "vector" is the normalized gradient (float3)
+		- "gradient" is the raw gradient (float3)
+		- "magnitude" is the length of the gradient (scalar)
+
+		The finite difference step is provided as a scalar input named "step". Consumers MUST clamp the effective step to
+		>= 1e-8. If the input is missing or evaluates to NaN/Inf, the consumer MUST treat the result as undefined. Central finite differences are used: for each component c ∈ {x,y,z}, evaluate the referenced scalar output at the selected
+		vector input offset by ±step along c and compute (f(x+h_c) - f(x-h_c)) / (2·step).
+
+		Example:
+		<functiongradient identifier="grad1" displayname="Gradient of f" scalaroutput="distance" vectorinput="pos">
+			<in>
+				<resourceref identifier="functionID" ref="functionIDNode.value"/>
+				<vectorref identifier="pos" ref="inputs.pos"/>
+				<scalarref identifier="radius" ref="inputs.radius"/>
+				<scalarref identifier="step" ref="inputs.step"/>
+			</in>
+			<out>
+				<vector identifier="vector"/>
+				<vector identifier="gradient"/>
+				<scalar identifier="magnitude"/>
+			</out>
+		</functiongradient>
+		]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Inputs to the function gradient. Must include a resourceref with identifier "functionID", a scalarref with identifier "step", and the argument references required
+		by the referenced function. The identifier of the vector input to differentiate must match the value of the @vectorinput attribute.
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:choice minOccurs="1" maxOccurs="2147483647">
+								<xs:element ref="scalarref" />
+								<xs:element ref="vectorref" />
+								<xs:element ref="matrixref" />
+								<xs:element ref="resourceref" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:annotation>
+								<xs:documentation>
+									<![CDATA[
+		Outputs of the function gradient: normalized gradient ("vector"), raw gradient ("gradient"), and gradient length ("magnitude").
+									]]>
+								</xs:documentation>
+							</xs:annotation>
+							<xs:sequence>
+								<xs:element ref="vector" />
+								<xs:element ref="vector" />
+								<xs:element ref="scalar" />
+							</xs:sequence>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+				<xs:attribute name="scalaroutput" type="xs:string" use="required" />
+				<xs:attribute name="vectorinput" type="xs:string" use="required" />
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- base for log, exp etc. -->
 	<xs:complexType name="CT_BaseOneParameterFunc">
 		<xs:complexContent>
@@ -2203,7 +2309,7 @@
 				<out>
 					<vector identifier="result"/>
 				</out>
-			</ln>
+			</log>
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -2418,18 +2524,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="2" maxOccurs="2" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="3" maxOccurs="3" />
+								<xs:element ref="vectorref" minOccurs="3" maxOccurs="3" />
+								<xs:element ref="matrixref" minOccurs="3" maxOccurs="3" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -2494,18 +2591,9 @@
 								</xs:documentation>
 							</xs:annotation>
 							<xs:choice>
-								<xs:sequence>
-									<xs:element ref="scalarref"
-										minOccurs="4" maxOccurs="4" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="vectorref"
-										minOccurs="4" maxOccurs="4" />
-								</xs:sequence>
-								<xs:sequence>
-									<xs:element ref="matrixref"
-										minOccurs="4" maxOccurs="4" />
-								</xs:sequence>
+								<xs:element ref="scalarref" minOccurs="4" maxOccurs="4" />
+								<xs:element ref="vectorref" minOccurs="4" maxOccurs="4" />
+								<xs:element ref="matrixref" minOccurs="4" maxOccurs="4" />
 							</xs:choice>
 						</xs:complexType>
 					</xs:element>
@@ -2809,7 +2897,8 @@
 			<xs:element ref="vector"/>
 			<xs:element ref="matrix"/>
 			<xs:element ref="resourceid"/>
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 		</xs:choice>
 	</xs:complexType>
 
@@ -2825,7 +2914,8 @@
 			<xs:element ref="scalarref" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="vectorref" minOccurs="0" maxOccurs="2147483647" />
 			<xs:element ref="matrixref" minOccurs="0" maxOccurs="2147483647" />
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 		</xs:choice>
 	</xs:complexType>
 
@@ -2853,10 +2943,10 @@
 			<xs:element ref="sin" />
 			<xs:element ref="cos" />
 			<xs:element ref="tan" />
-			<xs:element ref="arcsin" />
-			<xs:element ref="arccos" />
-			<xs:element ref="arctan" />
-			<xs:element ref="arctan2" />
+			<xs:element ref="asin" />
+			<xs:element ref="acos" />
+			<xs:element ref="atan" />
+			<xs:element ref="atan2" />
 			<xs:element ref="min" />
 			<xs:element ref="max" />
 			<xs:element ref="abs" />
@@ -2877,13 +2967,18 @@
 			<xs:element ref="floor" />
 			<xs:element ref="sign" />
 			<xs:element ref="fract" />
+			<xs:element ref="functiongradient" />
+			<xs:element ref="normalizedistance" />
 			<xs:element ref="functioncall" />
 			<xs:element ref="mesh" />
 			<xs:element ref="unsignedmesh" />
+			<xs:element ref="beamlattice" />
 			<xs:element ref="length" />
 			<xs:element ref="resourceid" />
+			<xs:element ref="constresourceid" />			
 			<xs:element ref="mod" />
-			<xs:any namespace="##other" processContents="lax" />
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 		</xs:choice>
 	</xs:group>
 
@@ -2913,7 +3008,7 @@
 				
 				<subtraction identifier="sub1" displayname="subtraction">
 					<in>
-						<scalarref identifier="A" ref="lentgth1.value"/>
+						<scalarref identifier="A" ref="length1.value"/>
 						<scalarref identifier="B" ref="inputs.radius"/>
 					</in>
 					<out>
@@ -2921,7 +3016,7 @@
 					</out>
 				</subtraction>								
 				<out>
-					<vectoref identifier="distance" ref="sub1.difference">
+					<vectorref identifier="distance" ref="sub1.difference"/>
 				</out>
 
 			</implicitfunction>
@@ -2937,7 +3032,8 @@
 						<xs:group ref="BasicNodeTypes"  />
 					</xs:choice>
 					<xs:element name="out" type="CT_Output" />
-					<xs:any namespace="##other" processContents="lax" />
+					<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/>
+
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
@@ -2957,7 +3053,7 @@
 					<scalarref identifier="radius" ref="othernode_1.result" />
 				</in>
 				<out>
-					<scalarref identifer="result" ref="mySphereFunction.distance"/>
+					<scalarref identifier="result" ref="mySphereFunction.distance"/>
 				</out>
 			</functioncall>
 			]]>
@@ -3016,7 +3112,7 @@
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			String containing 16 space seperated floating numbers.
+			String containing 16 space separated floating numbers.
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -3053,24 +3149,24 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<!-- Identifer for a scalar output -->
+	<!-- Identifier for a scalar output -->
 	<xs:simpleType name="ST_ScalarID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Identifer for a scalar output
+			Identifier for a scalar output
 			]]>
 			</xs:documentation>
 		</xs:annotation>
 		<xs:restriction base="ST_NodeOutputIdentifier" />
 	</xs:simpleType>
 
-	<!-- Identifer for a vector output -->
+	<!-- Identifier for a vector output -->
 	<xs:simpleType name="ST_VectorID">
 		<xs:annotation>
 			<xs:documentation>
 				<![CDATA[
-			Identifer for a vector output
+			Identifier for a vector output
 			]]>
 			</xs:documentation>
 		</xs:annotation>
@@ -3137,10 +3233,10 @@
 	<xs:element name="sin" type="CT_Sinus" />
 	<xs:element name="cos" type="CT_Cosinus" />
 	<xs:element name="tan" type="CT_Tan" />
-	<xs:element name="arcsin" type="CT_Arcsin" />
-	<xs:element name="arccos" type="CT_Arccos" />
-	<xs:element name="arctan" type="CT_Arctan" />
-	<xs:element name="arctan2" type="CT_Arctan2" />
+	<xs:element name="asin" type="CT_ASin" />
+	<xs:element name="acos" type="CT_ACos" />
+	<xs:element name="atan" type="CT_ATan" />
+	<xs:element name="atan2" type="CT_ATan2" />
 	<xs:element name="min" type="CT_Min" />
 	<xs:element name="max" type="CT_Max" />
 	<xs:element name="abs" type="CT_Abs" />
@@ -3161,12 +3257,14 @@
 	<xs:element name="floor" type="CT_Floor" />
 	<xs:element name="sign" type="CT_Sign" />
 	<xs:element name="fract" type="CT_Fract" />
+	<xs:element name="functiongradient" type="CT_FunctionGradient" />
+	<xs:element name="normalizedistance" type="CT_NormalizeDistance" />
 	<xs:element name="functioncall" type="CT_FunctionCall" />
 	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
 	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
+	<xs:element name="beamlattice" type="CT_SignedDistanceToBeamLattice" />
 	<xs:element name="length" type="CT_Length" />
 	<xs:element name="constresourceid" type="CT_ConstResourceID" />
 	<xs:element name="mod" type="CT_Mod" />
-
 
 </xs:schema>

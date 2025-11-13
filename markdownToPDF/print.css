@@ -1,0 +1,90 @@
+/* Print overrides for wkhtmltopdf to avoid left-side clipping and enforce full-width layout */
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* GitHub/Grip typically wraps content in .markdown-body with fixed padding and max-width */
+.markdown-body, .container, .container-lg, .clearfix, .boxed-group, #readme, .readme {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Remove GitHub "Box" borders/shadows around README containers */
+#readme, .readme, .Box, .Box-body, .Box-header, .container-lg, .markdown-body {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* Images and SVGs scale to page width */
+img, svg, video, canvas {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Ensure code blocks wrap and don't overflow page width */
+pre, code, pre code {
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+}
+
+/* Tables shouldn't overflow the page */
+table {
+  width: 100% !important;
+  table-layout: auto !important; /* allow natural column widths to reduce wrapping */
+  word-break: normal !important; /* avoid breaking inside words globally */
+}
+
+/* More compact table typography for print */
+.markdown-body table, table {
+  font-size: 10px !important;
+  line-height: 1.25 !important;
+}
+.markdown-body table th, table th {
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+}
+.markdown-body table td, .markdown-body table th, table td, table th {
+  padding: 4px 6px !important;  /* tighter padding */
+}
+.markdown-body table code, table code {
+  font-size: 10px !important;
+}
+
+/* Reduce wrapping while keeping current font size */
+.markdown-body table td, .markdown-body table th, table td, table th {
+  vertical-align: top !important;
+  /* keep padding as defined above */
+}
+
+
+/* Let the last column (e.g., Annotation) wrap as needed */
+.markdown-body table th:last-child,
+.markdown-body table td:last-child,
+table th:last-child,
+table td:last-child {
+  white-space: normal !important;
+  word-break: break-word !important;
+  overflow-wrap: anywhere !important;
+  hyphens: auto !important;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  page-break-after: avoid;
+}
+
+/* Body font size (target .markdown-body to override GitHub styles) */
+body, .markdown-body { font-size: 12px !important; }
+/* Optional: keep paragraphs readable after size change */
+.markdown-body p, .markdown-body li { line-height: 1.4 !important; }
+
+/* Remove horizontal rules if any theme injects them */
+hr {
+  border: 0 !important;
+  height: 0 !important;
+}
