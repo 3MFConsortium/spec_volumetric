@@ -6,7 +6,7 @@
 
 | **Version** | 1.0.0 |
 | --- | --- |
-| **Status** | Draft |
+| **Status** | Published |
 
 ## Disclaimer
 
@@ -48,7 +48,7 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
 
 | **Version** | **Changes Description** | **Date** |
 | --- | --- | --- |
-| 1.0 | First published version | November 7, 2025 |
+| 1.0 | First published version | November 13, 2025 |
 
 # Preface
 
