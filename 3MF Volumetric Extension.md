@@ -489,7 +489,7 @@ The child elements of the `<volumedata>` element reference a function that must 
 Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the `<volumedata>` applies to a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
 
-The `<volumedata>` element can contain up to one `<composite>` child element, up to one `<color>` element, and up to 2^31-1 `<property>` elements.
+The `<volumedata>` element can contain up to one `<composite>` child element, up to one `<color>` element, up to one `<translucency>` element, and up to 2^31-1 `<property>` elements.
 
 The child elements modify the enclosing Shape by specifying color, material composition and other arbitrary properties of the Shape object.
 
@@ -619,7 +619,42 @@ If this attribute is set, any undefined result MUST be evaluated as the provided
 
 If the sampled value of a `<function>` is `<0` it must be evaluated as "0".
 
-### 5.2.4 Property element
+### 5.2.4 Translucency element
+
+Element **\<translucency>**
+
+![translucency XML structure](images/element_translucency.png)
+
+| Name           | Type          | Use      | Default | Annotation                                                |
+| -------------- | ------------- | -------- | ------- | --------------------------------------------------------- |
+| functionid     | ST_ResourceID | required |         | ResourceID of the `<function>` providing the translucency value. |
+| transform      | ST_Matrix3D   |          |         | Transformation of the object coordinate system into the coordinate system of the referenced function. |
+| channel        | xs:QName      | required |         | Name of the function output to be used as the translucency value. The output must be a scalar. |
+| minfeaturesize | ST_PositiveNumber |      | 0       | Hint for the minimum size of features. |
+| fallbackvalue  | ST_Number     |          | 0       | Specifies the value to be used for this data element if the output of the referenced function is undefined. |
+
+The `<translucency>` element defines the translucency of the object as a scalar field that MAY vary throughout the volume of the enclosing Shape. The sampled scalar value is interpreted as the one-parameter "translucency alpha" as defined by ISO 19307:2026, _Graphic technology — Measurement and one-parameter representation of translucency_, and carries the same meaning as the material translucency property of the 3MF Materials and Properties extension. Whereas that extension requires translucency alpha to be constant across a connected component ("shell") of a mesh, this element generalizes the quantity to a spatially varying field, which is the intended use within the volumetric extension.
+
+A `<volumedata>` element can contain up to one `<translucency>` element. To simplify parsing, producers MUST define the function referenced by functionid prior to the `<translucency>`-element.
+
+**transform**:
+
+The transformation of the object coordinate system into the coordinate system of the function.
+If this `<translucency>`-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
+
+**channel**:
+
+Name of the function output to be used as the translucency value. The output must be a scalar. The valid range and interpretation of the value are defined normatively by ISO 19307:2026; values outside this range MUST be clamped to it.
+
+**minfeaturesize**:
+
+The minimum size of features to be considered in the translucency field. This is used as a hint for the consumer to determine the resolution of the translucency estimation. If the consumer is not able to resolve features of this size, it SHOULD raise a warning.
+
+**fallbackvalue**:
+
+Any undefined result MUST be evaluated as the provided value.
+
+### 5.2.5 Property element
 
 Element **\<property>**
 
@@ -3161,6 +3196,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:element ref="composite" minOccurs="0" maxOccurs="1"/>
 			<xs:element ref="color" minOccurs="0" maxOccurs="1"/>
+			<xs:element ref="translucency" minOccurs="0" maxOccurs="1"/>
 			<xs:element ref="property" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/> 
 		</xs:sequence>
@@ -3235,6 +3271,18 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
+	<xs:complexType name="CT_Translucency">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
+		</xs:sequence>
+		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="ST_PositiveNumber" default="0" />
+		<xs:attribute name="fallbackvalue" type="ST_Number" default="0" />
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
+
 	<!-- Simple Types -->
 	<xs:simpleType name="ST_TileStyle">
 		<xs:restriction base="xs:string">
@@ -3294,6 +3342,7 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="composite" type="CT_Composite"/>
 	<xs:element name="materialmapping" type="CT_MaterialMapping"/>
 	<xs:element name="color" type="CT_Color"/>
+	<xs:element name="translucency" type="CT_Translucency"/>
 	<xs:element name="property" type="CT_Property"/>
 	<xs:element name="mesh" type="CT_Mesh"/>
 	<xs:element name="levelset" type="CT_LevelSet"/>
@@ -6589,6 +6638,8 @@ Implicit http://schemas.3mf.io/3dmanufacturing/implicit/2023/12
 [1] Pasko, Alexander, et al. "Function representation in geometric modeling: concepts, implementation and applications." The visual computer 11.8 (1995): 429-446.
 
 [2] Wyvill, Brian, Andrew Guy, and Eric Galin. "Extending the csg tree. warping, blending and boolean operations in an implicit surface modeling system." Computer Graphics Forum. Vol. 18. No. 2. Oxford, UK and Boston, USA: Blackwell Publishers Ltd, 1999.
+
+[3] ISO 19307:2026, _Graphic technology — Measurement and one-parameter representation of translucency_. https://www.iso.org/standard/64088.html
 
 See also [the standard 3MF References](https://github.com/3MFConsortium/spec_resources/blob/master/references.md).
 
