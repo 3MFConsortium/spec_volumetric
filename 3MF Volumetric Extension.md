@@ -39,7 +39,7 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
   - [Chapter 7. Notes](#chapter-7-notes)
 - [Part III. Appendices](#part-iii-appendices)
   - [Appendix A. Glossary](#appendix-a-glossary)
-    - [Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-and-implicit-extensions)
+    - [Appendix B. 3MF XSD Schema for the Volumetric, Implicit, and MeshSurface Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-implicit-and-meshsurface-extensions)
     - [Appendix C. Namespaces](#appendix-c-namespaces)
   - [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
@@ -92,7 +92,7 @@ This extension MUST be used only with Core specification version 1.3. or higher.
 See the standard 3MF Document Conventions documentation:
 https://github.com/3MFConsortium/spec_resources/blob/master/document_conventions.md
 
-In this extension specification, the prefix "m" maps to the XML namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02", "v" to "http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01" and "i" to "http://schemas.3mf.io/3dmanufacturing/implicit/2023/12". See Appendix C. Namespaces.
+In this extension specification, the prefix "m" maps to the XML namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02", "v" to "http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01", "i" to "http://schemas.3mf.io/3dmanufacturing/implicit/2023/12" and "s" to "http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09". See Appendix C. Namespaces.
 
 ## Language Notes
 
@@ -2314,7 +2314,7 @@ The `pos` input MUST be an `<i:vectorref>` and the `mesh` input MUST be an `<i:r
 | `color` | vector | Resolved surface color at the selected surface point. The x-, y-, and z-components contain the red, green, and blue components, respectively. |
 | `translucency` | scalar | Resolved surface translucency at the selected surface point. |
 
-The `<i:out>` element MUST declare each output consumed by the graph using the existing `<i:scalar>` or `<i:vector>` output elements. Output identifiers and types MUST match the table above.
+The `<s:out>` element MUST declare each output consumed by the graph using the existing `<i:scalar>` or `<i:vector>` output elements. Output identifiers and types MUST match the table above.
 
 All outputs produced by one node evaluation MUST correspond to the same selected surface point and selected triangle.
 
@@ -2360,13 +2360,13 @@ When the Materials and Properties Extension assigns translucency to the selected
 
 The meaning, valid range, units, interpolation behavior, and scale dependence of translucency are defined by the Materials and Properties Extension and its normative references. Values outside the valid range MUST be handled as specified by that extension. If translucency is not assigned or cannot be resolved at the selected surface point, `translucency` is undefined.
 
-The `<i:meshsurface>` node does not define how a surface property is used at positions away from the surface. A producer that uses `color`, `translucency`, `texcoord`, or another result of the query within a volume MUST express the intended spatial behavior explicitly in the function graph. Such behavior can include attenuation, masking, shell generation, inward extension, or displacement.
+The `<s:meshsurface>` node does not define how a surface property is used at positions away from the surface. A producer that uses `color`, `translucency`, `texcoord`, or another result of the query within a volume MUST express the intended spatial behavior explicitly in the function graph. Such behavior can include attenuation, masking, shell generation, inward extension, or displacement.
 
 Properties not represented by an output listed in this section are not exposed by this node.
 
 ### Evaluation independence
 
-Evaluation of `<i:meshsurface>` at a position MUST be independent of evaluations at all other positions. A conforming consumer MUST NOT require any of the following to evaluate this node:
+Evaluation of `<s:meshsurface>` at a position MUST be independent of evaluations at all other positions. A conforming consumer MUST NOT require any of the following to evaluate this node:
 
 - flood filling or region growing on a voxel grid;
 - iterative diffusion or relaxation;
@@ -2403,20 +2403,20 @@ The following example applies the translucency resolved at the nearest surface p
   </i:out>
 </i:constresourceid>
 
-<i:meshsurface identifier="surface" displayname="Surface query">
-  <i:in>
+<s:meshsurface identifier="surface" displayname="Surface query">
+	<s:in>
     <i:vectorref identifier="pos" ref="inputs.pos"/>
     <i:resourceref identifier="mesh" ref="meshId.value"/>
-  </i:in>
-  <i:out>
+	</s:in>
+	<s:out>
     <i:scalar identifier="distance"/>
     <i:vector identifier="position"/>
     <i:vector identifier="normal"/>
     <i:vector identifier="texcoord"/>
     <i:vector identifier="color"/>
     <i:scalar identifier="translucency"/>
-  </i:out>
-</i:meshsurface>
+	</s:out>
+</s:meshsurface>
 
 <i:constant identifier="depth" value="5.0">
   <i:out>
@@ -2468,7 +2468,7 @@ The following example applies the translucency resolved at the nearest surface p
 </i:multiplication>
 ```
 
-The function graph defines the depth-dependent use of the surface property. The `<i:meshsurface>` node performs no inward propagation.
+The function graph defines the depth-dependent use of the surface property. The `<s:meshsurface>` node performs no inward propagation.
 
 The `color` and `texcoord` outputs can be connected to compatible vector inputs of function calls or extension-defined nodes. Texture and property semantics remain those of the extensions defining the corresponding resources.
 
@@ -3285,7 +3285,7 @@ The native nodes provided can create graphs that have regions that will evaluate
 
 See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/blob/master/glossary.md).
 
-## Appendix B. 3MF XSD Schema for the Volumetric and Implicit Extensions
+## Appendix B. 3MF XSD Schema for the Volumetric, Implicit, and MeshSurface Extensions
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -5654,42 +5654,6 @@ _sheet0.png_
 		</xs:complexContent>
 	</xs:complexType>
 
-	<!-- mesh surface query -->
-	<xs:complexType name="CT_MeshSurface">
-		<xs:annotation>
-			<xs:documentation>
-				<![CDATA[
-			Node for evaluating the closest point on a referenced mesh surface and the attributes associated with that point.
-			The input must have the identifier "pos" and must be a vector. The mesh is referenced by a resource input with
-			the identifier "mesh". The output declarations use scalar and vector values with the identifiers defined by
-				the meshsurface node. All outputs of one evaluation refer to the same selected surface point and triangle.
-			]]>
-			</xs:documentation>
-		</xs:annotation>
-		<xs:complexContent>
-			<xs:extension base="CT_Node">
-				<xs:all>
-					<xs:element name="in" minOccurs="1" maxOccurs="1">
-						<xs:complexType>
-							<xs:all>
-								<xs:element ref="vectorref" />
-								<xs:element ref="resourceref" />
-							</xs:all>
-						</xs:complexType>
-					</xs:element>
-					<xs:element name="out" minOccurs="1" maxOccurs="1">
-						<xs:complexType>
-							<xs:choice minOccurs="1" maxOccurs="6">
-								<xs:element ref="scalar" />
-								<xs:element ref="vector" />
-							</xs:choice>
-						</xs:complexType>
-					</xs:element>
-				</xs:all>
-			</xs:extension>
-		</xs:complexContent>
-	</xs:complexType>
-
 	<!-- length of a vector -->
 	<xs:complexType name="CT_Length">
 		<xs:annotation>
@@ -6551,7 +6515,6 @@ _sheet0.png_
 			<xs:element ref="functioncall" />
 			<xs:element ref="mesh" />
 			<xs:element ref="unsignedmesh" />
-			<xs:element ref="meshsurface" />
 			<xs:element ref="beamlattice" />
 			<xs:element ref="length" />
 			<xs:element ref="resourceid" />
@@ -6842,13 +6805,70 @@ _sheet0.png_
 	<xs:element name="functioncall" type="CT_FunctionCall" />
 	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
 	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
-	<xs:element name="meshsurface" type="CT_MeshSurface" />
 	<xs:element name="beamlattice" type="CT_SignedDistanceToBeamLattice" />
 	<xs:element name="length" type="CT_Length" />
 	<xs:element name="constresourceid" type="CT_ConstResourceID" />
 	<xs:element name="mod" type="CT_Mod" />
 
 </xs:schema>```
+
+The following schema defines the MeshSurface namespace:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+	elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all"
+	xmlns="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:i="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12">
+	<xs:import namespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
+		schemaLocation="implicit.xsd" />
+
+	<xs:annotation>
+		<xs:documentation>
+			<![CDATA[
+		MeshSurface extension schema.
+		The meshsurface node uses the existing implicit graph reference and output elements.
+		]]>
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:complexType name="CT_MeshSurface">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node for evaluating the closest point on a referenced mesh surface and the attributes associated with that point.
+			All outputs of one evaluation refer to the same selected surface point and triangle.
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="i:CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:all>
+								<xs:element ref="i:vectorref" />
+								<xs:element ref="i:resourceref" />
+							</xs:all>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:choice minOccurs="1" maxOccurs="6">
+								<xs:element ref="i:scalar" />
+								<xs:element ref="i:vector" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:element name="meshsurface" type="CT_MeshSurface" />
+</xs:schema>
+```
 
 _sheet1.png_
 ![sheet1.png](images/sheet1.png)
@@ -6858,6 +6878,8 @@ _sheet1.png_
 Volumetric http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01
 
 Implicit http://schemas.3mf.io/3dmanufacturing/implicit/2023/12
+
+MeshSurface http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09
 
 # References
 

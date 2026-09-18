@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+	elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all"
+	xmlns="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:i="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12">
+	<xs:import namespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
+		schemaLocation="implicit.xsd" />
+
+	<xs:annotation>
+		<xs:documentation>
+			<![CDATA[
+		MeshSurface extension schema.
+		The meshsurface node uses the existing implicit graph reference and output elements.
+		]]>
+		</xs:documentation>
+	</xs:annotation>
+
+	<xs:complexType name="CT_MeshSurface">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node for evaluating the closest point on a referenced mesh surface and the attributes associated with that point.
+			All outputs of one evaluation refer to the same selected surface point and triangle.
+				]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="i:CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:all>
+								<xs:element ref="i:vectorref" />
+								<xs:element ref="i:resourceref" />
+							</xs:all>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:choice minOccurs="1" maxOccurs="6">
+								<xs:element ref="i:scalar" />
+								<xs:element ref="i:vector" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:element name="meshsurface" type="CT_MeshSurface" />
+</xs:schema>
