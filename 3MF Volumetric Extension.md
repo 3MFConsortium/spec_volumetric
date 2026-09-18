@@ -938,6 +938,7 @@ Overview of native nodes
 | [beamlattice](#beamlattice) | signed distance to beam lattice operation  |
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
+| [meshsurface](#meshsurface) | closest point and surface property query |
 | [length](#length)          | length operation                           |
 | [constresourceid](#constresourceid)  | constant resource ID                       |
 
@@ -2284,6 +2285,163 @@ The operation can be used for the following types of inputs and outputs:
 </i:unsignedmesh>
 
 ```
+
+## meshsurface
+
+**Description:** Evaluates the surface of a referenced mesh at an input position. The node selects one point on the mesh with minimum Euclidean distance to the input position and exposes the selected point and the attributes associated with it. The referenced mesh need not be closed or watertight.
+
+The mesh is referenced through the existing resource-reference mechanism. The `mesh` input MUST identify an object that contains a mesh. The input position and the referenced mesh MUST use the same coordinate system. A producer that needs to change coordinate systems MUST use the matrix operations already defined by this extension.
+
+The node is a pointwise query. It does not create or modify geometry, sample neighboring evaluation positions, or propagate a surface value through a volume.
+
+**Inputs:**
+
+| Identifier | Type | Description |
+|------------|------|-------------|
+| pos | vector | Position at which the mesh is queried. |
+| mesh | resource reference | Resource reference to the mesh object. |
+
+The `pos` input MUST be a `<i:vectorref>` and the `mesh` input MUST be a `<i:resourceref>`. The resource reference uses the same `ST_ResourceOutputID` and `<i:resourceref>` conventions as the other native nodes.
+
+**Outputs:**
+
+| Identifier | Type | Description |
+|------------|------|-------------|
+| distance | scalar | Unsigned Euclidean distance from `pos` to the selected surface point. |
+| position | vector | Selected surface point in the coordinate system of the referenced mesh. |
+| normal | vector | Unit surface normal at the selected surface point. |
+| texcoord | vector | Texture coordinates at the selected surface point. The x- and y-components contain the `u` and `v` coordinates, respectively; the z-component is zero. |
+| color | vector | Resolved surface color at the selected surface point. The x-, y-, and z-components contain the red, green, and blue components, respectively. |
+| translucency | scalar | Resolved surface translucency at the selected surface point. |
+
+The `<i:out>` element MUST declare each output that is consumed by the graph using the existing `<i:scalar>` or `<i:vector>` output elements. The identifiers and types MUST match the table above. All declared outputs of one node evaluation MUST correspond to the same selected surface point and selected triangle.
+
+### Closest surface point
+
+For an input position `p` and the set `M` of all points on all triangles of the referenced mesh, the selected surface point `q` MUST satisfy:
+
+```text
+||p - q|| = min ||p - x||, for all x in M
+```
+
+The `distance` output MUST equal `||p - q||`. A consumer MAY use any algorithm that produces this result. The specification does not require exhaustive triangle testing, a particular acceleration structure, a voxel representation, or an iterative propagation algorithm.
+
+If multiple points on the mesh have the same minimum distance to `p`, the consumer MAY select any one of them. The selected point MUST be associated with one triangle that contains it. If the point lies on an edge or vertex shared by multiple triangles, the consumer MAY select any incident triangle for which the point is a closest point. The consumer MUST evaluate all outputs from that selected triangle and point; it MUST NOT blend values from multiple equally close triangles.
+
+Outputs of the node MAY be discontinuous at positions with multiple closest surface points. Producers MUST NOT assume continuity at such positions.
+
+### Attribute interpolation
+
+An attribute assigned at the vertices of the selected triangle MUST be evaluated using the barycentric coordinates of the selected point on that triangle, unless the extension that defines the attribute specifies another interpolation rule. The same barycentric coordinates MUST be used for all vertex-assigned attributes evaluated by this node.
+
+If per-vertex normals are available through an applicable extension, the `normal` output MUST be evaluated according to the interpolation and normalization rules of that extension. Otherwise, it MUST be the geometric normal of the selected triangle. The returned normal MUST have unit length unless it is undefined, and its orientation MUST follow the orientation of the selected triangle. The normal is undefined for a selected triangle whose area is zero.
+
+If texture-coordinate properties are assigned to the selected triangle, the `texcoord` output MUST be evaluated using the property assignment and interpolation rules of the Materials and Properties Extension. Texture addressing, filtering, color-space conversion, and channel interpretation are defined by the extension that defines the referenced texture. If texture coordinates are not available, `texcoord` is undefined.
+
+### Surface properties
+
+The `color` output MUST be resolved according to the Materials and Properties Extension, including its property assignment and texture rules. It uses the same linearized sRGB interpretation as the `color` element of `<v:volumedata>`. If a color cannot be resolved for the selected surface point, `color` is undefined.
+
+When the Materials and Properties Extension assigns translucency to the selected surface point, the `translucency` output MUST return the resolved value according to that extension. Its meaning, valid range, units, interpolation behavior, and scale dependence are defined by the Materials and Properties Extension and its normative references. Values outside the valid range MUST be handled as specified by that extension. If translucency is not assigned or cannot be resolved, `translucency` is undefined.
+
+The mesh-surface query does not define the spatial meaning of a surface property away from the selected surface point. A producer that uses `color`, `translucency`, `texcoord`, or another query result within a volume MUST express attenuation, masking, shell generation, displacement, or other spatial behavior explicitly in the function graph. Properties that are not represented by an output in this table are not exposed by this node.
+
+### Evaluation independence
+
+Evaluation of `<i:meshsurface>` at a position MUST be independent of evaluations at all other positions. A conforming consumer MUST NOT require any of the following as part of evaluating this node:
+
+- flood filling or region growing on a voxel grid;
+- iterative diffusion or relaxation;
+- repeated neighbor sampling until convergence;
+- propagation from previously evaluated positions; or
+- construction of a dense signed-distance or surface-property field.
+
+An implementation MAY preprocess the referenced mesh, construct a spatial acceleration structure, cache results, or use another optimization. The node MUST remain evaluatable independently for arbitrary positions and MUST permit evaluation on parallel processors.
+
+When multiple outputs of the same node are consumed, they semantically originate from one surface query. Consumers SHOULD avoid redundant surface searches while preserving the common selected point and triangle.
+
+### Undefined results
+
+If the mesh reference is invalid, the mesh contains no triangles, or an output cannot be evaluated, that output is undefined. An absent, unsupported, or unresolvable surface property MUST result in an undefined corresponding property output; it MUST NOT be silently replaced by zero. Undefined results are handled according to [Chapter 6.2](#62-undefined-results-and-fallback-values). This node has no additional validity output.
+
+**Example Usage:**
+
+The following example uses the existing resource-reference and node-link conventions to apply a surface translucency only within a bounded distance from a mesh surface.
+
+```xml
+
+<i:constresourceid identifier="meshId" value="7">
+	<i:out>
+		<i:resourceid identifier="value"/>
+	</i:out>
+</i:constresourceid>
+
+<i:meshsurface identifier="surface" displayname="Surface query">
+	<i:in>
+		<i:vectorref identifier="pos" ref="inputs.pos"/>
+		<i:resourceref identifier="mesh" ref="meshId.value"/>
+	</i:in>
+	<i:out>
+		<i:scalar identifier="distance"/>
+		<i:vector identifier="position"/>
+		<i:vector identifier="normal"/>
+		<i:vector identifier="texcoord"/>
+		<i:vector identifier="color"/>
+		<i:scalar identifier="translucency"/>
+	</i:out>
+</i:meshsurface>
+
+<i:constant identifier="depth" value="5.0">
+	<i:out>
+		<i:scalar identifier="value"/>
+	</i:out>
+</i:constant>
+
+<i:constant identifier="zero" value="0.0">
+	<i:out>
+		<i:scalar identifier="value"/>
+	</i:out>
+</i:constant>
+
+<i:constant identifier="one" value="1.0">
+	<i:out>
+		<i:scalar identifier="value"/>
+	</i:out>
+</i:constant>
+
+<i:subtraction identifier="remainingDepth">
+	<i:in>
+		<i:scalarref identifier="A" ref="depth.value"/>
+		<i:scalarref identifier="B" ref="surface.distance"/>
+	</i:in>
+	<i:out>
+		<i:scalar identifier="result"/>
+	</i:out>
+</i:subtraction>
+
+<i:clamp identifier="depthWeight">
+	<i:in>
+		<i:scalarref identifier="A" ref="remainingDepth.result"/>
+		<i:scalarref identifier="min" ref="zero.value"/>
+		<i:scalarref identifier="max" ref="one.value"/>
+	</i:in>
+	<i:out>
+		<i:scalar identifier="result"/>
+	</i:out>
+</i:clamp>
+
+<i:multiplication identifier="volumeTranslucency">
+	<i:in>
+		<i:scalarref identifier="A" ref="surface.translucency"/>
+		<i:scalarref identifier="B" ref="depthWeight.result"/>
+	</i:in>
+	<i:out>
+		<i:scalar identifier="result"/>
+	</i:out>
+</i:multiplication>
+```
+
+The function graph defines the depth behavior. The mesh-surface query performs no inward propagation. The `color` and `texcoord` outputs can be connected to existing vector inputs of a function call or a private extension function; the texture and property semantics remain those of the extensions that define them.
 
 ## length
 
@@ -5466,6 +5624,42 @@ _sheet0.png_
 		</xs:complexContent>
 	</xs:complexType>
 
+	<!-- mesh surface query -->
+	<xs:complexType name="CT_MeshSurface">
+		<xs:annotation>
+			<xs:documentation>
+				<![CDATA[
+			Node for evaluating the closest point on a referenced mesh surface and the attributes associated with that point.
+			The input must have the identifier "pos" and must be a vector. The mesh is referenced by a resource input with
+			the identifier "mesh". The output declarations use scalar and vector values with the identifiers defined by
+				the meshsurface node. All outputs of one evaluation refer to the same selected surface point and triangle.
+			]]>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:complexContent>
+			<xs:extension base="CT_Node">
+				<xs:all>
+					<xs:element name="in" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:all>
+								<xs:element ref="vectorref" />
+								<xs:element ref="resourceref" />
+							</xs:all>
+						</xs:complexType>
+					</xs:element>
+					<xs:element name="out" minOccurs="1" maxOccurs="1">
+						<xs:complexType>
+							<xs:choice minOccurs="1" maxOccurs="6">
+								<xs:element ref="scalar" />
+								<xs:element ref="vector" />
+							</xs:choice>
+						</xs:complexType>
+					</xs:element>
+				</xs:all>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
 	<!-- length of a vector -->
 	<xs:complexType name="CT_Length">
 		<xs:annotation>
@@ -6327,6 +6521,7 @@ _sheet0.png_
 			<xs:element ref="functioncall" />
 			<xs:element ref="mesh" />
 			<xs:element ref="unsignedmesh" />
+			<xs:element ref="meshsurface" />
 			<xs:element ref="beamlattice" />
 			<xs:element ref="length" />
 			<xs:element ref="resourceid" />
@@ -6617,6 +6812,7 @@ _sheet0.png_
 	<xs:element name="functioncall" type="CT_FunctionCall" />
 	<xs:element name="mesh" type="CT_SignedDistanceToMesh" />
 	<xs:element name="unsignedmesh" type="CT_UnsignedDistanceToMesh" />
+	<xs:element name="meshsurface" type="CT_MeshSurface" />
 	<xs:element name="beamlattice" type="CT_SignedDistanceToBeamLattice" />
 	<xs:element name="length" type="CT_Length" />
 	<xs:element name="constresourceid" type="CT_ConstResourceID" />
