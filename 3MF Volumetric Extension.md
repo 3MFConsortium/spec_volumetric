@@ -5335,7 +5335,7 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:all>
 								<xs:element ref="vectorref" />
-								<xs:element name="resourceref" type="ST_ResourceID" />
+								<xs:element ref="resourceref" />
 							</xs:all>
 						</xs:complexType>
 					</xs:element>
@@ -5394,7 +5394,7 @@ _sheet0.png_
 							</xs:annotation>
 							<xs:all>
 								<xs:element ref="vectorref" />
-								<xs:element name="resourceref" type="ST_ResourceID" />
+								<xs:element ref="resourceref" />
 							</xs:all>
 						</xs:complexType>
 					</xs:element>
