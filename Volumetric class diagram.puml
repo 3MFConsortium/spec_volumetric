@@ -1,15 +1,114 @@
-@startuml
+@startuml name
+title 3MF Volumetric & Implicit
+'left to right direction
+top to bottom direction
 
-title 3MF Volumetric 3D-Vector & Scalar Fields
+package Resources
+{
+    Class Object
+    Class Mesh extends Object
+
+    Class LevelSet extends Object
+    {
+        functionid : resourceID
+        channel : string
+        transform : Matrix
+        minfeaturesize : double
+        meshbboxonly : bool
+        fallbackvalue : double
+        solidthreshold : double
+        meshid : resourceID
+        volumeid : resourceID
+    }
+    Class VolumeData
+    Mesh *-- VolumeData
+    LevelSet *-- VolumeData
+
+    package Functions
+    {
+        Class Function
+        {
+            id: resourceID
+            displayname: string
+        }
+
+        Function *-- "1" Input
+        Function *-- "1" Output
+
+        Class FunctionFromImage3d extends Function
+        {
+            image3did : resourceID
+            valueoffset: double
+            valuescale: double
+            filter : string
+            tilestyleu : string
+            tilestylev : string
+            tilestylew : string
+        }
+        FunctionFromImage3d o-- "1" Image3D
+
+        Class FunctionImplicit extends Function
+        {
+            xmlns: implicit
+        }
+        FunctionImplicit *-- "0..*" Node_
+
+        Class PrivateExtensionFunction extends Function
+        {
+            xmlns: XYZ
+        }
+    }
+    package VolumetricData
+    {
+        Class Color
+        {
+            functionid : resourceID
+            minfeaturesize : double
+            fallbackvalue : double
+        }
+
+        Class Property
+        {
+            name : string
+            functionid : resourceID
+            minfeaturesize : double
+            fallbackvalue : double
+        }
+
+        Class Composite
+        {
+            basematerialid : resourceID
+        }
+
+        Class MaterialMapping
+        {
+            functionid : resourceID
+            minfeaturesize : double
+            fallbackvalue : double
+        }
+
+        VolumeData *-- "0..1" Color
+        VolumeData *-- "0..*" Property
+        VolumeData *-- "0..1" Composite
+        Composite *-- "1..*" MaterialMapping
+
+        Color o-- "1" Function
+        Property o-- "1" Function
+        MaterialMapping o-- "1" Function
+    }
+
+}
+
+
 
 package Image3D
 {
-    class Image3D
+    Class Image3D
     {
         id : resourceID
         name : string
     }
-    
+
     Class ImageStack extends Image3D
     {
         rowcount : int
@@ -25,141 +124,112 @@ package Image3D
     ImageStack *-- "1..*" ImageSheet
 }
 
-package ScalarFields
+package DataTypes
 {
-    Class ScalarField
+    Class ScalarRef
     {
-        id: resourceID
-        name: string
+        identifer: string
     }
 
-    Class ScalarFieldComposed extends ScalarField
+    Class VectorRef
     {
-        method : string
-        scalarfield1id : resourceID
-        scalarfield2id : resourceID
-        scalarmaskfieldid : resourceID
-        factor1 : double
-        factor2 : double
-        transform1 : transform
-        transform2 : transform
-        transformmask : transform
+        identifer: string
     }
 
-    Class ScalarFieldFromImage3D extends ScalarField
+    Class MatrixRef
     {
-        image3did : resourceID
-        channel : string
-        filter : string
-        valueoffset: double
-        valuescale: double
-        tilestyleu : string
-        tilestylev : string
-        tilestylew : string
+        identifer: string
     }
 
-    Class ScalarFieldConstant extends ScalarField
+    Class ResourceRef
     {
-        value: double
+        identifer: string
     }
 
-    ScalarFieldComposed o-- "1..3" ScalarField
-    ScalarFieldFromImage3D o-- "1" Image3D
+    class Scalar{}
+    class Vector{}
+    class Matrix{}
+
+    ScalarRef o-- "0..*" Scalar
+    VectorRef o-- "0..*" Vector
+    MatrixRef o-- "0..*" Matrix
+    ResourceRef o-- "0..*" Mesh
+    ResourceRef o-- "0..*" Image3D
+    ResourceRef o-- "0..*" Function
 }
 
-package Vector3DFields
+package FunctionArguments
 {
-    Class Vector3DField
+    Class Input
     {
-        id: resourceID
-        name: string
-    }
 
-    Class Vector3DFieldComposed extends Vector3DField
+    }
+    Class Output
     {
-        method : string
-        vector3dfield1id : resourceID
-        vector3dfield2id : resourceID
-        scalarmaskfieldid : resourceID
-        factor1 : double
-        factor2 : double
-        transform1 : transform
-        transform2 : transform
-        transformmask : transform
-        compositionspace : string
-    }
 
-    Class Vector3DFieldFromImage3D extends Vector3DField
-    {
-        image3did : resourceID
-        valueoffset: double
-        valuescale: double
-        filter : string
-        tilestyleu : string
-        tilestylev : string
-        tilestylew : string
     }
-
-    Class Vector3DFieldConstant extends Vector3DField
-    {
-        valuex: double
-        valuey: double
-        valuez: double
-    }
-
-    Vector3DFieldComposed o-- "2" Vector3DField
-    Vector3DFieldComposed o-- "0..1 mask" ScalarField
-    Vector3DFieldFromImage3D o-- "1" Image3D
+    Input *-- "0..*" Scalar
+    Input *-- "0..*" Vector
+    Input *-- "0..*" Matrix
+    Output *-- "0..*" ScalarRef
+    Output *-- "0..*" VectorRef
+    Output *-- "0..*" MatrixRef
 }
 
-package VolumetricData
+package NodeArguments
 {
-    Class VolumeData
-
-    Class Boundary
+    Class In
     {
-        transform : matrix
-        solidthreshold : double
-        scalarfieldid : resourceID
+
     }
-
-    Class Color
+    Class Out
     {
-        vector3dfieldid : resourceID
-        transform : matrix
+
     }
-
-    Class Property
-    {
-        name : string
-        transform : matrix
-        fieldid : resourceID
-    }
-
-    Class Composite
-    {
-        basematerialid : resourceID
-    }
-
-    Class MaterialMapping
-    {
-        scalarfieldid : resourceID
-        transform : matrix
-    }        
-
-    VolumeData *-- "0..1" Boundary
-    VolumeData *-- "0..1" Color
-    VolumeData *-- "0..*" Property
-    VolumeData *-- "0..1" Composite
-    Composite *-- "1..*" MaterialMapping
-
-    Boundary o-- "1" ScalarField
-    Color o-- "1" Vector3DField
-    Property o-- "1" ScalarField
-    MaterialMapping o-- "1" ScalarField
+    Out *-- "0..*" Scalar
+    Out *-- "0..*" Vector
+    Out *-- "0..*" Matrix
+    In *-- "0..*" ScalarRef
+    In *-- "0..*" VectorRef
+    In *-- "0..*" MatrixRef
 }
 
-Class Mesh
-Mesh *-- VolumeData
+
+
+package Native
+{
+    Class Node_
+    {
+        xmlns: implicit
+
+        identifier: string
+        displayname: string
+    }
+
+    Class Addition extends Node_
+    {
+    }
+
+    Class Min extends Node_
+    {
+    }
+
+    Class MatVecMul extends Node_
+    {
+    }
+
+    Class FunctionCall extends Node_
+    {
+        functionID : ResourceRef
+    }
+
+    Class Mesh extends Node_
+    {
+        mesh : ResourceRef
+    }
+
+    Node_ *-- "0..1" In
+    Node_ *-- "0..1" Out
+}
 
 @enduml
