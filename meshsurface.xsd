@@ -22,6 +22,8 @@
 				<![CDATA[
 			Node for evaluating the closest point on a referenced mesh surface and the attributes associated with that point.
 			All outputs of one evaluation refer to the same selected surface point and triangle.
+			This schema validates only the structural types of inputs and outputs. Consumers MUST additionally validate the
+			required identifiers (inputs: pos, mesh; outputs: distance, position, normal, texcoord, color, translucency) and their types.
 				]]>
 			</xs:documentation>
 		</xs:annotation>

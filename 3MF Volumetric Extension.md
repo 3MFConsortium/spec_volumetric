@@ -938,9 +938,16 @@ Overview of native nodes
 | [beamlattice](#beamlattice) | signed distance to beam lattice operation  |
 | [mesh](#mesh)              | signed distance to mesh operation           |
 | [unsignedmesh](#unsignedmesh) | unsigned distance to mesh operation     |
-| [meshsurface](#meshsurface) | closest point and surface property query |
 | [length](#length)          | length operation                           |
 | [constresourceid](#constresourceid)  | constant resource ID                       |
+
+Extension-defined nodes
+
+The following nodes are not part of the Implicit Extension. They are defined in the MeshSurface namespace (prefix "s"). Support for the Implicit Extension alone does not imply support for these nodes.
+
+| Node Type                 | Description                                |
+|---------------------------|--------------------------------------------|
+| [meshsurface](#meshsurface) | closest point and surface property query |
 
 ## addition
 
@@ -2290,7 +2297,7 @@ The operation can be used for the following types of inputs and outputs:
 
 **Description:** Evaluates the surface of a referenced mesh at an input position. The node selects a point on the mesh having minimum Euclidean distance to the input position and exposes the selected point and associated surface attributes. The referenced mesh need not be closed, manifold, or watertight.
 
-The mesh is referenced using the existing resource-reference mechanism. The `mesh` input MUST identify an object that contains a mesh. The `pos` input and the referenced mesh MUST use the same coordinate system. A producer that needs to transform between coordinate systems MUST use the matrix operations defined by this extension.
+The mesh is referenced using the existing resource-reference mechanism. The `mesh` input MUST identify an object that has a `<mesh>` child element. An object containing `<components>` or any other geometry representation (for example a `<v:levelset>`) MUST NOT be referenced; such a reference yields undefined results. The `pos` input and the referenced mesh MUST use the same coordinate system. A producer that needs to transform between coordinate systems MUST use the matrix operations defined by this extension.
 
 The node is a pointwise surface query. It does not create or modify geometry, sample neighboring evaluation positions, or propagate surface values through a volume.
 
@@ -2303,13 +2310,15 @@ The node is a pointwise surface query. It does not create or modify geometry, sa
 
 The `pos` input MUST be an `<i:vectorref>` and the `mesh` input MUST be an `<i:resourceref>`. The resource reference uses the same `ST_ResourceOutputID` and `<i:resourceref>` conventions as the other native nodes.
 
+The XSD validates only the structural types of the inputs and outputs. Consumers MUST additionally validate the required identifiers and their types according to the input and output tables of this node, and MUST reject nodes that declare other identifiers or mismatching types.
+
 **Outputs:**
 
 | Identifier | Type | Description |
 |------------|------|-------------|
 | `distance` | scalar | Unsigned Euclidean distance from `pos` to the selected surface point. |
 | `position` | vector | Selected surface point in the coordinate system of the referenced mesh. |
-| `normal` | vector | Unit surface normal at the selected surface point. |
+| `normal` | vector | Unit geometric normal of the selected triangle. |
 | `texcoord` | vector | Texture coordinates at the selected surface point. The x- and y-components contain the `u` and `v` coordinates, respectively. The z-component is zero. |
 | `color` | vector | Resolved surface color at the selected surface point. The x-, y-, and z-components contain the red, green, and blue components, respectively. |
 | `translucency` | scalar | Resolved surface translucency at the selected surface point. |
@@ -2320,7 +2329,7 @@ All outputs produced by one node evaluation MUST correspond to the same selected
 
 ### Closest surface point
 
-For an input position `p` and the set `M` of all points on all non-degenerate triangles of the referenced mesh, the selected surface point `q` MUST satisfy:
+Degenerate triangles MUST be ignored when selecting the closest surface point. For an input position `p` and the set `M` of all points on all non-degenerate triangles of the referenced mesh, the selected surface point `q` MUST satisfy:
 
 ```text
 ||p - q|| = min { ||p - x|| | x in M }
@@ -2342,15 +2351,15 @@ Attributes assigned at the vertices of the selected triangle MUST be evaluated u
 
 The same selected triangle, selected point, and barycentric coordinates MUST be used for all vertex-assigned attributes evaluated by one node invocation.
 
-If per-vertex normals are available through an applicable extension, the `normal` output MUST be evaluated according to the interpolation and normalization rules of that extension. Otherwise, `normal` MUST be the geometric normal of the selected triangle.
-
-The returned normal MUST have unit length and its orientation MUST follow the orientation of the selected triangle. The `normal` output is undefined when a normal cannot be determined, including when the selected triangle is degenerate.
+The `normal` output MUST be the unit geometric normal of the selected triangle. It is not interpolated, and per-vertex normals provided by other extensions MUST NOT be used. Its orientation MUST follow the vertex winding order of the selected triangle (right-hand rule).
 
 If texture coordinates are assigned to the selected triangle, the `texcoord` output MUST be evaluated using the property-assignment and interpolation rules of the Materials and Properties Extension. The x- and y-components of the result contain the interpolated `u` and `v` coordinates, respectively. The z-component MUST be zero.
 
 Texture addressing, filtering, color-space conversion, and channel interpretation are defined by the extension that defines the referenced texture. If texture coordinates cannot be resolved at the selected surface point, `texcoord` is undefined.
 
 ### Surface properties
+
+The surface properties queried by this node are restricted to properties assigned to the referenced mesh according to the Materials and Properties Extension. Volumetric properties, including any `<v:volumedata>` referenced by the mesh, are not evaluated by `<s:meshsurface>`.
 
 The `color` output MUST be resolved according to the Materials and Properties Extension, including its property-assignment, interpolation, and texture rules.
 
@@ -2384,7 +2393,7 @@ When multiple outputs of the same node are consumed, they semantically originate
 
 The outputs of the node are undefined if:
 
-- the `mesh` input does not resolve to an object containing a mesh;
+- the `mesh` input does not resolve to an object that has a `<mesh>` child element;
 - the referenced mesh contains no non-degenerate triangles; or
 - the corresponding output cannot be evaluated from the selected surface point.
 
@@ -2446,9 +2455,19 @@ The following example applies the translucency resolved at the nearest surface p
   </i:out>
 </i:subtraction>
 
-<i:clamp identifier="depthWeight">
+<i:division identifier="normalizedDepth">
   <i:in>
     <i:scalarref identifier="A" ref="remainingDepth.result"/>
+    <i:scalarref identifier="B" ref="depth.value"/>
+  </i:in>
+  <i:out>
+    <i:scalar identifier="result"/>
+  </i:out>
+</i:division>
+
+<i:clamp identifier="depthWeight">
+  <i:in>
+    <i:scalarref identifier="A" ref="normalizedDepth.result"/>
     <i:scalarref identifier="min" ref="zero.value"/>
     <i:scalarref identifier="max" ref="one.value"/>
   </i:in>
@@ -2468,7 +2487,7 @@ The following example applies the translucency resolved at the nearest surface p
 </i:multiplication>
 ```
 
-The function graph defines the depth-dependent use of the surface property. The `<s:meshsurface>` node performs no inward propagation.
+The function graph defines the depth-dependent use of the surface property: the weight falls linearly from 1 at the surface to 0 at a distance of `depth`. The `<s:meshsurface>` node performs no inward propagation.
 
 The `color` and `texcoord` outputs can be connected to compatible vector inputs of function calls or extension-defined nodes. Texture and property semantics remain those of the extensions defining the corresponding resources.
 
@@ -6839,6 +6858,8 @@ The following schema defines the MeshSurface namespace:
 				<![CDATA[
 			Node for evaluating the closest point on a referenced mesh surface and the attributes associated with that point.
 			All outputs of one evaluation refer to the same selected surface point and triangle.
+			This schema validates only the structural types of inputs and outputs. Consumers MUST additionally validate the
+			required identifiers (inputs: pos, mesh; outputs: distance, position, normal, texcoord, color, translucency) and their types.
 				]]>
 			</xs:documentation>
 		</xs:annotation>
