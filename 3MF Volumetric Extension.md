@@ -39,7 +39,7 @@ THESE MATERIALS ARE PROVIDED "AS IS." The contributors expressly disclaim any wa
   - [Chapter 7. Notes](#chapter-7-notes)
 - [Part III. Appendices](#part-iii-appendices)
   - [Appendix A. Glossary](#appendix-a-glossary)
-    - [Appendix B. 3MF XSD Schema for the Volumetric, Implicit, and MeshSurface Extensions](#appendix-b-3mf-xsd-schema-for-the-volumetric-implicit-and-meshsurface-extensions)
+    - [Appendix B. 3MF XSD Schemas for the Volumetric, Implicit, and Surface Properties Extensions](#appendix-b-3mf-xsd-schemas-for-the-volumetric-implicit-and-surface-properties-extensions)
     - [Appendix C. Namespaces](#appendix-c-namespaces)
   - [Appendix D: Example file](#appendix-d-example-file)
 - [References](#references)
@@ -87,12 +87,14 @@ The information contained in this specification is subject to change. Every effo
 
 This extension MUST be used only with Core specification version 1.3. or higher.
 
+The Surface Properties namespace (prefix "vs") adds the `<vs:translucency>` element to `<v:volumedata>` and the `<vs:meshsurface>` node to implicit functions. It adds to, and does not replace, the Volumetric and Implicit namespaces, which remain unchanged and MUST still be declared by files using it. A producer using elements of the Surface Properties namespace MUST declare it in the `requiredextensions` attribute if the design intent cannot be represented without them, and MAY otherwise declare it as recommended.
+
 ## Document Conventions
 
 See the standard 3MF Document Conventions documentation:
 https://github.com/3MFConsortium/spec_resources/blob/master/document_conventions.md
 
-In this extension specification, the prefix "m" maps to the XML namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02", "v" to "http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01", "i" to "http://schemas.3mf.io/3dmanufacturing/implicit/2023/12" and "s" to "http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09". See Appendix C. Namespaces.
+In this extension specification, the prefix "m" maps to the XML namespace "http://schemas.microsoft.com/3dmanufacturing/material/2015/02", "v" to "http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01", "i" to "http://schemas.3mf.io/3dmanufacturing/implicit/2023/12" and "vs" to "http://schemas.3mf.io/3dmanufacturing/volumetric/surfaceproperties/2026/09". See Appendix C. Namespaces.
 
 ## Language Notes
 
@@ -489,7 +491,7 @@ The child elements of the `<volumedata>` element reference a function that must 
 Volumedata MUST only be referenced by an object type "mesh" or "levelset" unless explicitly allowed by shapes defined in other extensions. This ensures that the `<volumedata>` applies to a volume.
 Moreover, the volumedata-element MUST not be used in a mesh that is referenced as "originalmesh" by any other mesh. This excludes the possibility to implicitly mirror volumedata, which makes it easier to consume files with this extension.
 
-The `<volumedata>` element can contain up to one `<composite>` child element, up to one `<color>` element, up to one `<translucency>` element, and up to 2^31-1 `<property>` elements.
+The `<volumedata>` element can contain up to one `<composite>` child element, up to one `<color>` element, and up to 2^31-1 `<property>` elements. Further child elements can be defined by other namespaces, e.g. `<vs:translucency>` in [section 5.2.4](#524-translucency-element). Elements of other namespaces are placed after the elements defined by this namespace.
 
 The child elements modify the enclosing Shape by specifying color, material composition and other arbitrary properties of the Shape object.
 
@@ -621,7 +623,9 @@ If the sampled value of a `<function>` is `<0` it must be evaluated as "0".
 
 ### 5.2.4 Translucency element
 
-Element **\<translucency>**
+Element **\<vs:translucency>**
+
+This element is defined in the Surface Properties namespace (prefix "vs"), see Appendix C.
 
 ![translucency XML structure](images/element_translucency.png)
 
@@ -633,14 +637,14 @@ Element **\<translucency>**
 | minfeaturesize | ST_PositiveNumber |      | 0       | Hint for the minimum size of features. |
 | fallbackvalue  | ST_Number     |          | 0       | Specifies the value to be used for this data element if the output of the referenced function is undefined. |
 
-The `<translucency>` element defines the translucency of the object as a scalar field that MAY vary throughout the volume of the enclosing Shape. The sampled scalar value is interpreted as the one-parameter "translucency alpha" as defined by ISO 19307:2026, _Graphic technology — Measurement and one-parameter representation of translucency_, and carries the same meaning as the material translucency property of the 3MF Materials and Properties extension. Whereas that extension requires translucency alpha to be constant across a connected component ("shell") of a mesh, this element generalizes the quantity to a spatially varying field, which is the intended use within the volumetric extension.
+The `<vs:translucency>` element defines the translucency of the object as a scalar field that MAY vary throughout the volume of the enclosing Shape. The sampled scalar value is interpreted as the one-parameter "translucency alpha" as defined by ISO 19307:2026, _Graphic technology — Measurement and one-parameter representation of translucency_, and carries the same meaning as the material translucency property of the 3MF Materials and Properties extension. Whereas that extension requires translucency alpha to be constant across a connected component ("shell") of a mesh, this element generalizes the quantity to a spatially varying field, which is the intended use within the volumetric extension.
 
-A `<volumedata>` element can contain up to one `<translucency>` element. To simplify parsing, producers MUST define the function referenced by functionid prior to the `<translucency>`-element.
+A `<volumedata>` element can contain up to one `<vs:translucency>` element. To simplify parsing, producers MUST define the function referenced by functionid prior to the `<vs:translucency>`-element.
 
 **transform**:
 
 The transformation of the object coordinate system into the coordinate system of the function.
-If this `<translucency>`-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
+If this `<vs:translucency>`-element is being sampled at position `(x,y,z)` in the mesh's local object coordinate system, the scalar field must be sampled at position `(x',y',z') = T*(x,y,z)`.
 
 **channel**:
 
@@ -943,7 +947,7 @@ Overview of native nodes
 
 Extension-defined nodes
 
-The following nodes are not part of the Implicit Extension. They are defined in the MeshSurface namespace (prefix "s"). Support for the Implicit Extension alone does not imply support for these nodes.
+The following nodes are not part of the Implicit Extension. They are defined in the Surface Properties namespace (prefix "vs"). Support for the Implicit Extension alone does not imply support for these nodes.
 
 | Node Type                 | Description                                |
 |---------------------------|--------------------------------------------|
@@ -2359,7 +2363,7 @@ Texture addressing, filtering, color-space conversion, and channel interpretatio
 
 ### Surface properties
 
-The surface properties queried by this node are restricted to properties assigned to the referenced mesh according to the Materials and Properties Extension. Volumetric properties, including any `<v:volumedata>` referenced by the mesh, are not evaluated by `<s:meshsurface>`.
+The surface properties queried by this node are restricted to properties assigned to the referenced mesh according to the Materials and Properties Extension. Volumetric properties, including any `<v:volumedata>` referenced by the mesh, are not evaluated by `<vs:meshsurface>`.
 
 The `color` output MUST be resolved according to the Materials and Properties Extension, including its property-assignment, interpolation, and texture rules.
 
@@ -2369,13 +2373,13 @@ When the Materials and Properties Extension assigns translucency to the selected
 
 The meaning, valid range, units, interpolation behavior, and scale dependence of translucency are defined by the Materials and Properties Extension and its normative references. Values outside the valid range MUST be handled as specified by that extension. If translucency is not assigned or cannot be resolved at the selected surface point, `translucency` is undefined.
 
-The `<s:meshsurface>` node does not define how a surface property is used at positions away from the surface. A producer that uses `color`, `translucency`, `texcoord`, or another result of the query within a volume MUST express the intended spatial behavior explicitly in the function graph. Such behavior can include attenuation, masking, shell generation, inward extension, or displacement.
+The `<vs:meshsurface>` node does not define how a surface property is used at positions away from the surface. A producer that uses `color`, `translucency`, `texcoord`, or another result of the query within a volume MUST express the intended spatial behavior explicitly in the function graph. Such behavior can include attenuation, masking, shell generation, inward extension, or displacement.
 
 Properties not represented by an output listed in this section are not exposed by this node.
 
 ### Evaluation independence
 
-Evaluation of `<s:meshsurface>` at a position MUST be independent of evaluations at all other positions. A conforming consumer MUST NOT require any of the following to evaluate this node:
+Evaluation of `<vs:meshsurface>` at a position MUST be independent of evaluations at all other positions. A conforming consumer MUST NOT require any of the following to evaluate this node:
 
 - flood filling or region growing on a voxel grid;
 - iterative diffusion or relaxation;
@@ -2412,20 +2416,20 @@ The following example applies the translucency resolved at the nearest surface p
   </i:out>
 </i:constresourceid>
 
-<s:meshsurface identifier="surface" displayname="Surface query">
-	<s:in>
+<vs:meshsurface identifier="surface" displayname="Surface query">
+	<vs:in>
     <i:vectorref identifier="pos" ref="inputs.pos"/>
     <i:resourceref identifier="mesh" ref="meshId.value"/>
-	</s:in>
-	<s:out>
+	</vs:in>
+	<vs:out>
     <i:scalar identifier="distance"/>
     <i:vector identifier="position"/>
     <i:vector identifier="normal"/>
     <i:vector identifier="texcoord"/>
     <i:vector identifier="color"/>
     <i:scalar identifier="translucency"/>
-	</s:out>
-</s:meshsurface>
+	</vs:out>
+</vs:meshsurface>
 
 <i:constant identifier="depth" value="5.0">
   <i:out>
@@ -2487,7 +2491,7 @@ The following example applies the translucency resolved at the nearest surface p
 </i:multiplication>
 ```
 
-The function graph defines the depth-dependent use of the surface property: the weight falls linearly from 1 at the surface to 0 at a distance of `depth`. The `<s:meshsurface>` node performs no inward propagation.
+The function graph defines the depth-dependent use of the surface property: the weight falls linearly from 1 at the surface to 0 at a distance of `depth`. The `<vs:meshsurface>` node performs no inward propagation.
 
 The `color` and `texcoord` outputs can be connected to compatible vector inputs of function calls or extension-defined nodes. Texture and property semantics remain those of the extensions defining the corresponding resources.
 
@@ -3304,7 +3308,7 @@ The native nodes provided can create graphs that have regions that will evaluate
 
 See [the standard 3MF Glossary](https://github.com/3MFConsortium/spec_resources/blob/master/glossary.md).
 
-## Appendix B. 3MF XSD Schema for the Volumetric, Implicit, and MeshSurface Extensions
+## Appendix B. 3MF XSD Schemas for the Volumetric, Implicit, and Surface Properties Extensions
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -3403,7 +3407,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:sequence>
 			<xs:element ref="composite" minOccurs="0" maxOccurs="1"/>
 			<xs:element ref="color" minOccurs="0" maxOccurs="1"/>
-			<xs:element ref="translucency" minOccurs="0" maxOccurs="1"/>
 			<xs:element ref="property" minOccurs="0" maxOccurs="2147483647"/>
 			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647"/> 
 		</xs:sequence>
@@ -3478,18 +3481,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 		<xs:anyAttribute namespace="##other" processContents="lax"/>
 	</xs:complexType>
 
-	<xs:complexType name="CT_Translucency">
-		<xs:sequence>
-			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
-		</xs:sequence>
-		<xs:attribute name="functionid" type="ST_ResourceID" use="required" />
-		<xs:attribute name="channel" type="xs:QName" use="required" />
-		<xs:attribute name="transform" type="ST_Matrix3D" />
-		<xs:attribute name="minfeaturesize" type="ST_PositiveNumber" default="0" />
-		<xs:attribute name="fallbackvalue" type="ST_Number" default="0" />
-		<xs:anyAttribute namespace="##other" processContents="lax"/>
-	</xs:complexType>
-
 	<!-- Simple Types -->
 	<xs:simpleType name="ST_TileStyle">
 		<xs:restriction base="xs:string">
@@ -3549,7 +3540,6 @@ xmlns:xml="http://www.w3.org/XML/1998/namespace" targetNamespace="http://schemas
 	<xs:element name="composite" type="CT_Composite"/>
 	<xs:element name="materialmapping" type="CT_MaterialMapping"/>
 	<xs:element name="color" type="CT_Color"/>
-	<xs:element name="translucency" type="CT_Translucency"/>
 	<xs:element name="property" type="CT_Property"/>
 	<xs:element name="mesh" type="CT_Mesh"/>
 	<xs:element name="levelset" type="CT_LevelSet"/>
@@ -6831,26 +6821,44 @@ _sheet0.png_
 
 </xs:schema>```
 
-The following schema defines the MeshSurface namespace:
+The following schema defines the Surface Properties namespace:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+<xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/volumetric/surfaceproperties/2026/09"
 	elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all"
-	xmlns="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+	xmlns="http://schemas.3mf.io/3dmanufacturing/volumetric/surfaceproperties/2026/09"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:vol="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01"
 	xmlns:i="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12">
+	<xs:import namespace="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01"
+		schemaLocation="volumetric.xsd" />
 	<xs:import namespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
 		schemaLocation="implicit.xsd" />
 
 	<xs:annotation>
 		<xs:documentation>
 			<![CDATA[
-		MeshSurface extension schema.
-		The meshsurface node uses the existing implicit graph reference and output elements.
+		Volumetric Surface Properties extension schema.
+		Adds the translucency volumedata child element and the meshsurface implicit node.
+		This namespace adds to, and does not replace, the volumetric and implicit namespaces.
+		The translucency element is placed in vol:volumedata through its ##other extension point,
+		after the elements defined by the volumetric namespace.
 		]]>
 		</xs:documentation>
 	</xs:annotation>
+
+	<xs:complexType name="CT_Translucency">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
+		</xs:sequence>
+		<xs:attribute name="functionid" type="vol:ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="vol:ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="vol:ST_PositiveNumber" default="0" />
+		<xs:attribute name="fallbackvalue" type="vol:ST_Number" default="0" />
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
 
 	<xs:complexType name="CT_MeshSurface">
 		<xs:annotation>
@@ -6887,6 +6895,7 @@ The following schema defines the MeshSurface namespace:
 		</xs:complexContent>
 	</xs:complexType>
 
+	<xs:element name="translucency" type="CT_Translucency" />
 	<xs:element name="meshsurface" type="CT_MeshSurface" />
 </xs:schema>
 ```
@@ -6900,7 +6909,7 @@ Volumetric http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01
 
 Implicit http://schemas.3mf.io/3dmanufacturing/implicit/2023/12
 
-MeshSurface http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09
+Surface Properties http://schemas.3mf.io/3dmanufacturing/volumetric/surfaceproperties/2026/09
 
 # References
 

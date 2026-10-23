@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+<xs:schema targetNamespace="http://schemas.3mf.io/3dmanufacturing/volumetric/surfaceproperties/2026/09"
 	elementFormDefault="qualified" attributeFormDefault="unqualified" blockDefault="#all"
-	xmlns="http://schemas.3mf.io/3dmanufacturing/meshsurface/2026/09"
+	xmlns="http://schemas.3mf.io/3dmanufacturing/volumetric/surfaceproperties/2026/09"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:vol="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01"
 	xmlns:i="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12">
+	<xs:import namespace="http://schemas.3mf.io/3dmanufacturing/volumetric/2022/01"
+		schemaLocation="volumetric.xsd" />
 	<xs:import namespace="http://schemas.3mf.io/3dmanufacturing/implicit/2023/12"
 		schemaLocation="implicit.xsd" />
 
 	<xs:annotation>
 		<xs:documentation>
 			<![CDATA[
-		MeshSurface extension schema.
-		The meshsurface node uses the existing implicit graph reference and output elements.
+		Volumetric Surface Properties extension schema.
+		Adds the translucency volumedata child element and the meshsurface implicit node.
+		This namespace adds to, and does not replace, the volumetric and implicit namespaces.
+		The translucency element is placed in vol:volumedata through its ##other extension point,
+		after the elements defined by the volumetric namespace.
 		]]>
 		</xs:documentation>
 	</xs:annotation>
+
+	<xs:complexType name="CT_Translucency">
+		<xs:sequence>
+			<xs:any namespace="##other" processContents="lax" minOccurs="0" maxOccurs="2147483647" />
+		</xs:sequence>
+		<xs:attribute name="functionid" type="vol:ST_ResourceID" use="required" />
+		<xs:attribute name="channel" type="xs:QName" use="required" />
+		<xs:attribute name="transform" type="vol:ST_Matrix3D" />
+		<xs:attribute name="minfeaturesize" type="vol:ST_PositiveNumber" default="0" />
+		<xs:attribute name="fallbackvalue" type="vol:ST_Number" default="0" />
+		<xs:anyAttribute namespace="##other" processContents="lax"/>
+	</xs:complexType>
 
 	<xs:complexType name="CT_MeshSurface">
 		<xs:annotation>
@@ -51,5 +69,6 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+	<xs:element name="translucency" type="CT_Translucency" />
 	<xs:element name="meshsurface" type="CT_MeshSurface" />
 </xs:schema>
